@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@theme {
+  --color-iris: #6757f5;
+  --color-iris-hover: #5342e8;
+  --color-iris-light: #f0effe;
+  --color-iris-glow: rgba(103, 87, 245, 0.15);
+  --color-ink: #171a2b;
+  --color-ink-secondary: #31364f;
+  --color-ink-muted: #626987;
+  --color-cyan: #35b8c5;
+  --color-cyan-hover: #269ca8;
+  --color-cyan-light: #e8f9fa;
+  --color-lavender: #edeaff;
+  --color-lavender-subtle: #f7f6ff;
+  --color-offwhite: #faf9f6;
+  --color-surface-card: #ffffff;
+  --color-border-subtle: #eceaf6;
+  --color-border-card: #dedaf5;
+
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+:root {
+  --background: #faf9f6;
+  --foreground: #171a2b;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Accessible custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f0f8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7c4e2;
+  border-radius: 9999px;
+  border: 2px solid #f1f0f8;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6757f5;
+}
+
+/* Focus styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid #6757f5;
+  outline-offset: 3px;
+}
+
+/* Subtle dot grid pattern utility */
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(103, 87, 245, 0.08) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.bg-dot-subtle {
+  background-image: radial-gradient(rgba(23, 26, 43, 0.06) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/* Glassmorphism effects */
+.glass-nav {
+  background: rgba(250, 249, 246, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
