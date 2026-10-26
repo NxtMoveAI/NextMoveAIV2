@@ -30,6 +30,16 @@ export interface InterestOption {
   shortDesc: string;
 }
 
+export interface InteractiveActivity {
+  id: string;
+  title: string;
+  duration: string;
+  tag: string;
+  description: string;
+  whatYouWillLearn: string;
+  clarifiesDecision: string;
+}
+
 export interface ExplorationResult {
   headline: string;
   introduction: string;
@@ -39,6 +49,7 @@ export interface ExplorationResult {
     badge: string;
     tagColor?: string;
   }>;
+  interactiveActivities?: InteractiveActivity[];
   practicalTrial: {
     title: string;
     timeEstimate: string;
@@ -622,42 +633,71 @@ export const EXPLORATION_MATRIX: Record<
   },
   'classes-11-12': {
     technology: {
-      headline: 'Navigate entrance exams, CS degree options, and self-directed building',
+      headline: "Interested in technology? Let's explore where it could take you.",
       introduction:
-        'Clarify the differences between B.Tech CS, BCA, B.Sc Computer Science, and Data Science, while keeping your practical coding curiosity alive.',
+        'Discover educational pathways and realistic alternatives beyond entrance exam hype. Compare B.Tech, BCA, and B.Sc Computing options, explore self-directed building, and try beginner-friendly practical tasks.',
       suggestedPaths: [
         {
-          title: 'Degree Pathway Comparison (B.Tech vs BCA vs B.Sc)',
-          description: 'Compare syllabus focus, entrance exams, 3-year vs 4-year structures, and placement realities.',
-          badge: 'Pathways',
+          title: 'Explore Relevant Education Pathways and Prerequisites',
+          description:
+            'Understand B.Tech CS, BCA, B.Sc Computer Science, and Data Science options, including entrance criteria, prerequisites, and alternative admissions.',
+          badge: 'Education Pathways',
         },
         {
-          title: 'Intro to Full-Stack Web Development',
-          description: 'Learn JavaScript, React basics, and APIs by building a practical web utility tool.',
-          badge: 'Modern Dev',
+          title: 'Compare Different Study Options and Alternatives',
+          description:
+            'Weigh 4-year engineering vs 3-year degrees + MCA; analyze fee structures, curriculum depth, and campus recruitment realities without bias.',
+          badge: 'Option Comparison',
         },
         {
-          title: 'Competitive Programming vs Open Source',
-          description: 'Understand how DSA prepares for technical interviews and how GitHub proves your skill.',
-          badge: 'Skill Strategy',
+          title: 'Try a Short Beginner-Friendly Technology Activity',
+          description:
+            'Test real coding, API data handling, or algorithmic logic in a 20-minute low-stakes micro-trial before making long-term tuition commitments.',
+          badge: 'Starter Activity',
+        },
+      ],
+      interactiveActivities: [
+        {
+          id: 'activity-api',
+          title: 'Build a Live Currency Exchange Calculator',
+          duration: '20 mins',
+          tag: 'Web & APIs',
+          description:
+            'Fetch real-time exchange rates using a public API endpoint and parse currency JSON values in JavaScript.',
+          whatYouWillLearn:
+            'You will understand how client applications communicate with remote cloud servers and parse real-world data payloads.',
+          clarifiesDecision:
+            'Helps you discover whether hands-on software development and web applications feel exciting and intuitive.',
+        },
+        {
+          id: 'activity-algo',
+          title: 'Trace a Shortest-Path & Maze Algorithm',
+          duration: '20 mins',
+          tag: 'Logic & Algorithms',
+          description:
+            'Follow how a graph traversal algorithm searches grid nodes to find the optimal route through a maze.',
+          whatYouWillLearn:
+            'You will discover the difference between memorizing math formulae and applying algorithmic problem-solving to complex systems.',
+          clarifiesDecision:
+            'Helps you evaluate whether theoretical computer science, discrete mathematics, and competitive problem solving fit your thinking style.',
         },
       ],
       practicalTrial: {
         title: 'Build a Live Currency Exchange Calculator',
-        timeEstimate: '30 mins',
-        description: 'Fetch real-time currency rates using a free public API and display INR conversion.',
-        firstStep: 'Test an API endpoint in your browser or Postman and parse the JSON response in JS.',
-        reflectionPrompt: 'Did you find API data manipulation intuitive, or do you prefer algorithm logic?',
+        timeEstimate: '20 mins',
+        description: 'Fetch real-time currency rates using a free public API and display INR conversion values.',
+        firstStep: 'Open a public JSON endpoint in your browser, inspect the currency keys, and extract the USD-to-INR rate.',
+        reflectionPrompt: 'Did you find manipulating live API data intuitive, or do you prefer working with visual designs or system algorithms?',
       },
       nextAction: {
-        title: 'Map out entrance exams and non-JEE top engineering colleges',
-        description: 'Explore BITSAT, VITEEE, KCET, COMEDK, State CETs, and leading private universities.',
-        ctaText: 'Explore Engineering Portals',
+        title: 'Map out entrance exams and non-JEE top engineering & computing colleges',
+        description: 'Explore state CETs, university portals, non-JEE technical programs, and independent admissions calendars.',
+        ctaText: 'Explore Computing Portals',
       },
       curatedInsights: [
-        'Comprehensive breakdown of Tier 1/2/3 college realities',
-        'Emphasis on building GitHub proof of work alongside 12th board prep',
-        'Direct alternatives if JEE rank falls short of top IITs/NITs',
+        'Comprehensive breakdown of Tier 1/2/3 college realities and cutoff expectations',
+        'Emphasis on building GitHub proof of work alongside 12th board preparation',
+        'Direct alternative degree pathways if entrance test ranks fall short of top institutions',
       ],
     },
     creativity: {
@@ -1094,42 +1134,71 @@ export const EXPLORATION_MATRIX: Record<
   },
   'degree-engineering': {
     technology: {
-      headline: 'Move past tutorial hell: ship real production projects and master CS fundamentals',
+      headline: "I'm pursuing my degree and want to explore career possibilities, practical skills and next steps.",
       introduction:
-        'Whether in BCA, B.Sc CS, or B.Tech, standout students build full-stack deployed applications, contribute to open source, and master data structures with discipline.',
+        'Whether in engineering, applied computing, data science, or sciences, standout undergraduates bridge academic theory with demonstrable projects, industry skills, and clear next moves.',
       suggestedPaths: [
         {
-          title: 'Full-Stack Application Architecture (Next.js, Node, Postgres)',
-          description: 'Build authenticated, performant apps with database migrations and automated tests.',
-          badge: 'Production Dev',
+          title: 'Explore Career Possibilities & Emerging Tech Domains',
+          description:
+            'Investigate backend systems, cloud engineering, applied machine learning, or mobile development with verified salary and hiring data.',
+          badge: 'Career Possibilities',
         },
         {
-          title: 'Backend Systems, APIs & Distributed Caching',
-          description: 'Learn Redis caching, message queues (Kafka/RabbitMQ), and rate limiting.',
-          badge: 'Systems Eng',
+          title: 'Build Practical Skills & Portfolio Artifacts',
+          description:
+            'Transition from generic tutorial clones to authenticated, production-deployed applications with databases and automated tests.',
+          badge: 'Practical Skills',
         },
         {
-          title: 'Data Science & Applied Machine Learning',
-          description: 'Fine-tune open-weights LLMs, build RAG pipelines, and deploy on vector databases.',
-          badge: 'AI & Data',
+          title: 'Plan Your Next Steps (Placements, Internships or Higher Studies)',
+          description:
+            'Compare direct startup hiring, tier-1 IT campus drives, and higher degree entrance exams (GATE, NIMCET, CAT, or MS abroad).',
+          badge: 'Next Steps',
+        },
+      ],
+      interactiveActivities: [
+        {
+          id: 'degree-api-sec',
+          title: 'Implement API Rate Limiting & Token Auth',
+          duration: '25 mins',
+          tag: 'Production Engineering',
+          description:
+            'Create an Express or Next.js route handler that restricts requests to 10 per minute per IP using a token bucket.',
+          whatYouWillLearn:
+            'Learn how production backend systems defend against spam attacks and manage concurrent traffic.',
+          clarifiesDecision:
+            'Clarifies whether you enjoy backend system architecture, API infrastructure, and security engineering.',
+        },
+        {
+          id: 'degree-rag-pipeline',
+          title: 'Inspect an Embeddings Vector Search Pipeline',
+          duration: '25 mins',
+          tag: 'Applied AI & Data',
+          description:
+            'Convert 5 paragraphs of university syllabus into text embeddings and query the nearest semantic neighbor.',
+          whatYouWillLearn:
+            'Understand how modern Retrieval-Augmented Generation (RAG) and search algorithms work behind LLMs.',
+          clarifiesDecision:
+            'Clarifies whether applied AI engineering, data modeling, and machine learning pipelines suit your goals.',
         },
       ],
       practicalTrial: {
         title: 'Build an Authenticated API with Rate Limiting',
-        timeEstimate: '35 mins',
+        timeEstimate: '30 mins',
         description: 'Create an Express or Next.js route handler that restricts requests to 10 per minute per IP.',
-        firstStep: 'Set up an in-memory token bucket or connect to an Upstash Redis free instance.',
-        reflectionPrompt: 'Did you think about handling concurrent requests or malicious spam spikes?',
+        firstStep: 'Set up an in-memory token bucket or connect to an Upstash Redis free instance to track client IP request counts.',
+        reflectionPrompt: 'Did handling concurrent requests and edge cases feel engaging, or do you prefer user interface engineering?',
       },
       nextAction: {
-        title: 'Build your verified skill portfolio on Next Move AI',
-        description: 'Link your GitHub commits, deployment URLs, and project architecture explanations.',
+        title: 'Build your demonstrated skill portfolio on Next Move AI',
+        description: 'Link your GitHub commits, deployment URLs, and architecture decisions into an evidence-backed profile.',
         ctaText: 'Build Project Portfolio',
       },
       curatedInsights: [
-        'Stops reliance on generic clone tutorials (Netflix/Spotify clones)',
-        'Prepares for modern remote internships and high-growth product startups',
-        'Proven balance between LeetCode DSA and real shipping skills',
+        'Move past generic tutorial clones (like Netflix/Spotify clones) to solve real user problems',
+        'Balances data structures & algorithms (DSA) with shipped production code',
+        'Provides objective clarity on higher studies vs direct corporate internships',
       ],
     },
     creativity: {
@@ -1582,6 +1651,7 @@ export interface MyPartnerScenario {
       whyItFits: string;
       prerequisites: string;
     }>;
+    whatRemainsUnknown: string[];
     practicalTrial: {
       title?: string;
       action: string;
@@ -1590,104 +1660,128 @@ export interface MyPartnerScenario {
     };
     guidedReflection: string;
     mentorNote: string;
+    nextAction?: {
+      title: string;
+      description: string;
+    };
   };
 }
 
 export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
   {
-    id: 'bca-python',
-    studentTag: 'Ananya, BCA 2nd Year',
-    avatarSeed: 'ananya',
-    stageBadge: 'Degree / Applied Tech',
+    id: 'class-12-pcm',
+    studentTag: 'Arjun, Class 12 PCM',
+    avatarSeed: 'arjun',
+    stageBadge: 'Class 12 / High School',
     question:
-      'I am studying BCA. I know a little Python, but I am unsure what I should explore next—web development, data analysis, or should I prepare for MCA entrance?',
-    contextPills: ['Knows basic Python', 'BCA Semester 3', 'Uncertain between job vs MCA'],
+      'I am in Class 12 studying Physics, Chemistry, and Math. I enjoy coding and technology, but JEE coaching is overwhelming me. What are my real options beyond top IIT/NIT engineering seats?',
+    contextPills: ['Class 12 PCM', 'Enjoys coding', 'Overwhelmed by JEE', 'Exploring alternative routes'],
     partnerResponse: {
       acknowledgement:
-        'It is very common in 2nd-year BCA to feel pulled between jumping into web development, exploring data science, or studying for NIMCET/MCA. Your existing comfort with Python gives you a head start for either route.',
+        'Feeling overwhelmed by JEE while knowing you genuinely like technology is very common. An entrance rank measures high-speed test elimination, not your ultimate potential as a software engineer or problem solver. Let us look at grounded options across degrees and colleges.',
       verifiedPathways: [
         {
-          title: 'Backend Web Development with Python (FastAPI / Django)',
-          difficulty: 'Moderate',
+          title: 'Top Non-JEE Engineering Entrances (BITSAT, KCET, COMEDK, VITEEE)',
+          difficulty: 'Moderate to High',
           description:
-            'Use your Python knowledge to build backend APIs, connect databases (PostgreSQL), and understand how servers serve data to mobile and web apps.',
-          whyItFits: 'High entry-level hiring in Indian startups, and leverages your exact current language.',
-          prerequisites: 'Basic Python syntax, basic SQL queries, HTTP request understanding',
+            'State CETs and premier private universities offer excellent computer engineering education and campus hiring without the single-exam pressure of JEE Advanced.',
+          whyItFits: 'Allows you to focus on solid fundamentals while keeping top engineering options wide open.',
+          prerequisites: '12th PCM board preparation, consistent mock test practice for state entrance syllabi',
         },
         {
-          title: 'Applied Data Analysis & Visualization',
+          title: 'Direct Computing Degrees (BCA + MCA or B.Sc Computer Science)',
           difficulty: 'Moderate',
           description:
-            'Learn Pandas, NumPy, and basic data storytelling. Clean messy CSV datasets and build interactive dashboards with Streamlit.',
-          whyItFits: 'Great if you enjoy finding patterns and working with business or scientific numbers.',
-          prerequisites: 'Python functions, descriptive statistics, Excel/CSV comfort',
+            'Focus on practical software development and computer science principles from day one. Top product companies evaluate your demonstrable GitHub portfolio over a degree title.',
+          whyItFits: 'Avoids heavy physics/chemistry engineering coursework if you want pure computing focus.',
+          prerequisites: 'Mathematics at 12th level (recommended for premier universities and NIMCET eligibility)',
         },
         {
-          title: 'NIMCET / MCA Entrance Preparation Route',
-          difficulty: 'Intensive',
+          title: 'Skill-First Engineering & Open Source Portfolio Route',
+          difficulty: 'Self-Directed & Rewarding',
           description:
-            'If you want a Tier-1 NIT brand and deeper theoretical computer science, prepare quantitative math and computer awareness for NIMCET.',
-          whyItFits: 'Best if you want placement access to top-tier campus recruitment drives.',
-          prerequisites: '12th-level Mathematics, analytical reasoning, 12 months consistent prep',
+            'Build real software projects alongside your college degree. Many students in Tier-2 and Tier-3 colleges secure high-paying remote startup roles by showcasing shipped code.',
+          whyItFits: 'Shields you from college brand bias by creating indisputable public proof of capability.',
+          prerequisites: 'Curiosity to learn Git, modern web technologies, and build small usable utilities',
         },
       ],
+      whatRemainsUnknown: [
+        'Your final 12th board marks and entrance rank score on exam day',
+        'Your family’s budget flexibility for private college tuition vs state university fees',
+        'Whether you prefer theoretical algorithmic mathematics or practical software product development',
+      ],
       practicalTrial: {
-        action: 'Build a 30-line mini API using FastAPI that returns a random inspirational quote from a JSON list.',
-        duration: '25 minutes',
-        whatYouLearn: 'You will immediately feel whether you enjoy backend routing and server responses.',
+        title: 'Build a Live Currency Exchange Calculator',
+        action: 'Open a free JSON exchange rate API in your browser and calculate live USD to INR conversions.',
+        duration: '20 minutes',
+        whatYouLearn: 'You will see how real web applications fetch and manipulate live data.',
       },
       guidedReflection:
-        'Try the small FastAPI exercise this weekend. If seeing your API return data in the browser excites you, backend development is a strong candidate for your next 3 months.',
+        'Try the small API trial this weekend. If seeing code work gives you genuine energy, remember that practical skills will matter far more in your career than an arbitrary coaching test rank.',
       mentorNote:
-        'Next Move AI does not tell you to drop MCA or pick web development; we provide the exact trial so you can experience both before deciding.',
+        'My Partner is a conceptual preview of our upcoming contextual AI guidance engine. We do not predict a single career; we surface pathways with trade-offs so you stay in control.',
+      nextAction: {
+        title: 'Map out non-JEE state CET application dates and college backup options',
+        description: 'Review exam dates, fees, and eligibility for 4 backup colleges alongside your board prep.',
+      },
     },
   },
   {
-    id: 'class-10-bio-tech',
-    studentTag: 'Rohan, Class 10',
-    avatarSeed: 'rohan',
-    stageBadge: 'Class 10 / High School',
+    id: 'degree-career-pivot',
+    studentTag: 'Priya, 2nd Year Degree',
+    avatarSeed: 'priya',
+    stageBadge: 'Degree / College',
     question:
-      'I really enjoy Biology and I also like computers and tinkering, but my family says I must choose either standard PCB for MBBS or PCM for Engineering. What are my real options?',
-    contextPills: ['Likes Biology & Tech', 'CBSE Class 10', 'Family expecting NEET/JEE choice'],
+      'I am in my 2nd year of college. I have good grades, but I haven’t built real projects and feel unprepared for technical internships. How do I start?',
+    contextPills: ['Undergrad Year 2', 'Good theory grades', 'Zero portfolio projects', 'Targeting internships'],
     partnerResponse: {
       acknowledgement:
-        'You do not have to abandon your curiosity in biology just to keep technology open. The modern world has huge fields that unite both—and Indian universities now offer exciting hybrid pathways.',
+        'It is very common in 2nd year to realize that college exams test rote theory rather than building real software. Having strong grades means you have disciplined study habits—now we simply redirect that discipline into shipping demonstrable work.',
       verifiedPathways: [
         {
-          title: 'Bioinformatics & Computational Biology',
-          difficulty: 'Challenging & Rewarding',
+          title: 'Backend API Development with Node.js or Python (FastAPI)',
+          difficulty: 'Moderate',
           description:
-            'Use software algorithms and statistical models to decode DNA sequences, model diseases, and accelerate drug discovery.',
-          whyItFits: 'Perfect blend: writes Python/R code to solve real biological mysteries.',
-          prerequisites: 'Either PCMB or PCM with biology self-interest, basic coding curiosity',
+            'Build backend REST APIs, connect relational databases (PostgreSQL), and understand authentication and server deployment.',
+          whyItFits: 'Highest volume of entry-level engineering internships in Indian technology companies.',
+          prerequisites: 'Basic programming syntax, foundational SQL queries, HTTP concepts',
         },
         {
-          title: 'Biomedical Engineering & Medical Devices',
-          difficulty: 'Moderate to High',
+          title: 'Modern Front-End Engineering with React & Next.js',
+          difficulty: 'Moderate',
           description:
-            'Design prosthetic limbs, ECG monitors, MRI imaging software, and robotic surgery tools.',
-          whyItFits: 'Direct engineering degree (B.Tech) that saves lives through healthcare innovation.',
-          prerequisites: 'PCM in 11th-12th (Biology often not mandatory for engineering entrance)',
+            'Translate design wireframes into responsive, accessible web interfaces with clean component architecture and state management.',
+          whyItFits: 'Immediate visual feedback that makes portfolio demonstration engaging to recruiters.',
+          prerequisites: 'HTML, CSS, JavaScript ES6 fundamentals, basic Git commands',
         },
         {
-          title: 'PCMB (Physics, Chemistry, Maths, Biology) Stream Route',
-          difficulty: 'Demanding Workload',
+          title: 'Higher Studies & Competitive Placement Strategy (GATE / NIMCET / CAT)',
+          difficulty: 'Intensive',
           description:
-            'Keep both options officially open in CBSE/State Boards while deciding during 11th grade.',
-          whyItFits: 'Buys you 12 more months of maturity without closing either entrance door.',
-          prerequisites: 'Strong time management to balance both board syllabus and entrance prep',
+            'If you want access to premier tier-1 campus placements, prepare structured aptitude and technical foundations for national competitive exams.',
+          whyItFits: 'Best if you want placement access to top-tier institutional campus hiring drives.',
+          prerequisites: 'Core engineering mathematics, analytical reasoning, 12 months consistent preparation',
         },
       ],
+      whatRemainsUnknown: [
+        'Your preferred technical domain (frontend, backend, data science, or mobile)',
+        'How many weekly hours you can protect outside your college attendance obligations',
+        'Whether your college requires an official faculty sign-off for off-campus summer internships',
+      ],
       practicalTrial: {
-        action: 'Open NCBI Protein Data Bank (PDB-101) and inspect a 3D molecule of the Spike Protein on your laptop screen.',
-        duration: '15 minutes',
-        whatYouLearn: 'See how digital tools make abstract biological molecules tangible and computable.',
+        title: 'Deploy a 30-Line Authenticated API Route',
+        action: 'Build a mini API route using Next.js or FastAPI that returns structured JSON and protects a endpoint with a header token.',
+        duration: '25 minutes',
+        whatYouLearn: 'You will immediately feel whether backend logic and server responses feel intuitive to you.',
       },
       guidedReflection:
-        'Have a constructive discussion with your parents using our verified Stream Comparison sheet. Show them that biotechnology and biomedical engineering are respected high-growth careers.',
+        'Focus on building one small, finished utility rather than starting three massive uncompleted tutorial clones. One deployed link beats ten unfinished folders.',
       mentorNote:
-        'Next Move AI provides a Parent-Student Discussion Guide specifically designed for the PCB vs PCM conversation.',
+        'Next Move AI does not tell you to pick web development or prepare for exams; we provide the exact trial so you can experience both before deciding.',
+      nextAction: {
+        title: 'Create your GitHub repository and ship a 1-page project roadmap',
+        description: 'Define an MVP problem, write a README, and schedule 4 hours of focused coding this week.',
+      },
     },
   },
   {
@@ -1727,6 +1821,11 @@ export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
           prerequisites: 'A phone or tablet camera with family supervision, paper cutouts',
         },
       ],
+      whatRemainsUnknown: [
+        'Which creative mediums (digital drawing, clay modeling, comic writing) feel most fun over time',
+        'Parental preferences for screen time and device availability for digital drawing tools',
+        'Whether you enjoy drawing characters solo or collaborating with classmates on school projects',
+      ],
       practicalTrial: {
         title: 'The 3-Second Paper Flipbook',
         action: 'Draw a ball bouncing on the corner of 15 pages in your rough notebook and flip the pages fast with your thumb.',
@@ -1737,6 +1836,10 @@ export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
         'Notice how your friends react when you show them your bouncing ball. Storytelling is all about sharing joy with others!',
       mentorNote:
         'In middle school, our focus is purely curiosity and joyful practice—zero career pressure or formal evaluations.',
+      nextAction: {
+        title: 'Create a private sketchbook folder in your room',
+        description: 'Keep your best 5 character sketches in one folder to look back at at the end of the year.',
+      },
     },
   },
 ];
@@ -1783,7 +1886,7 @@ export const HOW_IT_WORKS_STAGES: HowItWorksStage[] = [
     description:
       'Discover educational pathways, emerging cross-disciplinary domains, realistic degree options, prerequisite requirements, and age-appropriate practical opportunities.',
     concreteExample:
-      'Connecting a BCA student to specialized tracks in Cloud Infrastructure, Backend Systems, and UI Engineering with realistic entry salaries.',
+      'Connecting a technology-interested student to specialized tracks in Cloud Infrastructure, Backend Systems, and UI Engineering with realistic entry salaries.',
     studentQuestion: 'What options match my strengths that my relatives haven’t told me about?',
     keyOutputs: [
       'Grounded Indian education pathways',
@@ -1801,7 +1904,7 @@ export const HOW_IT_WORKS_STAGES: HowItWorksStage[] = [
     description:
       'We don’t decide careers for you. We put the facts, costs, college cutoffs, day-in-the-life realities, and unknown risks side-by-side so you remain in full control.',
     concreteExample:
-      'Comparing B.Tech CS in a private university (₹16 Lakhs total fee) vs BCA + MCA in a state university, analyzing ROI and placement profiles.',
+      'Comparing B.Tech CS in a private university (₹16 Lakhs total fee) vs state university computing options, analyzing ROI and placement profiles.',
     studentQuestion: 'What are the real trade-offs between my top two choices?',
     keyOutputs: [
       'Side-by-side trade-off matrix',
@@ -1817,15 +1920,96 @@ export const HOW_IT_WORKS_STAGES: HowItWorksStage[] = [
     iconName: 'Rocket',
     accentColor: '#171A2B',
     description:
-      'Turn chosen directions into flexible weekly roadmaps, hands-on micro-projects, portfolio evidence, and verified internships or higher study applications.',
+      'Turn chosen directions into flexible weekly roadmaps, hands-on micro-projects, portfolio evidence, and sample internships or higher study applications.',
     concreteExample:
-      'A final-year student builds a 12-week roadmap: 2 flagship GitHub projects, 1 technical case study, and 10 targeted startup applications.',
+      'A student builds a 12-week roadmap: 2 flagship GitHub projects, 1 technical case study, and targeted applications.',
     studentQuestion: 'What is the exact concrete step I need to take this week?',
     keyOutputs: [
       'Flexible, adjustable milestone timeline',
       'Proof of work instead of certificates',
       'Reflect, learn, and adapt as you grow',
     ],
+  },
+];
+
+export interface GrowthMilestoneCase {
+  step: string;
+  title: string;
+  subtitle: string;
+  iconName: string;
+  color: string;
+  description: string;
+  sampleStudent: string;
+  whatStudentDid: string;
+  tangibleArtifact: string;
+  clarityGained: string;
+}
+
+export const GROWTH_TIMELINE_CASES: GrowthMilestoneCase[] = [
+  {
+    step: '01',
+    title: 'Explore',
+    subtitle: 'Map Possibilities',
+    iconName: 'Compass',
+    color: '#6757F5',
+    description:
+      'Investigate streams, college options, and emerging domains without immediate commitment or pressure.',
+    sampleStudent: 'Aryan (Class 12 PCM)',
+    whatStudentDid: 'Explored 3 distinct paths beyond JEE: State CET engineering colleges, direct BCA+MCA routes, and design technology programs.',
+    tangibleArtifact: 'Curated 1-page Pathway Map with fee brackets and entrance deadlines',
+    clarityGained: 'Discovered that missing an IIT cutoff does not close the door to becoming a top software engineer.',
+  },
+  {
+    step: '02',
+    title: 'Try',
+    subtitle: '15-Min Micro-Trials',
+    iconName: 'FlaskConical',
+    color: '#35B8C5',
+    description:
+      'Experience short practical tasks—write a script, audit a policy, build an API—before spending months of study.',
+    sampleStudent: 'Aryan (Class 12 PCM)',
+    whatStudentDid: 'Tested a 20-minute live Currency API script in JavaScript instead of only reading theoretical textbook code.',
+    tangibleArtifact: 'Working browser exchange rate calculator parsing real JSON data',
+    clarityGained: 'Confirmed that building interactive software feels intuitive and deeply energizing.',
+  },
+  {
+    step: '03',
+    title: 'Build',
+    subtitle: 'Verifiable Projects',
+    iconName: 'Hammer',
+    color: '#7C6BF8',
+    description:
+      'Create real portfolio evidence: GitHub repositories, design case studies, or scientific reports.',
+    sampleStudent: 'Aryan (1st Year College)',
+    whatStudentDid: 'Built a student timetable & study planner web application deployed on Vercel with a PostgreSQL database.',
+    tangibleArtifact: 'Public GitHub repository with 42 commits and a live deployed URL',
+    clarityGained: 'Gained confidence that recruiters and internship mentors evaluate shipped code over college prestige.',
+  },
+  {
+    step: '04',
+    title: 'Reflect',
+    subtitle: 'Private Journaling',
+    iconName: 'MessageSquareHeart',
+    color: '#171A2B',
+    description:
+      'Note what energized you, what felt stressful, and what you want to adjust in your roadmap.',
+    sampleStudent: 'Aryan (2nd Year College)',
+    whatStudentDid: 'Logged weekly reflections comparing feelings of flow during backend development vs frustration during rote exam prep.',
+    tangibleArtifact: 'Private reflection log tracking energy, friction points, and focus hours',
+    clarityGained: 'Decided to double down on backend distributed systems and skip unrelated competitive exam hype.',
+  },
+  {
+    step: '05',
+    title: 'Grow',
+    subtitle: 'Evolving Student Profile',
+    iconName: 'TrendingUp',
+    color: '#35B8C5',
+    description:
+      'Your profile evolves with you throughout school and college, capturing authentic demonstrated capability.',
+    sampleStudent: 'Aryan (Final Year Candidate)',
+    whatStudentDid: 'Aggregated 4 project case studies, open-source pull requests, and reflective learning milestones into an evidence-backed profile.',
+    tangibleArtifact: 'Comprehensive demonstrated capability profile shared with 8 product startups',
+    clarityGained: 'Secured a product engineering internship with an offer based on demonstrated work, not arbitrary grades.',
   },
 ];
 
@@ -1877,14 +2061,14 @@ export const STUDENT_EXPERIENCES: StudentExperienceFeature[] = [
     iconName: 'Map',
     previewType: 'paths',
     previewData: {
-      heading: 'Pathway Breakdown: BCA to Tech Careers',
-      subheading: 'Verified educational routes beyond the standard B.Tech bottleneck',
+      heading: 'Pathway Breakdown: Computing & Technology Paths',
+      subheading: 'Educational routes beyond the standard coaching bottleneck',
       items: [
-        { label: 'Route A: Direct Product Dev', value: 'BCA + GitHub Projects -> ₹6–10 LPA Starting' },
-        { label: 'Route B: NIT MCA (NIMCET)', value: '3-Year Master -> ₹12–18 LPA Campus Average' },
-        { label: 'Route C: Applied Data Science', value: 'BCA + SQL/Python Portfolio -> Analyst Roles' },
+        { label: 'Route A: Direct Tech Degree', value: 'B.Tech / B.Sc / BCA -> Foundations + Project Work' },
+        { label: 'Route B: National Entrance Route', value: 'Central / State Universities -> Competitive Selection' },
+        { label: 'Route C: Applied Technology & Design', value: 'UI/UX or Data Science -> Portfolio-led Roles' },
       ],
-      calloutText: 'You have 3 credible options that do not require an expensive private B.Tech.',
+      calloutText: 'Explore credible options that match your strengths without getting stuck in a single entrance exam mindset.',
     },
   },
   {
@@ -1921,7 +2105,7 @@ export const STUDENT_EXPERIENCES: StudentExperienceFeature[] = [
         { label: 'Step 2: Correct CSS z-index', value: 'Completed in 6 mins', status: 'done' },
         { label: 'Step 3: Test on mobile view', value: 'Ready to verify', status: 'active', highlight: true },
       ],
-      calloutText: 'Student Feedback: "Troubleshooting CSS made me feel like a detective solving a puzzle!"',
+      calloutText: 'Sample Student Feedback: "Troubleshooting CSS made me feel like a detective solving a puzzle!"',
     },
   },
   {
@@ -1932,29 +2116,29 @@ export const STUDENT_EXPERIENCES: StudentExperienceFeature[] = [
     iconName: 'Milestone',
     previewType: 'roadmap',
     previewData: {
-      heading: 'Term Roadmap: BCA to Internship Ready',
+      heading: 'Term Roadmap: Foundations to Internship Ready',
       subheading: 'Flexible weekly milestones with built-in reflection checkpoints',
       items: [
-        { label: 'Weeks 1–3', value: 'FastAPI CRUD Backend with PostgreSQL', status: 'done' },
-        { label: 'Weeks 4–6', value: 'Next.js Frontend & Authentication', status: 'active', highlight: true },
-        { label: 'Weeks 7–9', value: 'Deploy on Vercel + Record 2-Min Demo' },
-        { label: 'Weeks 10–12', value: 'Apply to 15 Curated Bangalore Startups' },
+        { label: 'Weeks 1–3', value: 'Core Programming & API Foundations', status: 'done' },
+        { label: 'Weeks 4–6', value: 'Interactive Web UI & Prototype', status: 'active', highlight: true },
+        { label: 'Weeks 7–9', value: 'Deployed Web Demo & Documentation' },
+        { label: 'Weeks 10–12', value: 'Peer Review & Portfolio Showcase' },
       ],
-      calloutText: 'Every milestone results in a linkable artifact you can show a recruiter.',
+      calloutText: 'Every milestone results in a linkable artifact you can show a mentor or recruiter.',
     },
   },
   {
     id: 'understand-growth',
     title: 'Understand Your Growth',
-    shortDesc: 'Evidence-based growth logs showing verified capabilities rather than arbitrary readiness percentages.',
+    shortDesc: 'Evidence-based growth logs showing demonstrated capabilities rather than arbitrary readiness percentages.',
     badge: 'Evidence Log',
     iconName: 'ShieldCheck',
     previewType: 'growth',
     previewData: {
-      heading: 'Student Verified Capability Ledger',
+      heading: 'Student Demonstrated Activity Record',
       subheading: 'Grounded in demonstrated project artifacts, not self-claimed scores',
       items: [
-        { label: 'Full-Stack Architecture', value: 'Demonstrated: 2 deployed production repos', highlight: true },
+        { label: 'Software Architecture', value: 'Demonstrated: 2 deployed production repos', highlight: true },
         { label: 'Database Design', value: 'Demonstrated: Normalized schema with foreign keys' },
         { label: 'API Security', value: 'Demonstrated: JWT & rate limiting middleware' },
         { label: 'Reflective Clarity', value: '14 weekly reflections logged in journal' },

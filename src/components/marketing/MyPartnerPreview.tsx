@@ -12,11 +12,15 @@ import {
   Clock,
   HelpCircle,
   Lightbulb,
+  AlertCircle,
+  Calendar,
 } from "lucide-react";
 
 export function MyPartnerPreview() {
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string>("bca-python");
-  const scenario = MY_PARTNER_SCENARIOS.find((s) => s.id === selectedScenarioId)!;
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string>("class-12-pcm");
+  const scenario =
+    MY_PARTNER_SCENARIOS.find((s) => s.id === selectedScenarioId) ||
+    MY_PARTNER_SCENARIOS[0];
 
   return (
     <section
@@ -34,9 +38,9 @@ export function MyPartnerPreview() {
             Meet My Partner. Guidance that understands your journey.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-[#31364F] leading-relaxed">
-            Not a generic chatbot that produces walls of text. My Partner responds with
-            structured pathways, 15-minute trials, and trade-off comparisons tailored to your
-            exact academic stage.
+            Not a generic chatbot that produces walls of text. My Partner is a future
+            contextual system designed to respond with structured pathways, transparent
+            uncertainties, and low-stakes starter trials.
           </p>
         </div>
 
@@ -89,18 +93,18 @@ export function MyPartnerPreview() {
                     My Partner
                   </h3>
                   <span className="text-[10px] bg-[#35B8C5]/20 text-[#35B8C5] px-2 py-0.5 rounded-full font-semibold border border-[#35B8C5]/30">
-                    Context-Aware
+                    Context-Aware Architecture
                   </span>
                 </div>
                 <p className="text-[11px] text-white/70">
-                  Grounding guidance in verified education databases
+                  Concept preview · No live LLM connection on public landing page
                 </p>
               </div>
             </div>
 
             <div className="hidden sm:flex items-center gap-2 text-xs text-white/80">
               <Sparkles className="w-4 h-4 text-[#35B8C5]" />
-              <span>Interactive Landing Demonstration</span>
+              <span>Interactive Demonstration</span>
             </div>
           </div>
 
@@ -137,7 +141,7 @@ export function MyPartnerPreview() {
               <div className="w-9 h-9 rounded-2xl bg-[#6757F5] text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-xs">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="space-y-4 flex-1">
+              <div className="space-y-5 flex-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#6757F5] flex items-center gap-1.5">
                     <span>My Partner Guidance</span>
@@ -148,15 +152,15 @@ export function MyPartnerPreview() {
                   </span>
                 </div>
 
-                {/* 1. Acknowledgement */}
+                {/* 1. Brief Acknowledgement */}
                 <div className="p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-sm text-[#31364F] leading-relaxed">
                   {scenario.partnerResponse.acknowledgement}
                 </div>
 
-                {/* 2. Structured Pathways */}
+                {/* 2. Structured Possibilities */}
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-[#626987] block mb-2">
-                    Verified Pathways to Consider:
+                    Relevant Possibilities to Consider:
                   </span>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {scenario.partnerResponse.verifiedPathways.map((path, idx) => (
@@ -167,7 +171,7 @@ export function MyPartnerPreview() {
                         <div>
                           <div className="flex items-center justify-between mb-1.5">
                             <span className="text-[10px] font-bold text-[#6757F5] uppercase">
-                              Direction 0{idx + 1}
+                              Option 0{idx + 1}
                             </span>
                             <span className="text-[10px] font-semibold bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#E8E6F3] text-[#31364F]">
                               {path.difficulty}
@@ -188,12 +192,31 @@ export function MyPartnerPreview() {
                   </div>
                 </div>
 
-                {/* 3. Practical Trial */}
+                {/* 3. What Remains Unknown (Critical requirement) */}
+                <div className="p-4 rounded-2xl bg-[#FFF9F2] border border-[#FFE2C2]">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#C26B00] uppercase tracking-wider mb-2">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    <span>What Remains Unknown Today (Open Factors & Trade-offs):</span>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {scenario.partnerResponse.whatRemainsUnknown.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-2 text-xs text-[#5C3B00]"
+                      >
+                        <span className="text-[#C26B00] font-bold">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* 4. Practical Starter Trial */}
                 <div className="p-4 rounded-2xl bg-[#EDEAFF]/60 border border-[#DDD8FE]">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-[#6757F5] uppercase tracking-wider">
                       <FlaskConical className="w-3.5 h-3.5" />
-                      <span>Suggested Weekend Micro-Trial:</span>
+                      <span>Suggested Starter Micro-Trial:</span>
                     </div>
                     <span className="text-[11px] font-semibold text-[#626987] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
@@ -209,7 +232,7 @@ export function MyPartnerPreview() {
                   </p>
                 </div>
 
-                {/* 4. Reflection and Mentor Note */}
+                {/* 5. Optional Next Action & Reflection */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
                     <div className="font-bold text-[#171A2B] mb-1 flex items-center gap-1.5">
@@ -221,15 +244,30 @@ export function MyPartnerPreview() {
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
-                    <div className="font-bold text-[#6757F5] mb-1 flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5" />
-                      <span>Philosophy Guardrail:</span>
+                  {scenario.partnerResponse.nextAction ? (
+                    <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
+                      <div className="font-bold text-[#6757F5] mb-1 flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>Recommended Next Action:</span>
+                      </div>
+                      <p className="font-semibold text-[#171A2B] mb-0.5">
+                        {scenario.partnerResponse.nextAction.title}
+                      </p>
+                      <p className="text-[#626987] leading-relaxed">
+                        {scenario.partnerResponse.nextAction.description}
+                      </p>
                     </div>
-                    <p className="text-[#626987] leading-relaxed">
-                      {scenario.partnerResponse.mentorNote}
-                    </p>
-                  </div>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
+                      <div className="font-bold text-[#6757F5] mb-1 flex items-center gap-1.5">
+                        <HelpCircle className="w-3.5 h-3.5" />
+                        <span>Philosophy Guardrail:</span>
+                      </div>
+                      <p className="text-[#626987] leading-relaxed">
+                        {scenario.partnerResponse.mentorNote}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -240,7 +278,7 @@ export function MyPartnerPreview() {
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0" />
               <span>
-                Demonstration showing structured guidance outputs rather than generic chat text.
+                Demonstration of upcoming contextual guidance system. No live LLM API is active on this landing page.
               </span>
             </div>
             <a

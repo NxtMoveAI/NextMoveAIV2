@@ -77,7 +77,7 @@ export function TrustSection() {
 
                 <div className="mt-5 pt-3 border-t border-[#E8E6F3] flex items-center gap-1.5 text-[11px] font-semibold text-[#35B8C5]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Guaranteed Product Guardrail</span>
+                  <span>Governing Product Commitment</span>
                 </div>
               </div>
             );

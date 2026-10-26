@@ -8,6 +8,7 @@ import {
   EXPLORATION_MATRIX,
   type AcademicStageId,
   type InterestId,
+  type InteractiveActivity,
 } from "@/data/landing-demo";
 import {
   Cpu,
@@ -24,6 +25,7 @@ import {
   Lightbulb,
   Milestone,
   Check,
+  Zap,
 } from "lucide-react";
 
 export function StudentExplorer() {
@@ -31,14 +33,66 @@ export function StudentExplorer() {
     useState<AcademicStageId>("classes-11-12");
   const [selectedInterest, setSelectedInterest] =
     useState<InterestId>("technology");
-  const [activeTab, setActiveTab] = useState<"paths" | "trial" | "next">(
-    "paths"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "paths" | "activity" | "trial" | "next"
+  >("activity");
 
   const currentStageData = ACADEMIC_STAGES.find((s) => s.id === selectedStage)!;
   const currentResult =
     EXPLORATION_MATRIX[selectedStage]?.[selectedInterest] ||
     EXPLORATION_MATRIX[selectedStage]["still-exploring"];
+
+  // Mini-interaction state
+  const availableActivities: InteractiveActivity[] =
+    currentResult.interactiveActivities || [
+      {
+        id: "default-activity-1",
+        title: currentResult.practicalTrial.title,
+        duration: currentResult.practicalTrial.timeEstimate,
+        tag: "Hands-on Starter",
+        description: currentResult.practicalTrial.description,
+        whatYouWillLearn: `You will test foundational concepts in ${INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label} and discover if hands-on practice energizes you.`,
+        clarifiesDecision: "Helps you know whether to invest time into this stream before committing to expensive courses.",
+      },
+      {
+        id: "default-activity-2",
+        title: `Compare Real-World Tools & Methods in ${INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label}`,
+        duration: "15 mins",
+        tag: "Analytical Comparison",
+        description: `Compare 2 different practical approaches used by practitioners in this domain.`,
+        whatYouWillLearn: "You will understand the trade-offs between theory and real-world execution.",
+        clarifiesDecision: "Clarifies which specialization or study structure fits your preferred learning style.",
+      },
+    ];
+
+  const [selectedActivityId, setSelectedActivityId] = useState<string>(
+    availableActivities[0].id
+  );
+
+  // When stage or interest changes, ensure selectedActivityId stays valid
+  const activeActivity =
+    availableActivities.find((a) => a.id === selectedActivityId) ||
+    availableActivities[0];
+
+  const handleStageChange = (newStage: AcademicStageId) => {
+    setSelectedStage(newStage);
+    const newResult =
+      EXPLORATION_MATRIX[newStage]?.[selectedInterest] ||
+      EXPLORATION_MATRIX[newStage]["still-exploring"];
+    if (newResult.interactiveActivities && newResult.interactiveActivities.length > 0) {
+      setSelectedActivityId(newResult.interactiveActivities[0].id);
+    }
+  };
+
+  const handleInterestChange = (newInterest: InterestId) => {
+    setSelectedInterest(newInterest);
+    const newResult =
+      EXPLORATION_MATRIX[selectedStage]?.[newInterest] ||
+      EXPLORATION_MATRIX[selectedStage]["still-exploring"];
+    if (newResult.interactiveActivities && newResult.interactiveActivities.length > 0) {
+      setSelectedActivityId(newResult.interactiveActivities[0].id);
+    }
+  };
 
   // Helper icon mapper
   const getInterestIcon = (id: InterestId) => {
@@ -111,7 +165,7 @@ export function StudentExplorer() {
                   type="button"
                   role="radio"
                   aria-checked={isSelected}
-                  onClick={() => setSelectedStage(stage.id)}
+                  onClick={() => handleStageChange(stage.id)}
                   className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] ${
                     isSelected
                       ? "bg-[#FAF9F6] border-[#6757F5] shadow-md shadow-[#6757F5]/10 ring-1 ring-[#6757F5]"
@@ -174,7 +228,7 @@ export function StudentExplorer() {
                   type="button"
                   role="radio"
                   aria-checked={isSelected}
-                  onClick={() => setSelectedInterest(interest.id)}
+                  onClick={() => handleInterestChange(interest.id)}
                   className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] ${
                     isSelected
                       ? "bg-[#6757F5] text-white border-[#6757F5] shadow-md shadow-[#6757F5]/20"
@@ -239,7 +293,7 @@ export function StudentExplorer() {
             {/* Stage Change Notification */}
             <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#E8E6F3] text-xs text-[#626987]">
               <div className="w-2 h-2 rounded-full bg-[#35B8C5] animate-ping" />
-              <span>Real-time local exploration</span>
+              <span>Deterministic local preview</span>
             </div>
           </div>
 
@@ -249,37 +303,70 @@ export function StudentExplorer() {
           </p>
 
           {/* Tab Navigation for Exploration Details */}
-          <div className="mt-8 flex items-center gap-2 border-b border-[#E8E6F3] pb-3 overflow-x-auto">
+          <div
+            className="mt-8 flex items-center gap-2 border-b border-[#E8E6F3] pb-3 overflow-x-auto"
+            role="tablist"
+            aria-label="Exploration Views"
+          >
             <button
               type="button"
+              role="tab"
+              id="tab-activity"
+              aria-selected={activeTab === "activity"}
+              aria-controls="panel-activity"
+              onClick={() => setActiveTab("activity")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
+                activeTab === "activity"
+                  ? "bg-[#6757F5] text-white shadow-sm"
+                  : "bg-white text-[#31364F] hover:bg-[#EDEAFF]/60 border border-[#E8E6F3]"
+              }`}
+            >
+              <Zap className="w-4 h-4 text-[#35B8C5]" />
+              <span>Mini Interactive Activity ({availableActivities.length})</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              id="tab-paths"
+              aria-selected={activeTab === "paths"}
+              aria-controls="panel-paths"
               onClick={() => setActiveTab("paths")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === "paths"
                   ? "bg-[#6757F5] text-white shadow-sm"
                   : "bg-white text-[#31364F] hover:bg-[#EDEAFF]/60 border border-[#E8E6F3]"
               }`}
             >
               <Milestone className="w-4 h-4" />
-              <span>Exploration Pathways ({currentResult.suggestedPaths.length})</span>
+              <span>Curated Pathways ({currentResult.suggestedPaths.length})</span>
             </button>
 
             <button
               type="button"
+              role="tab"
+              id="tab-trial"
+              aria-selected={activeTab === "trial"}
+              aria-controls="panel-trial"
               onClick={() => setActiveTab("trial")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === "trial"
                   ? "bg-[#6757F5] text-white shadow-sm"
                   : "bg-white text-[#31364F] hover:bg-[#EDEAFF]/60 border border-[#E8E6F3]"
               }`}
             >
               <FlaskConical className="w-4 h-4" />
-              <span>15-Min Practical Trial</span>
+              <span>15-Min Micro-Trial Preview</span>
             </button>
 
             <button
               type="button"
+              role="tab"
+              id="tab-next"
+              aria-selected={activeTab === "next"}
+              aria-controls="panel-next"
               onClick={() => setActiveTab("next")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === "next"
                   ? "bg-[#6757F5] text-white shadow-sm"
                   : "bg-white text-[#31364F] hover:bg-[#EDEAFF]/60 border border-[#E8E6F3]"
@@ -290,9 +377,142 @@ export function StudentExplorer() {
             </button>
           </div>
 
+          {/* Tab 0: Interactive Mini Activity (Real frontend interactivity) */}
+          {activeTab === "activity" && (
+            <div
+              id="panel-activity"
+              role="tabpanel"
+              aria-labelledby="tab-activity"
+              className="mt-6 space-y-6 animate-fadeIn"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] block">
+                    Select a starter micro-task to test:
+                  </span>
+                  <p className="text-xs text-[#626987]">
+                    Choose one of the two activities below to see what you will immediately discover.
+                  </p>
+                </div>
+                <span className="text-[11px] font-semibold text-[#35B8C5] bg-[#35B8C5]/10 px-2.5 py-1 rounded-lg border border-[#35B8C5]/20 self-start sm:self-auto">
+                  Deterministic Interactive Task
+                </span>
+              </div>
+
+              {/* Activity Selector Toggle Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {availableActivities.map((act) => {
+                  const isActSelected = activeActivity.id === act.id;
+                  return (
+                    <button
+                      key={act.id}
+                      type="button"
+                      onClick={() => setSelectedActivityId(act.id)}
+                      className={`p-5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between ${
+                        isActSelected
+                          ? "bg-white border-[#6757F5] shadow-md shadow-[#6757F5]/10 ring-2 ring-[#6757F5]/30 -translate-y-0.5"
+                          : "bg-white/80 border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-white"
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span
+                            className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                              isActSelected
+                                ? "bg-[#6757F5] text-white"
+                                : "bg-[#EDEAFF] text-[#6757F5]"
+                            }`}
+                          >
+                            {act.tag}
+                          </span>
+                          <span className="text-[11px] font-semibold text-[#626987] flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#35B8C5]" />
+                            {act.duration}
+                          </span>
+                        </div>
+                        <h4 className="text-base font-bold text-[#171A2B] mb-2 leading-snug">
+                          {act.title}
+                        </h4>
+                        <p className="text-xs text-[#626987] leading-relaxed">
+                          {act.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-[#F0EEF8] flex items-center justify-between text-xs">
+                        <span
+                          className={`font-semibold ${
+                            isActSelected ? "text-[#6757F5]" : "text-[#626987]"
+                          }`}
+                        >
+                          {isActSelected ? "Selected Activity" : "Click to Inspect"}
+                        </span>
+                        {isActSelected && (
+                          <span className="w-4 h-4 rounded-full bg-[#6757F5] text-white flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Dynamic Discovery Box for the Selected Activity */}
+              <div className="p-6 rounded-2xl bg-white border border-[#DDD8FE] shadow-xs">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#35B8C5] bg-[#35B8C5]/10 px-2.5 py-0.5 rounded-md">
+                    Immediate Learning & Decision Clarity
+                  </span>
+                  <span className="text-xs text-[#626987]">
+                    For {currentStageData.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] space-y-1">
+                    <div className="text-xs font-bold text-[#6757F5] uppercase tracking-wider">
+                      What You Will Learn / Discover:
+                    </div>
+                    <p className="text-xs sm:text-sm text-[#171A2B] font-medium leading-relaxed">
+                      {activeActivity.whatYouWillLearn}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#F7F6FF] border border-[#DDD8FE] space-y-1">
+                    <div className="text-xs font-bold text-[#171A2B] uppercase tracking-wider">
+                      How It Clarifies Your Next Move:
+                    </div>
+                    <p className="text-xs sm:text-sm text-[#31364F] leading-relaxed font-medium">
+                      {activeActivity.clarifiesDecision}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-[#F0EEF8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <span className="text-[#626987]">
+                    Estimated investment: <strong>{activeActivity.duration}</strong> · Low-stakes exploration
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("trial")}
+                    className="inline-flex items-center gap-1.5 font-bold text-[#6757F5] hover:text-[#5342E8]"
+                  >
+                    <span>View First Step Instructions</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Tab 1: Suggested Pathways */}
           {activeTab === "paths" && (
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fadeIn">
+            <div
+              id="panel-paths"
+              role="tabpanel"
+              aria-labelledby="tab-paths"
+              className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fadeIn"
+            >
               {currentResult.suggestedPaths.map((path, idx) => (
                 <div
                   key={path.title}
@@ -315,7 +535,7 @@ export function StudentExplorer() {
                     </p>
                   </div>
                   <div className="mt-4 pt-3 border-t border-[#F0EEF8] flex items-center text-[11px] text-[#6757F5] font-semibold">
-                    <span>Verified in Indian Curriculums</span>
+                    <span>Curated Educational Pathway</span>
                   </div>
                 </div>
               ))}
@@ -324,11 +544,16 @@ export function StudentExplorer() {
 
           {/* Tab 2: Practical Trial */}
           {activeTab === "trial" && (
-            <div className="mt-6 p-6 rounded-2xl bg-white border border-[#E8E6F3] shadow-xs animate-fadeIn">
+            <div
+              id="panel-trial"
+              role="tabpanel"
+              aria-labelledby="tab-trial"
+              className="mt-6 p-6 rounded-2xl bg-white border border-[#E8E6F3] shadow-xs animate-fadeIn"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-1 rounded-md bg-[#EDEAFF] text-[#6757F5] text-xs font-bold">
-                    Micro-Trial Experience
+                    Micro-Trial Preview
                   </span>
                   <h4 className="text-lg font-bold text-[#171A2B]">
                     {currentResult.practicalTrial.title}
@@ -367,7 +592,12 @@ export function StudentExplorer() {
 
           {/* Tab 3: Next Action & Principles */}
           {activeTab === "next" && (
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-4 animate-fadeIn">
+            <div
+              id="panel-next"
+              role="tabpanel"
+              aria-labelledby="tab-next"
+              className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-4 animate-fadeIn"
+            >
               <div className="md:col-span-7 p-6 rounded-2xl bg-white border border-[#E8E6F3]">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#35B8C5] mb-1 block">
                   Recommended Concrete Step
