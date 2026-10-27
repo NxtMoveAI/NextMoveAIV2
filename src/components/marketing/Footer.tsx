@@ -38,7 +38,7 @@ export function Footer() {
 
             <p className="text-xs sm:text-sm text-white/70 max-w-sm leading-relaxed">
               &ldquo;We don’t decide careers; we enable clarity.&rdquo;
-              Next Move AI helps students understand themselves, explore verified
+              Next Move AI helps students understand themselves, explore curated
               educational pathways, and build practical skills with confidence.
             </p>
 

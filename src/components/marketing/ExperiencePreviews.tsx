@@ -199,7 +199,7 @@ export function ExperiencePreviews() {
                     <span>Real-world student data architecture</span>
                   </span>
                   <span className="font-semibold text-[#6757F5]">
-                    Verified & Grounded
+                    Evidence-Based & Grounded
                   </span>
                 </div>
               </div>

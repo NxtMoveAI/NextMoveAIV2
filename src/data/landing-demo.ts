@@ -101,7 +101,7 @@ export const ACADEMIC_STAGES: AcademicStage[] = [
   {
     id: 'degree-engineering',
     label: 'Degree / Engineering',
-    sublabel: 'Undergrad Years 1–3',
+    sublabel: 'Undergraduate (Years 1–4)',
     ageRange: 'College & University',
     focusTone: 'Capabilities, Skills & Projects',
     description: 'Build real portfolio projects, explore cross-disciplinary skills, and find your domain.',
@@ -111,7 +111,7 @@ export const ACADEMIC_STAGES: AcademicStage[] = [
     label: 'Final Year / Graduate',
     sublabel: 'Transition to Work / Higher Studies',
     ageRange: 'Graduating Students',
-    focusTone: 'Verified Skills & Next Step Clarity',
+    focusTone: 'Demonstrated Projects & Next Step Clarity',
     description: 'Prepare evidence of your work, compare higher studies vs roles, and avoid blind placement choices.',
   },
 ];
@@ -1136,12 +1136,12 @@ export const EXPLORATION_MATRIX: Record<
     technology: {
       headline: "I'm pursuing my degree and want to explore career possibilities, practical skills and next steps.",
       introduction:
-        'Whether in engineering, applied computing, data science, or sciences, standout undergraduates bridge academic theory with demonstrable projects, industry skills, and clear next moves.',
+        'Whether in 4-year B.Tech/B.E. programs, 3- or 4-year B.Sc/BCA honors, or applied computing, standout undergraduates bridge academic theory with demonstrable projects, industry skills, and clear next moves.',
       suggestedPaths: [
         {
           title: 'Explore Career Possibilities & Emerging Tech Domains',
           description:
-            'Investigate backend systems, cloud engineering, applied machine learning, or mobile development with verified salary and hiring data.',
+            'Investigate backend systems, cloud engineering, applied machine learning, or mobile development with research-backed industry context.',
           badge: 'Career Possibilities',
         },
         {
@@ -1382,13 +1382,13 @@ export const EXPLORATION_MATRIX: Record<
         title: 'Define Your 3-Pillar Capability Triangle',
         timeEstimate: '20 mins',
         description: 'Pick your Core Deep Skill, your Design/Comms Skill, and your Domain Interest.',
-        firstStep: 'Score your current confidence in each pillar from 1 (beginner) to 5 (can teach others).',
+        firstStep: 'Assess your current comfort in each pillar from beginner to confident mentor.',
         reflectionPrompt: 'Which single pillar, if strengthened, would make you 3x more hireable?',
       },
       nextAction: {
-        title: 'Run Next Move AI Skill Gap Assessment',
+        title: 'Run Next Move AI Capability Review',
         description: 'Compare your current projects against real startup job requirements.',
-        ctaText: 'Assess Skill Gaps',
+        ctaText: 'Review Capabilities',
       },
       curatedInsights: [
         'Removes anxiety about not having a single narrow obsession',
@@ -1427,9 +1427,9 @@ export const EXPLORATION_MATRIX: Record<
         reflectionPrompt: 'Did you explain the trade-offs clearly without reading from a script?',
       },
       nextAction: {
-        title: 'Run Next Move AI Portfolio Readiness Check',
+        title: 'Run Next Move AI Portfolio Milestone Review',
         description: 'Ensure your GitHub repo and live demo pass standard engineering recruiter filters.',
-        ctaText: 'Inspect Portfolio Readiness',
+        ctaText: 'Review Portfolio Milestones',
       },
       curatedInsights: [
         'Helps avoid predatory mass-recruitment service company bonds',
@@ -1627,8 +1627,8 @@ export const EXPLORATION_MATRIX: Record<
         ctaText: 'Launch 90-Day Sprint',
       },
       curatedInsights: [
-        'Zero judgment, 100% practical focus on what you can control today',
-        'Shields students from expensive scam bootcamps promising 100% placement',
+        'Zero judgment, practical focus on what you can control today',
+        'Shields students from expensive bootcamps promising unrealistic placement guarantees',
         'Empowers students to take ownership of their own next move',
       ],
     },
@@ -1644,7 +1644,7 @@ export interface MyPartnerScenario {
   contextPills: string[];
   partnerResponse: {
     acknowledgement: string;
-    verifiedPathways: Array<{
+    structuredPossibilities: Array<{
       title: string;
       difficulty: string;
       description: string;
@@ -1679,7 +1679,7 @@ export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
     partnerResponse: {
       acknowledgement:
         'Feeling overwhelmed by JEE while knowing you genuinely like technology is very common. An entrance rank measures high-speed test elimination, not your ultimate potential as a software engineer or problem solver. Let us look at grounded options across degrees and colleges.',
-      verifiedPathways: [
+      structuredPossibilities: [
         {
           title: 'Top Non-JEE Engineering Entrances (BITSAT, KCET, COMEDK, VITEEE)',
           difficulty: 'Moderate to High',
@@ -1737,7 +1737,7 @@ export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
     partnerResponse: {
       acknowledgement:
         'It is very common in 2nd year to realize that college exams test rote theory rather than building real software. Having strong grades means you have disciplined study habits—now we simply redirect that discipline into shipping demonstrable work.',
-      verifiedPathways: [
+      structuredPossibilities: [
         {
           title: 'Backend API Development with Node.js or Python (FastAPI)',
           difficulty: 'Moderate',
@@ -1795,7 +1795,7 @@ export const MY_PARTNER_SCENARIOS: MyPartnerScenario[] = [
     partnerResponse: {
       acknowledgement:
         'That is a fantastic creative superpower! Many famous video game creators, children’s book authors, and movie directors started exactly by drawing funny comics in their school notebooks.',
-      verifiedPathways: [
+      structuredPossibilities: [
         {
           title: 'Visual Storytelling & 4-Panel Webcomics',
           difficulty: 'Fun & Exploratory',
@@ -2084,7 +2084,7 @@ export const STUDENT_EXPERIENCES: StudentExperienceFeature[] = [
       items: [
         { label: 'Study Workload', value: 'PCB: 32 hrs/wk | PCMB: 44 hrs/wk' },
         { label: 'NEET Focus Impact', value: 'PCB: Dedicated | PCMB: Math requires 8 hrs' },
-        { label: 'Engineering/CS Fallback', value: 'PCB: Closed | PCMB: 100% Open', highlight: true },
+        { label: 'Engineering/CS Fallback', value: 'PCB: Closed | PCMB: Fully Open', highlight: true },
         { label: 'Biotech Degree Eligibility', value: 'Both eligible across top universities' },
       ],
       calloutText: 'If you want to keep computing options open, keeping PCMB is worth the extra math hours.',
@@ -2176,12 +2176,12 @@ export const PARENT_PILLARS: ParentPillar[] = [
     studentRespectNote: 'Helps parents understand modern fields (like UI/UX and Cloud) with clear, simple explanations.',
   },
   {
-    title: 'Verified Information & Safe Exploration',
+    title: 'Authoritative Information & Safe Exploration',
     iconName: 'ShieldCheck',
     description:
       'Rest easy knowing your child is exploring official university guidelines, approved entrance criteria, and safe, age-appropriate activities.',
     howItWorks:
-      'All pathway data is cross-verified with official bodies (UGC, AICTE, NTA) without sponsored advertisements or coaching sales pitches.',
+      'All pathway guidance is researched from official educational frameworks (UGC, AICTE, NTA) without sponsored advertisements or coaching sales pitches.',
     studentRespectNote: 'Zero predatory loan advertising, zero aggressive telecaller calls, zero data selling.',
   },
 ];
@@ -2203,9 +2203,9 @@ export const TRUST_PRINCIPLES: TrustPrinciple[] = [
   },
   {
     number: '02',
-    title: 'Grounded in Verified Sources',
+    title: 'Grounded in Authoritative Sources',
     description:
-      'College prerequisites, entrance exams, syllabus patterns, and salary distributions are verified against government and accredited industry sources.',
+      'College prerequisites, entrance exams, syllabus patterns, and educational guidelines are referenced from official regulatory bodies and accredited academic sources.',
     iconName: 'BookCheck',
   },
   {
@@ -2226,7 +2226,7 @@ export const TRUST_PRINCIPLES: TrustPrinciple[] = [
     number: '05',
     title: 'Zero Sponsored Bias',
     description:
-      'We do not accept payments from private colleges or edtech institutes to recommend their degrees. Our recommendations are 100% objective.',
+      'We do not accept payments from private colleges or edtech institutes to promote their degrees. Our guidance is student-aligned and free of sponsored bias.',
     iconName: 'CheckCircle2',
   },
   {
@@ -2292,7 +2292,7 @@ export const FAQ_ITEMS: FAQItem[] = [
     id: 'faq-7',
     question: 'Is Next Move AI free to use?',
     answer:
-      'The public interactive landing explorer and foundational student exploration features are free during our initial beta phase. As the platform evolves into Phase 2 and beyond, verified institutional partnerships and specialized deep mentoring roadmaps are being defined with complete transparency—with no hidden paywalls on foundational guidance.',
+      'The public interactive landing explorer and foundational student exploration features are free during our initial beta phase. As the platform evolves into Phase 2 and beyond, accredited institutional collaborations and specialized deep mentoring roadmaps are being defined with complete transparency—with no hidden paywalls on foundational guidance.',
     category: 'Pricing & Access',
   },
 ];

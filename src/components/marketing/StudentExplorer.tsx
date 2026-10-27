@@ -26,6 +26,7 @@ import {
   Milestone,
   Check,
   Zap,
+  RotateCcw,
 } from "lucide-react";
 
 export function StudentExplorer() {
@@ -34,7 +35,7 @@ export function StudentExplorer() {
   const [selectedInterest, setSelectedInterest] =
     useState<InterestId>("technology");
   const [activeTab, setActiveTab] = useState<
-    "paths" | "activity" | "trial" | "next"
+    "activity" | "paths" | "trial" | "next"
   >("activity");
 
   const currentStageData = ACADEMIC_STAGES.find((s) => s.id === selectedStage)!;
@@ -42,26 +43,34 @@ export function StudentExplorer() {
     EXPLORATION_MATRIX[selectedStage]?.[selectedInterest] ||
     EXPLORATION_MATRIX[selectedStage]["still-exploring"];
 
-  // Mini-interaction state
+  // Activity Previews state
   const availableActivities: InteractiveActivity[] =
     currentResult.interactiveActivities || [
       {
         id: "default-activity-1",
         title: currentResult.practicalTrial.title,
         duration: currentResult.practicalTrial.timeEstimate,
-        tag: "Hands-on Starter",
+        tag: "Starter Preview",
         description: currentResult.practicalTrial.description,
-        whatYouWillLearn: `You will test foundational concepts in ${INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label} and discover if hands-on practice energizes you.`,
-        clarifiesDecision: "Helps you know whether to invest time into this stream before committing to expensive courses.",
+        whatYouWillLearn: `You will test foundational concepts in ${
+          INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label
+        } and discover if hands-on practice energizes you.`,
+        clarifiesDecision:
+          "Helps you know whether to invest time into this stream before committing to expensive courses.",
       },
       {
         id: "default-activity-2",
-        title: `Compare Real-World Tools & Methods in ${INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label}`,
+        title: `Compare Real-World Tools & Methods in ${
+          INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label
+        }`,
         duration: "15 mins",
         tag: "Analytical Comparison",
-        description: `Compare 2 different practical approaches used by practitioners in this domain.`,
-        whatYouWillLearn: "You will understand the trade-offs between theory and real-world execution.",
-        clarifiesDecision: "Clarifies which specialization or study structure fits your preferred learning style.",
+        description:
+          "Compare 2 different practical approaches used by practitioners in this domain.",
+        whatYouWillLearn:
+          "You will understand the trade-offs between theory and real-world execution.",
+        clarifiesDecision:
+          "Clarifies which specialization or study structure fits your preferred learning style.",
       },
     ];
 
@@ -69,11 +78,212 @@ export function StudentExplorer() {
     availableActivities[0].id
   );
 
-  // When stage or interest changes, ensure selectedActivityId stays valid
   const activeActivity =
     availableActivities.find((a) => a.id === selectedActivityId) ||
     availableActivities[0];
 
+  // =========================================================================
+  // PRIORITY 2: Self-Contained Deterministic Interactive Mini-Experiences
+  // =========================================================================
+
+  // 1. Technology: Binary Search Data Router
+  const techNodes = [12, 19, 27, 34, 42, 58, 71, 89];
+  const [techTarget, setTechTarget] = useState<number>(58);
+  const [techChecked, setTechChecked] = useState<number[]>([]);
+  const [techEliminated, setTechEliminated] = useState<number[]>([]);
+  const [techFound, setTechFound] = useState<boolean>(false);
+  const [techFeedback, setTechFeedback] = useState<string>(
+    "Find target #58 in 8 sorted data nodes. Click any node to test divide-and-conquer logic!"
+  );
+
+  const handleTechNodeClick = (index: number) => {
+    if (techFound || techChecked.includes(index) || techEliminated.includes(index)) return;
+    const val = techNodes[index];
+    const newChecked = [...techChecked, index];
+    setTechChecked(newChecked);
+
+    if (val === techTarget) {
+      setTechFound(true);
+      setTechFeedback(
+        `✓ Target #${val} located in ${newChecked.length} check${
+          newChecked.length > 1 ? "s" : ""
+        }! You just executed binary search logic—eliminating half the search space with each comparison.`
+      );
+    } else if (val < techTarget) {
+      const eliminated = Array.from(
+        new Set([...techEliminated, ...techNodes.map((_, i) => i).filter((i) => i <= index)])
+      );
+      setTechEliminated(eliminated);
+      setTechFeedback(
+        `#${val} is lower than target #${techTarget}. Because the array is sorted, you can safely eliminate all nodes from index 1 to ${
+          index + 1
+        } without checking them!`
+      );
+    } else {
+      const eliminated = Array.from(
+        new Set([...techEliminated, ...techNodes.map((_, i) => i).filter((i) => i >= index)])
+      );
+      setTechEliminated(eliminated);
+      setTechFeedback(
+        `#${val} is higher than target #${techTarget}. You can safely eliminate all nodes from index ${
+          index + 1
+        } to 8 in a single comparison!`
+      );
+    }
+  };
+
+  const handleResetTechLab = (newTarget: number = 58) => {
+    setTechTarget(newTarget);
+    setTechChecked([]);
+    setTechEliminated([]);
+    setTechFound(false);
+    setTechFeedback(
+      `Target #${newTarget} active. Click any node to find it in the fewest comparisons!`
+    );
+  };
+
+  // 2. Creativity: Visual Hierarchy & Design Tuner
+  const [designHierarchy, setDesignHierarchy] = useState<"flat" | "balanced">("flat");
+  const [designContrast, setDesignContrast] = useState<"low" | "high">("low");
+  const [designSpacing, setDesignSpacing] = useState<"tight" | "breathable">("tight");
+
+  const handleResetDesignLab = () => {
+    setDesignHierarchy("flat");
+    setDesignContrast("low");
+    setDesignSpacing("tight");
+  };
+
+  const isDesignOptimal =
+    designHierarchy === "balanced" &&
+    designContrast === "high" &&
+    designSpacing === "breathable";
+
+  // 3. Business: Unit Economics Simulator
+  const [businessPriceTier, setBusinessPriceTier] = useState<499 | 999 | 1999>(999);
+  const businessTiers = {
+    499: {
+      attendees: 120,
+      revenue: 59880,
+      cost: 30000,
+      profit: 29880,
+      status: "High Volume · Maximum Net Surplus (+₹29,880)",
+      insight:
+        "Accessible pricing triggered word-of-mouth adoption among students, yielding highest overall net surplus.",
+    },
+    999: {
+      attendees: 55,
+      revenue: 54945,
+      cost: 30000,
+      profit: 24945,
+      status: "Balanced Margin (+₹24,945)",
+      insight:
+        "Balanced trade-off between perceived prestige and volume, but fewer total students impacted.",
+    },
+    1999: {
+      attendees: 12,
+      revenue: 23988,
+      cost: 30000,
+      profit: -6012,
+      status: "Price Resistance · Operating Deficit (-₹6,012)",
+      insight:
+        "Severe price barrier collapsed demand below fixed venue/kit costs, resulting in an operating loss.",
+    },
+  };
+
+  // 4. Science: Enzyme Kinetics & Temperature Lab
+  const [scienceTemp, setScienceTemp] = useState<15 | 37 | 75>(15);
+  const scienceTiers = {
+    15: {
+      rate: "25%",
+      status: "Slow Reaction Kinetics",
+      color: "bg-blue-500",
+      description:
+        "Low kinetic energy restricts enzyme-substrate collision frequency. Safe but sluggish.",
+    },
+    37: {
+      rate: "100%",
+      status: "Optimal Catalytic Rate",
+      color: "bg-emerald-500",
+      description:
+        "Optimal physiological temperature! Active sites conform with maximum binding efficiency.",
+    },
+    75: {
+      rate: "0%",
+      status: "Protein Denatured · Zero Activity",
+      color: "bg-rose-500",
+      description:
+        "Excess thermal energy ruptured tertiary hydrogen bonds. Enzyme permanently lost its structure.",
+    },
+  };
+
+  // 5. Healthcare / Social Impact: Emergency Triage Priority
+  const [triageChoice, setTriageChoice] = useState<string | null>(null);
+  const triageCases = [
+    {
+      id: "sprain",
+      title: "Patient A: Sprained Ankle",
+      details: "Mild swelling, normal breathing, able to bear slight weight.",
+      isPriority: false,
+      feedback:
+        "Stable musculoskeletal injury. In medical protocols, non-life-threatening sprains wait while airway emergencies are treated.",
+    },
+    {
+      id: "asthma",
+      title: "Patient B: Acute Respiratory Attack",
+      details: "Severe stridor, gasping, oxygen saturation dropping rapidly.",
+      isPriority: true,
+      feedback:
+        "✓ Correct Triage Priority! Airway and breathing (ABC protocol) supersede all stable cases to prevent hypoxia.",
+    },
+    {
+      id: "fever",
+      title: "Patient C: 2-Day Low Fever",
+      details: "Temperature 100.2°F, alert and hydrated, mild headache.",
+      isPriority: false,
+      feedback:
+        "Moderate urgent category. Needs diagnostic evaluation, but respiratory distress takes immediate precedent.",
+    },
+  ];
+
+  // 6. Still Exploring: Curiosity Dimension Compass
+  const [selectedDimension, setSelectedDimension] = useState<string | null>(null);
+  const explorationDimensions = [
+    {
+      id: "systems",
+      label: "Digital Systems & Abstract Logic",
+      tag: "Systems Focus",
+      crossPaths: [
+        "Computational Linguistics (AI + Language)",
+        "Bioinformatics (Computing + Genetics)",
+      ],
+      insight:
+        "You enjoy discovering rules and order. Cross-disciplinary technology allows you to build solutions across biology, linguistics, or robotics.",
+    },
+    {
+      id: "people",
+      label: "Human Behavior, Teaching & Expression",
+      tag: "Human Focus",
+      crossPaths: [
+        "Product Design & HCI (Psychology + Software)",
+        "EdTech & Cognitive Experience Design",
+      ],
+      insight:
+        "You care about how humans experience tools and ideas. Design and education technology let you bridge psychology with digital tools.",
+    },
+    {
+      id: "physical",
+      label: "Physical Artifacts, Nature & Material Systems",
+      tag: "Physical Focus",
+      crossPaths: [
+        "Sustainable Materials Engineering",
+        "Hardware IoT & Clean-Tech Systems",
+      ],
+      insight:
+        "You like tangible cause-and-effect. Engineering, green tech, and applied science let you build physical systems that impact real communities.",
+    },
+  ];
+
+  // Handlers for switching stage and interest
   const handleStageChange = (newStage: AcademicStageId) => {
     setSelectedStage(newStage);
     const newResult =
@@ -127,25 +337,25 @@ export function StudentExplorer() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-4 border border-[#DDD8FE]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Interactive Explorer</span>
+            <span>Interactive Student Explorer</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#171A2B] tracking-tight">
-            Let’s discover what your next move could look like.
+            Discover what your next move could look like.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-[#31364F] leading-relaxed">
-            Every student’s journey is different. Choose where you are today and
-            explore what you could try next—without creating an account.
+            Every student’s path is unique. Choose your academic stage and curiosities
+            to test a hands-on micro-challenge and inspect curated educational directions.
           </p>
         </div>
 
-        {/* Step A: Academic Stage Selector */}
+        {/* Step 1: Academic Stage Selector */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#626987] flex items-center gap-2">
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#6757F5] text-white text-[11px] font-bold">
                 1
               </span>
-              Select Your Current Academic Stage
+              Select Your Academic Stage
             </span>
             <span className="text-xs font-medium text-[#6757F5] hidden sm:inline">
               Selected: <strong className="text-[#171A2B]">{currentStageData.label}</strong> ({currentStageData.sublabel})
@@ -200,7 +410,7 @@ export function StudentExplorer() {
           </div>
         </div>
 
-        {/* Step B: Interest Selector */}
+        {/* Step 2: Interest Selector */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#626987] flex items-center gap-2">
@@ -269,7 +479,7 @@ export function StudentExplorer() {
           </div>
         </div>
 
-        {/* Step C: Dynamic Journey Preview Card */}
+        {/* Dynamic Journey Preview Canvas */}
         <div className="rounded-3xl bg-[#FAF9F6] border-2 border-[#DDD8FE] p-6 sm:p-8 lg:p-10 shadow-lg shadow-[#6757F5]/5 transition-all duration-300">
           {/* Header of dynamic preview */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6F3]">
@@ -290,9 +500,8 @@ export function StudentExplorer() {
               </h3>
             </div>
 
-            {/* Stage Change Notification */}
             <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#E8E6F3] text-xs text-[#626987]">
-              <div className="w-2 h-2 rounded-full bg-[#35B8C5] animate-ping" />
+              <div className="w-2 h-2 rounded-full bg-[#35B8C5] animate-pulse" />
               <span>Deterministic local preview</span>
             </div>
           </div>
@@ -322,7 +531,7 @@ export function StudentExplorer() {
               }`}
             >
               <Zap className="w-4 h-4 text-[#35B8C5]" />
-              <span>Mini Interactive Activity ({availableActivities.length})</span>
+              <span>Interactive Micro-Challenge & Previews</span>
             </button>
 
             <button
@@ -356,7 +565,7 @@ export function StudentExplorer() {
               }`}
             >
               <FlaskConical className="w-4 h-4" />
-              <span>15-Min Micro-Trial Preview</span>
+              <span>15-Min Sample Trial Preview</span>
             </button>
 
             <button
@@ -377,129 +586,609 @@ export function StudentExplorer() {
             </button>
           </div>
 
-          {/* Tab 0: Interactive Mini Activity (Real frontend interactivity) */}
+          {/* Tab 0: Interactive Micro-Challenge & Activity Previews */}
           {activeTab === "activity" && (
             <div
               id="panel-activity"
               role="tabpanel"
               aria-labelledby="tab-activity"
-              className="mt-6 space-y-6 animate-fadeIn"
+              className="mt-6 space-y-8 animate-fadeIn"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] block">
-                    Select a starter micro-task to test:
+              {/* PART 1: The Self-Contained Genuine Interactive Micro-Experience */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-white border border-[#DDD8FE] shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#F0EEF8]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-[#6757F5] text-white flex items-center justify-center text-xs font-bold">
+                      <Zap className="w-3.5 h-3.5" />
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-[#171A2B]">
+                        30-Second Hands-On Micro-Challenge
+                      </h4>
+                      <p className="text-xs text-[#626987]">
+                        Perform an action below to experience how thinking works in this domain.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#6757F5] bg-[#EDEAFF] px-2.5 py-1 rounded-lg border border-[#DDD8FE] self-start sm:self-auto">
+                    Interactive Trial · Zero Backend Calls
                   </span>
-                  <p className="text-xs text-[#626987]">
-                    Choose one of the two activities below to see what you will immediately discover.
-                  </p>
                 </div>
-                <span className="text-[11px] font-semibold text-[#35B8C5] bg-[#35B8C5]/10 px-2.5 py-1 rounded-lg border border-[#35B8C5]/20 self-start sm:self-auto">
-                  Deterministic Interactive Task
-                </span>
-              </div>
 
-              {/* Activity Selector Toggle Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {availableActivities.map((act) => {
-                  const isActSelected = activeActivity.id === act.id;
-                  return (
-                    <button
-                      key={act.id}
-                      type="button"
-                      onClick={() => setSelectedActivityId(act.id)}
-                      className={`p-5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between ${
-                        isActSelected
-                          ? "bg-white border-[#6757F5] shadow-md shadow-[#6757F5]/10 ring-2 ring-[#6757F5]/30 -translate-y-0.5"
-                          : "bg-white/80 border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-white"
-                      }`}
-                    >
+                {/* --- 1. TECHNOLOGY MINI-CHALLENGE (Binary Search Vault) --- */}
+                {selectedInterest === "technology" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                       <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                              isActSelected
-                                ? "bg-[#6757F5] text-white"
-                                : "bg-[#EDEAFF] text-[#6757F5]"
+                        <span className="font-bold text-[#171A2B]">Challenge:</span> Find target data node{" "}
+                        <strong className="text-[#6757F5] bg-[#EDEAFF] px-2 py-0.5 rounded font-mono text-sm">
+                          #{techTarget}
+                        </strong>{" "}
+                        in 8 sorted nodes in the fewest clicks!
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleResetTechLab(27)}
+                          className="px-2.5 py-1 text-[11px] font-semibold rounded bg-[#FAF9F6] text-[#31364F] border border-[#E8E6F3] hover:bg-[#EDEAFF]"
+                        >
+                          Target #27
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleResetTechLab(58)}
+                          className="px-2.5 py-1 text-[11px] font-semibold rounded bg-[#FAF9F6] text-[#31364F] border border-[#E8E6F3] hover:bg-[#EDEAFF]"
+                        >
+                          Target #58
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleResetTechLab(71)}
+                          className="px-2.5 py-1 text-[11px] font-semibold rounded bg-[#FAF9F6] text-[#31364F] border border-[#E8E6F3] hover:bg-[#EDEAFF]"
+                        >
+                          Target #71
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleResetTechLab(techTarget)}
+                          className="p-1 rounded text-[#626987] hover:text-[#6757F5]"
+                          title="Reset Challenge"
+                          aria-label="Reset Challenge"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* The 8 Interactive Data Nodes */}
+                    <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                      {techNodes.map((val, idx) => {
+                        const isChecked = techChecked.includes(idx);
+                        const isEliminated = techEliminated.includes(idx) && !isChecked;
+                        const isMatch = isChecked && val === techTarget;
+
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => handleTechNodeClick(idx)}
+                            disabled={techFound || isChecked || isEliminated}
+                            className={`p-3 rounded-xl border font-mono text-xs sm:text-sm font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
+                              isMatch
+                                ? "bg-emerald-500 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300 scale-105"
+                                : isChecked
+                                ? "bg-[#6757F5] text-white border-[#5342E8]"
+                                : isEliminated
+                                ? "bg-gray-100 text-gray-400 border-gray-200 opacity-40 line-through cursor-not-allowed"
+                                : "bg-[#FAF9F6] text-[#171A2B] border-[#E8E6F3] hover:border-[#6757F5] hover:bg-[#EDEAFF]/50 active:scale-95"
                             }`}
                           >
-                            {act.tag}
-                          </span>
-                          <span className="text-[11px] font-semibold text-[#626987] flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-[#35B8C5]" />
-                            {act.duration}
-                          </span>
-                        </div>
-                        <h4 className="text-base font-bold text-[#171A2B] mb-2 leading-snug">
-                          {act.title}
-                        </h4>
-                        <p className="text-xs text-[#626987] leading-relaxed">
-                          {act.description}
-                        </p>
-                      </div>
+                            <span className="text-[9px] uppercase tracking-wider opacity-70">
+                              Node {idx + 1}
+                            </span>
+                            <span>{isChecked || isEliminated ? `#${val}` : "?"}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                      <div className="mt-4 pt-3 border-t border-[#F0EEF8] flex items-center justify-between text-xs">
-                        <span
-                          className={`font-semibold ${
-                            isActSelected ? "text-[#6757F5]" : "text-[#626987]"
+                    {/* Feedback and Learning Outcome */}
+                    <div
+                      className={`p-3.5 rounded-xl border text-xs leading-relaxed transition-colors ${
+                        techFound
+                          ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                          : "bg-[#F7F6FF] border-[#DDD8FE] text-[#31364F]"
+                      }`}
+                    >
+                      <p className="font-medium">{techFeedback}</p>
+                      {techFound && (
+                        <div className="mt-2 pt-2 border-t border-emerald-200/60 text-[11px] text-emerald-800">
+                          <strong>Autonomy Reflection:</strong> Did finding the efficiency shortcut
+                          feel satisfying? Software engineering and algorithms center on eliminating
+                          wasted computational effort to build fast, scalable systems.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* --- 2. CREATIVITY MINI-CHALLENGE (Hierarchy & Readability Tuner) --- */}
+                {selectedInterest === "creativity" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#171A2B]">
+                        Challenge: Tune the 3 sliders to achieve optimal visual hierarchy.
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleResetDesignLab}
+                        className="inline-flex items-center gap-1 text-[11px] text-[#626987] hover:text-[#6757F5]"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Reset</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDesignHierarchy(designHierarchy === "flat" ? "balanced" : "flat")
+                        }
+                        className={`p-2.5 rounded-xl border text-left flex items-center justify-between ${
+                          designHierarchy === "balanced"
+                            ? "bg-[#6757F5] text-white border-[#6757F5]"
+                            : "bg-[#FAF9F6] border-[#E8E6F3] text-[#31364F]"
+                        }`}
+                      >
+                        <span>Font Hierarchy:</span>
+                        <strong className="text-[11px]">
+                          {designHierarchy === "balanced" ? "Balanced" : "Flat / Uniform"}
+                        </strong>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDesignContrast(designContrast === "low" ? "high" : "low")
+                        }
+                        className={`p-2.5 rounded-xl border text-left flex items-center justify-between ${
+                          designContrast === "high"
+                            ? "bg-[#6757F5] text-white border-[#6757F5]"
+                            : "bg-[#FAF9F6] border-[#E8E6F3] text-[#31364F]"
+                        }`}
+                      >
+                        <span>Text Contrast:</span>
+                        <strong className="text-[11px]">
+                          {designContrast === "high" ? "High (WCAG AA)" : "Low / Faded"}
+                        </strong>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDesignSpacing(designSpacing === "tight" ? "breathable" : "tight")
+                        }
+                        className={`p-2.5 rounded-xl border text-left flex items-center justify-between ${
+                          designSpacing === "breathable"
+                            ? "bg-[#6757F5] text-white border-[#6757F5]"
+                            : "bg-[#FAF9F6] border-[#E8E6F3] text-[#31364F]"
+                        }`}
+                      >
+                        <span>Card Spacing:</span>
+                        <strong className="text-[11px]">
+                          {designSpacing === "breathable" ? "Breathable (24px)" : "Cramped (6px)"}
+                        </strong>
+                      </button>
+                    </div>
+
+                    {/* Live Preview of Design Tuner */}
+                    <div
+                      className={`rounded-2xl border transition-all duration-300 ${
+                        designSpacing === "breathable" ? "p-6" : "p-2"
+                      } ${
+                        designContrast === "high"
+                          ? "bg-white border-[#6757F5] text-[#171A2B]"
+                          : "bg-[#F7F6F4] border-gray-200 text-gray-400"
+                      }`}
+                    >
+                      <span className="text-[10px] uppercase font-bold text-[#6757F5]">
+                        Live Layout Component
+                      </span>
+                      <h4
+                        className={`mt-1 font-bold ${
+                          designHierarchy === "balanced" ? "text-lg text-[#171A2B]" : "text-xs"
+                        }`}
+                      >
+                        Annual Student Science & Design Exhibition
+                      </h4>
+                      <p className="text-xs text-[#626987] mt-1">
+                        Explore student projects across robotics, animation, and UI architecture.
+                      </p>
+                    </div>
+
+                    <div
+                      className={`p-3.5 rounded-xl border text-xs ${
+                        isDesignOptimal
+                          ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                          : "bg-[#F7F6FF] border-[#DDD8FE] text-[#31364F]"
+                      }`}
+                    >
+                      {isDesignOptimal ? (
+                        <div>
+                          <strong>✓ Optimal Design Hierarchy Achieved!</strong> High contrast +
+                          breathable whitespace significantly cuts cognitive fatigue. Product and
+                          UI designers apply these exact cognitive principles every day.
+                        </div>
+                      ) : (
+                        <span>
+                          Toggle the 3 design attributes above to see how layout structure changes
+                          human readability.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* --- 3. BUSINESS MINI-CHALLENGE (Unit Economics Simulator) --- */}
+                {selectedInterest === "business" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#171A2B]">
+                        Challenge: Price a student workshop (Fixed Venue & Kit Cost: ₹30,000).
+                      </span>
+                      <span className="text-[11px] text-[#6757F5]">Select a ticket price tier:</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {([499, 999, 1999] as const).map((tier) => (
+                        <button
+                          key={tier}
+                          type="button"
+                          onClick={() => setBusinessPriceTier(tier)}
+                          className={`p-3 rounded-xl border text-center transition-all ${
+                            businessPriceTier === tier
+                              ? "bg-[#6757F5] text-white border-[#6757F5] shadow-sm"
+                              : "bg-[#FAF9F6] border-[#E8E6F3] text-[#171A2B] hover:bg-[#EDEAFF]"
                           }`}
                         >
-                          {isActSelected ? "Selected Activity" : "Click to Inspect"}
-                        </span>
-                        {isActSelected && (
-                          <span className="w-4 h-4 rounded-full bg-[#6757F5] text-white flex items-center justify-center">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
-                          </span>
-                        )}
+                          <span className="text-[10px] uppercase block opacity-80">Tier</span>
+                          <strong className="text-sm font-bold">₹{tier}</strong>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div>
+                        <span className="text-[#626987] block">Expected Attendees:</span>
+                        <strong className="text-sm text-[#171A2B]">
+                          {businessTiers[businessPriceTier].attendees} students
+                        </strong>
                       </div>
-                    </button>
-                  );
-                })}
+                      <div>
+                        <span className="text-[#626987] block">Gross Revenue:</span>
+                        <strong className="text-sm text-[#171A2B]">
+                          ₹{businessTiers[businessPriceTier].revenue.toLocaleString("en-IN")}
+                        </strong>
+                      </div>
+                      <div>
+                        <span className="text-[#626987] block">Total Operating Cost:</span>
+                        <strong className="text-sm text-[#171A2B]">₹30,000</strong>
+                      </div>
+                      <div>
+                        <span className="text-[#626987] block">Net Operating Profit:</span>
+                        <strong
+                          className={`text-sm ${
+                            businessTiers[businessPriceTier].profit >= 0
+                              ? "text-emerald-600"
+                              : "text-rose-600"
+                          }`}
+                        >
+                          ₹{businessTiers[businessPriceTier].profit.toLocaleString("en-IN")}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-[#F7F6FF] border border-[#DDD8FE] text-xs text-[#31364F]">
+                      <strong>Business Insight:</strong> {businessTiers[businessPriceTier].insight}
+                    </div>
+                  </div>
+                )}
+
+                {/* --- 4. SCIENCE MINI-CHALLENGE (Enzyme Kinetics Lab) --- */}
+                {selectedInterest === "science" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#171A2B]">
+                        Challenge: Test enzyme reaction velocity at 3 controlled temperatures.
+                      </span>
+                      <span className="text-[11px] text-[#6757F5]">Select temperature:</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {([15, 37, 75] as const).map((temp) => (
+                        <button
+                          key={temp}
+                          type="button"
+                          onClick={() => setScienceTemp(temp)}
+                          className={`p-3 rounded-xl border text-center transition-all ${
+                            scienceTemp === temp
+                              ? "bg-[#6757F5] text-white border-[#6757F5] shadow-sm"
+                              : "bg-[#FAF9F6] border-[#E8E6F3] text-[#171A2B] hover:bg-[#EDEAFF]"
+                          }`}
+                        >
+                          <span className="text-[10px] uppercase block opacity-80">Variable</span>
+                          <strong className="text-sm font-bold">{temp}°C</strong>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] space-y-2">
+                      <div className="flex items-center justify-between text-xs font-semibold">
+                        <span>Reaction Velocity:</span>
+                        <span className="text-[#6757F5]">
+                          {scienceTiers[scienceTemp].rate} ({scienceTiers[scienceTemp].status})
+                        </span>
+                      </div>
+                      <div className="w-full h-3 rounded-full bg-gray-200 overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${scienceTiers[scienceTemp].color}`}
+                          style={{ width: scienceTiers[scienceTemp].rate }}
+                        />
+                      </div>
+                      <p className="text-xs text-[#626987] leading-relaxed pt-1">
+                        {scienceTiers[scienceTemp].description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* --- 5. SOCIAL IMPACT / HEALTHCARE (Emergency Triage) --- */}
+                {selectedInterest === "social-impact" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#171A2B]">
+                        Challenge: Which incoming emergency patient must be treated first?
+                      </span>
+                      {triageChoice && (
+                        <button
+                          type="button"
+                          onClick={() => setTriageChoice(null)}
+                          className="inline-flex items-center gap-1 text-[11px] text-[#626987] hover:text-[#6757F5]"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reset</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {triageCases.map((tc) => {
+                        const isChosen = triageChoice === tc.id;
+                        return (
+                          <button
+                            key={tc.id}
+                            type="button"
+                            onClick={() => setTriageChoice(tc.id)}
+                            className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                              isChosen
+                                ? tc.isPriority
+                                  ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-300"
+                                  : "bg-rose-50 border-rose-300 ring-1 ring-rose-200"
+                                : "bg-[#FAF9F6] border-[#E8E6F3] hover:border-[#6757F5]"
+                            }`}
+                          >
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-[#6757F5] block">
+                                {tc.title}
+                              </span>
+                              <p className="text-xs text-[#171A2B] font-medium mt-1">
+                                {tc.details}
+                              </p>
+                            </div>
+                            <span className="text-[10px] font-semibold text-[#626987] mt-2 block">
+                              Click to Prioritize
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {triageChoice && (
+                      <div
+                        className={`p-3.5 rounded-xl border text-xs leading-relaxed ${
+                          triageCases.find((t) => t.id === triageChoice)?.isPriority
+                            ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                            : "bg-amber-50 border-amber-200 text-amber-900"
+                        }`}
+                      >
+                        {triageCases.find((t) => t.id === triageChoice)?.feedback}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* --- 6. STILL EXPLORING (Curiosity Dimension Compass) --- */}
+                {selectedInterest === "still-exploring" && (
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#171A2B]">
+                        Challenge: Select what naturally pulls your curiosity:
+                      </span>
+                      {selectedDimension && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDimension(null)}
+                          className="inline-flex items-center gap-1 text-[11px] text-[#626987] hover:text-[#6757F5]"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reset</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {explorationDimensions.map((dim) => {
+                        const isChosen = selectedDimension === dim.id;
+                        return (
+                          <button
+                            key={dim.id}
+                            type="button"
+                            onClick={() => setSelectedDimension(dim.id)}
+                            className={`p-4 rounded-xl border text-left transition-all ${
+                              isChosen
+                                ? "bg-[#6757F5] text-white border-[#6757F5] shadow-sm"
+                                : "bg-[#FAF9F6] border-[#E8E6F3] text-[#171A2B] hover:bg-[#EDEAFF]"
+                            }`}
+                          >
+                            <span
+                              className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
+                                isChosen ? "text-white/80" : "text-[#6757F5]"
+                              }`}
+                            >
+                              {dim.tag}
+                            </span>
+                            <h5 className="text-xs sm:text-sm font-bold leading-snug">
+                              {dim.label}
+                            </h5>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {selectedDimension && (
+                      <div className="p-4 rounded-xl bg-white border border-[#DDD8FE] text-xs text-[#31364F] space-y-2">
+                        <p className="font-medium">
+                          {
+                            explorationDimensions.find((d) => d.id === selectedDimension)
+                              ?.insight
+                          }
+                        </p>
+                        <div className="pt-2 border-t border-[#F0EEF8] flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-[#6757F5]">
+                            Interdisciplinary Combinations:
+                          </span>
+                          {explorationDimensions
+                            .find((d) => d.id === selectedDimension)
+                            ?.crossPaths.map((p) => (
+                              <span
+                                key={p}
+                                className="px-2 py-0.5 rounded bg-[#FAF9F6] text-[#171A2B] border border-[#E8E6F3] font-semibold text-[11px]"
+                              >
+                                {p}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Dynamic Discovery Box for the Selected Activity */}
-              <div className="p-6 rounded-2xl bg-white border border-[#DDD8FE] shadow-xs">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#35B8C5] bg-[#35B8C5]/10 px-2.5 py-0.5 rounded-md">
-                    Immediate Learning & Decision Clarity
-                  </span>
-                  <span className="text-xs text-[#626987]">
-                    For {currentStageData.label}
+              {/* PART 2: Optional Advanced Activity Previews (Explicitly Labeled) */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] block">
+                      Optional Activity Previews (For Future Exploration)
+                    </span>
+                    <p className="text-xs text-[#626987]">
+                      These deeper practical challenges show what advanced project trials look like.
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-semibold text-[#626987] bg-white px-2 py-1 rounded-md border border-[#E8E6F3] self-start sm:self-auto">
+                    Activity Preview Only · Demonstrative
                   </span>
                 </div>
 
+                {/* Activity Selector Toggle Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] space-y-1">
-                    <div className="text-xs font-bold text-[#6757F5] uppercase tracking-wider">
-                      What You Will Learn / Discover:
-                    </div>
-                    <p className="text-xs sm:text-sm text-[#171A2B] font-medium leading-relaxed">
-                      {activeActivity.whatYouWillLearn}
-                    </p>
-                  </div>
+                  {availableActivities.map((act) => {
+                    const isActSelected = activeActivity.id === act.id;
+                    return (
+                      <button
+                        key={act.id}
+                        type="button"
+                        onClick={() => setSelectedActivityId(act.id)}
+                        className={`p-5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between ${
+                          isActSelected
+                            ? "bg-white border-[#6757F5] shadow-md shadow-[#6757F5]/10 ring-2 ring-[#6757F5]/30 -translate-y-0.5"
+                            : "bg-white/80 border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-white"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span
+                              className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                isActSelected
+                                  ? "bg-[#6757F5] text-white"
+                                  : "bg-[#EDEAFF] text-[#6757F5]"
+                              }`}
+                            >
+                              Activity Preview: {act.tag}
+                            </span>
+                            <span className="text-[11px] font-semibold text-[#626987] flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-[#35B8C5]" />
+                              {act.duration}
+                            </span>
+                          </div>
+                          <h4 className="text-base font-bold text-[#171A2B] mb-2 leading-snug">
+                            {act.title}
+                          </h4>
+                          <p className="text-xs text-[#626987] leading-relaxed">
+                            {act.description}
+                          </p>
+                        </div>
 
-                  <div className="p-4 rounded-xl bg-[#F7F6FF] border border-[#DDD8FE] space-y-1">
-                    <div className="text-xs font-bold text-[#171A2B] uppercase tracking-wider">
-                      How It Clarifies Your Next Move:
-                    </div>
-                    <p className="text-xs sm:text-sm text-[#31364F] leading-relaxed font-medium">
-                      {activeActivity.clarifiesDecision}
-                    </p>
-                  </div>
+                        <div className="mt-4 pt-3 border-t border-[#F0EEF8] flex items-center justify-between text-xs">
+                          <span
+                            className={`font-semibold ${
+                              isActSelected ? "text-[#6757F5]" : "text-[#626987]"
+                            }`}
+                          >
+                            {isActSelected ? "Selected Preview" : "Click to Inspect"}
+                          </span>
+                          {isActSelected && (
+                            <span className="w-4 h-4 rounded-full bg-[#6757F5] text-white flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-[#F0EEF8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <span className="text-[#626987]">
-                    Estimated investment: <strong>{activeActivity.duration}</strong> · Low-stakes exploration
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("trial")}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#6757F5] hover:text-[#5342E8]"
-                  >
-                    <span>View First Step Instructions</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                {/* Dynamic Discovery Box for the Selected Activity */}
+                <div className="p-6 rounded-2xl bg-white border border-[#DDD8FE] shadow-xs">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#35B8C5] bg-[#35B8C5]/10 px-2.5 py-0.5 rounded-md">
+                      Sample Learning & Decision Clarity
+                    </span>
+                    <span className="text-xs text-[#626987]">
+                      For {currentStageData.label}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] space-y-1">
+                      <div className="text-xs font-bold text-[#6757F5] uppercase tracking-wider">
+                        What You Will Learn / Discover:
+                      </div>
+                      <p className="text-xs sm:text-sm text-[#171A2B] font-medium leading-relaxed">
+                        {activeActivity.whatYouWillLearn}
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#F7F6FF] border border-[#DDD8FE] space-y-1">
+                      <div className="text-xs font-bold text-[#171A2B] uppercase tracking-wider">
+                        How It Clarifies Your Next Move:
+                      </div>
+                      <p className="text-xs sm:text-sm text-[#31364F] leading-relaxed font-medium">
+                        {activeActivity.clarifiesDecision}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -553,7 +1242,7 @@ export function StudentExplorer() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-1 rounded-md bg-[#EDEAFF] text-[#6757F5] text-xs font-bold">
-                    Micro-Trial Preview
+                    Sample Trial Preview
                   </span>
                   <h4 className="text-lg font-bold text-[#171A2B]">
                     {currentResult.practicalTrial.title}

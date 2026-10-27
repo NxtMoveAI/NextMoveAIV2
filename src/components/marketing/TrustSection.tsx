@@ -41,7 +41,7 @@ export function TrustSection() {
             <span>Integrity & Governance</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#171A2B] tracking-tight">
-            Built on trust, verified sources, and student control.
+            Built on trust, authoritative sources, and student control.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-[#31364F] leading-relaxed">
             We don’t rely on aggressive advertising, fake accuracy percentages, or sponsored

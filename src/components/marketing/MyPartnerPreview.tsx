@@ -14,10 +14,13 @@ import {
   Lightbulb,
   AlertCircle,
   Calendar,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 export function MyPartnerPreview() {
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("class-12-pcm");
+  const [expandedPathwayIndex, setExpandedPathwayIndex] = useState<number | null>(null);
   const scenario =
     MY_PARTNER_SCENARIOS.find((s) => s.id === selectedScenarioId) ||
     MY_PARTNER_SCENARIOS[0];
@@ -157,38 +160,80 @@ export function MyPartnerPreview() {
                   {scenario.partnerResponse.acknowledgement}
                 </div>
 
-                {/* 2. Structured Possibilities */}
+                {/* 2. Meaningful Possibilities with Expandable Details */}
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#626987] block mb-2">
-                    Relevant Possibilities to Consider:
-                  </span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#626987]">
+                      Relevant Possibilities to Consider ({scenario.partnerResponse.structuredPossibilities.length}):
+                    </span>
+                    <span className="text-[11px] text-[#6757F5]">
+                      Click any card for prerequisites & context
+                    </span>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {scenario.partnerResponse.verifiedPathways.map((path, idx) => (
-                      <div
-                        key={path.title}
-                        className="p-4 rounded-xl bg-white border border-[#E8E6F3] shadow-2xs hover:border-[#6757F5]/40 transition-colors flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[10px] font-bold text-[#6757F5] uppercase">
-                              Option 0{idx + 1}
-                            </span>
-                            <span className="text-[10px] font-semibold bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#E8E6F3] text-[#31364F]">
-                              {path.difficulty}
-                            </span>
+                    {scenario.partnerResponse.structuredPossibilities.map((path, idx) => {
+                      const isExpanded = expandedPathwayIndex === idx;
+                      return (
+                        <div
+                          key={path.title}
+                          className={`p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
+                            isExpanded
+                              ? "bg-white border-[#6757F5] shadow-md ring-1 ring-[#6757F5]/30"
+                              : "bg-white border-[#E8E6F3] hover:border-[#6757F5]/40 shadow-2xs"
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="text-[10px] font-bold text-[#6757F5] uppercase">
+                                Option 0{idx + 1}
+                              </span>
+                              <span className="text-[10px] font-semibold bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#E8E6F3] text-[#31364F]">
+                                {path.difficulty}
+                              </span>
+                            </div>
+                            <h4 className="text-xs font-bold text-[#171A2B] mb-1 leading-snug">
+                              {path.title}
+                            </h4>
+                            <p className="text-[11px] text-[#626987] leading-relaxed mb-2">
+                              {path.description}
+                            </p>
                           </div>
-                          <h4 className="text-xs font-bold text-[#171A2B] mb-1 leading-snug">
-                            {path.title}
-                          </h4>
-                          <p className="text-[11px] text-[#626987] leading-relaxed mb-2">
-                            {path.description}
-                          </p>
+
+                          <div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedPathwayIndex(isExpanded ? null : idx)
+                              }
+                              className="mt-2 pt-2 border-t border-[#F0EEF8] text-[11px] font-semibold text-[#6757F5] hover:text-[#5342E8] flex items-center justify-between w-full focus:outline-none"
+                              aria-expanded={isExpanded}
+                            >
+                              <span>{isExpanded ? "Hide Details" : "View Prerequisites & Fit"}</span>
+                              {isExpanded ? (
+                                <ChevronUp className="w-3.5 h-3.5" />
+                              ) : (
+                                <ChevronDown className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+
+                            {isExpanded && (
+                              <div className="mt-2.5 pt-2 border-t border-[#EDEAFF] space-y-1.5 text-[10px] text-[#31364F] animate-fadeIn">
+                                {path.whyItFits && (
+                                  <p>
+                                    <strong className="text-[#171A2B]">Why it fits:</strong>{" "}
+                                    {path.whyItFits}
+                                  </p>
+                                )}
+                                <p>
+                                  <strong className="text-[#6757F5]">Prerequisites:</strong>{" "}
+                                  {path.prerequisites}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="mt-2 pt-2 border-t border-[#F0EEF8] text-[10px] text-[#6757F5]">
-                          <strong>Prerequisites:</strong> {path.prerequisites}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 

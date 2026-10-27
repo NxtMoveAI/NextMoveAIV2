@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Next Move AI — Intelligent Student Career & Continuous Growth Platform",
   description:
-    "We don't decide careers; we enable clarity. Explore your interests, discover verified Indian education pathways, test 15-minute practical trials, and make informed choices with AI guidance that grows alongside you.",
+    "We don't decide careers; we enable clarity. Explore your interests, discover curated Indian education pathways, test 15-minute practical trials, and make informed choices with AI guidance that grows alongside you.",
   keywords: [
     "Next Move AI",
     "Student Intelligence",

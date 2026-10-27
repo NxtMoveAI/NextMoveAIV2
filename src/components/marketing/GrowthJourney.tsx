@@ -247,7 +247,7 @@ export function GrowthJourney() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#35B8C5] font-bold">✓</span>
-                  <span>100% objective data from official UGC, AICTE, and university portals</span>
+                  <span>Independent data referenced from official UGC, AICTE, and university frameworks</span>
                 </li>
               </ul>
             </div>

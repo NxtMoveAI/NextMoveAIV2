@@ -233,7 +233,7 @@ export function HowItWorks() {
               </h3>
               <p className="text-xs sm:text-sm text-white/80 mt-1 max-w-xl">
                 Your journey doesn’t end with picking a college or course. Your student profile
-                evolves with new projects, verified skills, and updated goals.
+                evolves with new projects, demonstrated capabilities, and updated goals.
               </p>
             </div>
           </div>
