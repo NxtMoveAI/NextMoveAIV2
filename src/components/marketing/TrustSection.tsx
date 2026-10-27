@@ -44,8 +44,8 @@ export function TrustSection() {
             Built on trust, authoritative sources, and student control.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-[#31364F] leading-relaxed">
-            We don’t rely on aggressive advertising, fake accuracy percentages, or sponsored
-            college rankings. Here are the core commitments that govern Next Move AI.
+            We don’t rely on aggressive advertising, arbitrary test scores, or sponsored
+            college rankings. The commitments below govern our current public previews and our future platform architecture.
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export function TrustSection() {
 
                 <div className="mt-5 pt-3 border-t border-[#E8E6F3] flex items-center gap-1.5 text-[11px] font-semibold text-[#35B8C5]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Governing Product Commitment</span>
+                  <span>Governing Platform Commitment</span>
                 </div>
               </div>
             );

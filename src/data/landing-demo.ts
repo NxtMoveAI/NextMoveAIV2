@@ -2084,10 +2084,10 @@ export const STUDENT_EXPERIENCES: StudentExperienceFeature[] = [
       items: [
         { label: 'Study Workload', value: 'PCB: 32 hrs/wk | PCMB: 44 hrs/wk' },
         { label: 'NEET Focus Impact', value: 'PCB: Dedicated | PCMB: Math requires 8 hrs' },
-        { label: 'Engineering/CS Fallback', value: 'PCB: Closed | PCMB: Fully Open', highlight: true },
+        { label: 'Engineering / Computing Entry', value: 'PCB: Mainstream B.Tech requires Math (Biotech/BCA/Bioinformatics options exist per AICTE/NEP) | PCMB: Eligible across standard engineering & medical entrances', highlight: true },
         { label: 'Biotech Degree Eligibility', value: 'Both eligible across top universities' },
       ],
-      calloutText: 'If you want to keep computing options open, keeping PCMB is worth the extra math hours.',
+      calloutText: 'Check university-specific criteria: While mainstream engineering entrances mandate Mathematics, select biotechnology, computational biology, and applied computing degrees accommodate science students through bridge courses.',
     },
   },
   {
@@ -2198,42 +2198,42 @@ export const TRUST_PRINCIPLES: TrustPrinciple[] = [
     number: '01',
     title: 'The Student Remains in Control',
     description:
-      'We don’t decide careers; we enable clarity. Next Move AI will never output a single forced career prediction or claim to know your destiny.',
+      'We don’t decide careers; we enable clarity. Next Move AI is architected never to output a single forced career prediction or claim to know your destiny.',
     iconName: 'Compass',
   },
   {
     number: '02',
-    title: 'Grounded in Authoritative Sources',
+    title: 'Referenced from Authoritative Frameworks',
     description:
-      'College prerequisites, entrance exams, syllabus patterns, and educational guidelines are referenced from official regulatory bodies and accredited academic sources.',
+      'Educational paths on this platform are curated from official educational guidelines (UGC, AICTE, NTA) and accredited academic portals rather than commercial promotional brochures.',
     iconName: 'BookCheck',
   },
   {
     number: '03',
-    title: 'Evidence-Based Skill Recognition',
+    title: 'Evidence-Based Exploration',
     description:
-      'No meaningless "98% Future Ready" percentages. Skills are evidenced by actual code, design prototypes, writing samples, and reflective trials.',
+      'No arbitrary "98% Future Ready" scores. Demonstrations on this site focus on tangible activity artifacts (code sketches, design balance, unit economics) that students can inspect and reflect upon.',
     iconName: 'Award',
   },
   {
     number: '04',
     title: 'Privacy by Design',
     description:
-      'Student curiosity needs a safe space to fail and try again. Your personal reflections and exploratory questions are never commercialized or sold to third parties.',
+      'Student curiosity needs a safe space to fail and try again. Exploratory notes and questions are strictly private and never commercialized or sold to third parties.',
     iconName: 'Lock',
   },
   {
     number: '05',
     title: 'Zero Sponsored Bias',
     description:
-      'We do not accept payments from private colleges or edtech institutes to promote their degrees. Our guidance is student-aligned and free of sponsored bias.',
+      'Our platform accepts no payments from private colleges or coaching institutes to push their admissions. Recommendations remain strictly student-aligned.',
     iconName: 'CheckCircle2',
   },
   {
     number: '06',
-    title: 'AI as a Thought Partner, Not an Oracle',
+    title: 'AI as an Exploratory Partner, Not an Oracle',
     description:
-      'Our AI assists by asking clarifying questions, surfacing alternatives, and breaking goals into trials—never by hallucinating authoritative career dictates.',
+      'Our upcoming contextual guidance architecture is designed to assist by framing trade-offs and low-stakes trials—never by claiming live assessment on public pages or issuing rigid career mandates.',
     iconName: 'Cpu',
   },
 ];

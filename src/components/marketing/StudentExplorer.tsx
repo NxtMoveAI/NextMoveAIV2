@@ -104,20 +104,24 @@ export function StudentExplorer() {
 
     if (val === techTarget) {
       setTechFound(true);
-      setTechFeedback(
-        `✓ Target #${val} located in ${newChecked.length} check${
-          newChecked.length > 1 ? "s" : ""
-        }! You just executed binary search logic—eliminating half the search space with each comparison.`
-      );
+      if (newChecked.length === 1) {
+        setTechFeedback(
+          `Target #${val} found on your very first click! That was a 1-in-8 lucky guess (12.5% random probability) rather than divide-and-conquer reasoning. Try switching to Target #27 or #71 and click a middle node first to see how binary elimination guarantees a solution in ≤3 comparisons!`
+        );
+      } else {
+        setTechFeedback(
+          `✓ Target #${val} located in ${newChecked.length} checks! Demonstrated algorithmic reasoning: by comparing against midpoints and eliminating sorted sub-ranges, you reached the target in O(log₂ 8) time without sequentially checking all nodes.`
+        );
+      }
     } else if (val < techTarget) {
       const eliminated = Array.from(
         new Set([...techEliminated, ...techNodes.map((_, i) => i).filter((i) => i <= index)])
       );
       setTechEliminated(eliminated);
       setTechFeedback(
-        `#${val} is lower than target #${techTarget}. Because the array is sorted, you can safely eliminate all nodes from index 1 to ${
+        `#${val} is lower than target #${techTarget}. Because the list is sorted in ascending order, you can safely eliminate nodes 1 through ${
           index + 1
-        } without checking them!`
+        } without checking them! Remaining search space cut in half.`
       );
     } else {
       const eliminated = Array.from(
@@ -125,9 +129,9 @@ export function StudentExplorer() {
       );
       setTechEliminated(eliminated);
       setTechFeedback(
-        `#${val} is higher than target #${techTarget}. You can safely eliminate all nodes from index ${
+        `#${val} is higher than target #${techTarget}. You can safely eliminate nodes ${
           index + 1
-        } to 8 in a single comparison!`
+        } through 8 in a single comparison! Now search only the lower remaining nodes.`
       );
     }
   };
@@ -216,34 +220,43 @@ export function StudentExplorer() {
     },
   };
 
-  // 5. Healthcare / Social Impact: Emergency Triage Priority
-  const [triageChoice, setTriageChoice] = useState<string | null>(null);
-  const triageCases = [
-    {
-      id: "sprain",
-      title: "Patient A: Sprained Ankle",
-      details: "Mild swelling, normal breathing, able to bear slight weight.",
-      isPriority: false,
-      feedback:
-        "Stable musculoskeletal injury. In medical protocols, non-life-threatening sprains wait while airway emergencies are treated.",
+  // 5. Health Science & Social Impact: Cardiovascular Physiology & Aerobic Recovery Lab
+  const [cardioPhase, setCardioPhase] = useState<"resting" | "aerobic" | "recovery">("resting");
+  const cardioData = {
+    resting: {
+      phaseName: "Resting Baseline",
+      bpm: "72 bpm",
+      cardiacOutput: "5.0 L/min",
+      color: "bg-blue-500",
+      status: "Resting Homeostasis",
+      description:
+        "Baseline cardiac output at rest. The parasympathetic nervous system maintains steady, rhythmic ventricular contractions and efficient cellular oxygen delivery.",
+      insight:
+        "Healthy cardiovascular baseline: At rest, stroke volume is approximately 70 mL per beat, circulating the body's total blood volume (~5 liters) once every minute.",
     },
-    {
-      id: "asthma",
-      title: "Patient B: Acute Respiratory Attack",
-      details: "Severe stridor, gasping, oxygen saturation dropping rapidly.",
-      isPriority: true,
-      feedback:
-        "✓ Correct Triage Priority! Airway and breathing (ABC protocol) supersede all stable cases to prevent hypoxia.",
+    aerobic: {
+      phaseName: "Aerobic Exertion",
+      bpm: "138 bpm",
+      cardiacOutput: "14.5 L/min",
+      color: "bg-amber-500",
+      status: "Elevated Metabolic Demand",
+      description:
+        "During aerobic movement, sympathetic nervous activity increases heart rate and stroke volume, channeling oxygenated blood to contracting skeletal muscles.",
+      insight:
+        "Exercise physiology: Vasodilation widens arterioles in active muscle tissue while vasoconstriction temporarily slows flow to non-critical digestive systems.",
     },
-    {
-      id: "fever",
-      title: "Patient C: 2-Day Low Fever",
-      details: "Temperature 100.2°F, alert and hydrated, mild headache.",
-      isPriority: false,
-      feedback:
-        "Moderate urgent category. Needs diagnostic evaluation, but respiratory distress takes immediate precedent.",
+    recovery: {
+      phaseName: "2-Min Cool-Down",
+      bpm: "78 bpm",
+      cardiacOutput: "5.8 L/min",
+      color: "bg-emerald-500",
+      status: "Healthy Parasympathetic Recovery",
+      description:
+        "Post-exercise heart rate recovery (HRR). Vagal tone reactivates promptly, returning heart rate toward resting baseline within 120 seconds.",
+      insight:
+        "Health-science metric: Rapid heart-rate recovery within 2 minutes is a primary non-invasive biomarker of cardiovascular fitness and autonomic health.",
     },
-  ];
+  };
 
   // 6. Still Exploring: Curiosity Dimension Compass
   const [selectedDimension, setSelectedDimension] = useState<string | null>(null);
@@ -673,7 +686,11 @@ export function StudentExplorer() {
                             type="button"
                             onClick={() => handleTechNodeClick(idx)}
                             disabled={techFound || isChecked || isEliminated}
-                            className={`p-3 rounded-xl border font-mono text-xs sm:text-sm font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
+                            aria-label={`Data node ${idx + 1}: ${
+                              isChecked || isEliminated ? `value #${val}` : "hidden"
+                            }`}
+                            aria-pressed={isChecked}
+                            className={`p-3 rounded-xl border font-mono text-xs sm:text-sm font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 focus:outline-hidden focus:ring-2 focus:ring-[#6757F5] ${
                               isMatch
                                 ? "bg-emerald-500 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300 scale-105"
                                 : isChecked
@@ -696,16 +713,48 @@ export function StudentExplorer() {
                     <div
                       className={`p-3.5 rounded-xl border text-xs leading-relaxed transition-colors ${
                         techFound
-                          ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                          ? techChecked.length === 1
+                            ? "bg-amber-50 border-amber-200 text-amber-900"
+                            : "bg-emerald-50 border-emerald-200 text-emerald-900"
                           : "bg-[#F7F6FF] border-[#DDD8FE] text-[#31364F]"
                       }`}
                     >
-                      <p className="font-medium">{techFeedback}</p>
+                      <div className="flex items-start gap-2">
+                        {techFound && (
+                          <span
+                            className={`mt-0.5 inline-block px-1.5 py-0.5 text-[10px] font-bold rounded uppercase shrink-0 ${
+                              techChecked.length === 1
+                                ? "bg-amber-200 text-amber-900"
+                                : "bg-emerald-200 text-emerald-900"
+                            }`}
+                          >
+                            {techChecked.length === 1 ? "Lucky First Guess" : "Algorithmic Reasoning"}
+                          </span>
+                        )}
+                        <p className="font-medium flex-1">{techFeedback}</p>
+                      </div>
+
                       {techFound && (
-                        <div className="mt-2 pt-2 border-t border-emerald-200/60 text-[11px] text-emerald-800">
-                          <strong>Autonomy Reflection:</strong> Did finding the efficiency shortcut
-                          feel satisfying? Software engineering and algorithms center on eliminating
-                          wasted computational effort to build fast, scalable systems.
+                        <div
+                          className={`mt-2.5 pt-2 border-t text-[11px] ${
+                            techChecked.length === 1
+                              ? "border-amber-200 text-amber-800"
+                              : "border-emerald-200/60 text-emerald-800"
+                          }`}
+                        >
+                          {techChecked.length === 1 ? (
+                            <span>
+                              <strong>Algorithmic Principle:</strong> In computer science, algorithms
+                              provide deterministic worst-case guarantees (O(log₂ 8) = at most 3
+                              comparisons) so that systems never depend on random chance.
+                            </span>
+                          ) : (
+                            <span>
+                              <strong>Autonomy Reflection:</strong> Did finding the efficiency shortcut
+                              feel satisfying? Software engineering and algorithms center on eliminating
+                              wasted computational effort to build fast, scalable systems.
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -943,68 +992,90 @@ export function StudentExplorer() {
                   </div>
                 )}
 
-                {/* --- 5. SOCIAL IMPACT / HEALTHCARE (Emergency Triage) --- */}
+                {/* --- 5. HEALTH SCIENCE & PHYSIOLOGY LAB (Cardiovascular Recovery) --- */}
                 {selectedInterest === "social-impact" && (
                   <div className="mt-5 space-y-4">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-[#171A2B]">
-                        Challenge: Which incoming emergency patient must be treated first?
-                      </span>
-                      {triageChoice && (
-                        <button
-                          type="button"
-                          onClick={() => setTriageChoice(null)}
-                          className="inline-flex items-center gap-1 text-[11px] text-[#626987] hover:text-[#6757F5]"
-                        >
-                          <RotateCcw className="w-3 h-3" />
-                          <span>Reset</span>
-                        </button>
-                      )}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                      <div>
+                        <span className="font-bold text-[#171A2B]">Health Science Lab:</span>{" "}
+                        Observe cardiovascular response to physical exertion and autonomic recovery.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCardioPhase("resting")}
+                        className="inline-flex items-center gap-1 text-[11px] text-[#626987] hover:text-[#6757F5] self-start sm:self-auto"
+                        title="Reset to resting baseline"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Reset</span>
+                      </button>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      {triageCases.map((tc) => {
-                        const isChosen = triageChoice === tc.id;
+                      {(["resting", "aerobic", "recovery"] as const).map((phaseKey) => {
+                        const phase = cardioData[phaseKey];
+                        const isSelected = cardioPhase === phaseKey;
                         return (
                           <button
-                            key={tc.id}
+                            key={phaseKey}
                             type="button"
-                            onClick={() => setTriageChoice(tc.id)}
+                            onClick={() => setCardioPhase(phaseKey)}
+                            aria-pressed={isSelected}
                             className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
-                              isChosen
-                                ? tc.isPriority
-                                  ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-300"
-                                  : "bg-rose-50 border-rose-300 ring-1 ring-rose-200"
-                                : "bg-[#FAF9F6] border-[#E8E6F3] hover:border-[#6757F5]"
+                              isSelected
+                                ? "bg-white border-[#6757F5] ring-2 ring-[#6757F5]/20 shadow-xs"
+                                : "bg-[#FAF9F6] border-[#E8E6F3] hover:border-[#6757F5]/50 text-[#31364F]"
                             }`}
                           >
                             <div>
                               <span className="text-[10px] font-bold uppercase text-[#6757F5] block">
-                                {tc.title}
+                                Phase {phaseKey === "resting" ? "1" : phaseKey === "aerobic" ? "2" : "3"}
                               </span>
-                              <p className="text-xs text-[#171A2B] font-medium mt-1">
-                                {tc.details}
-                              </p>
+                              <strong className="text-xs text-[#171A2B] block mt-0.5">
+                                {phase.phaseName}
+                              </strong>
+                              <span className="text-sm font-bold text-[#6757F5] mt-1 block font-mono">
+                                {phase.bpm}
+                              </span>
                             </div>
-                            <span className="text-[10px] font-semibold text-[#626987] mt-2 block">
-                              Click to Prioritize
+                            <span className="text-[10px] font-medium text-[#626987] mt-2 block">
+                              Click to simulate
                             </span>
                           </button>
                         );
                       })}
                     </div>
 
-                    {triageChoice && (
-                      <div
-                        className={`p-3.5 rounded-xl border text-xs leading-relaxed ${
-                          triageCases.find((t) => t.id === triageChoice)?.isPriority
-                            ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-                            : "bg-amber-50 border-amber-200 text-amber-900"
-                        }`}
-                      >
-                        {triageCases.find((t) => t.id === triageChoice)?.feedback}
+                    {/* Physiology Monitor Card */}
+                    <div className="p-4 rounded-xl border bg-white border-[#E8E6F3] shadow-xs space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F0EEF8] pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full ${cardioData[cardioPhase].color} animate-pulse`}
+                          />
+                          <span className="text-xs font-bold text-[#171A2B]">
+                            {cardioData[cardioPhase].phaseName}
+                          </span>
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#EDEAFF] text-[#6757F5] font-semibold">
+                            {cardioData[cardioPhase].bpm}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-[#626987] font-medium">
+                          Est. Cardiac Output:{" "}
+                          <strong className="text-[#171A2B] font-mono">
+                            {cardioData[cardioPhase].cardiacOutput}
+                          </strong>
+                        </div>
                       </div>
-                    )}
+
+                      <p className="text-xs text-[#31364F] leading-relaxed">
+                        {cardioData[cardioPhase].description}
+                      </p>
+
+                      <div className="p-2.5 rounded-lg bg-[#FAF9F6] border border-[#E8E6F3] text-[11px] text-[#474D66] leading-relaxed">
+                        <strong>Autonomic Health Insight:</strong> {cardioData[cardioPhase].insight}
+                      </div>
+                    </div>
                   </div>
                 )}
 
