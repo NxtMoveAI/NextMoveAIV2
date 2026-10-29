@@ -32,11 +32,11 @@ function StudentAccessContent() {
   const stageParam = searchParams.get("stage");
   const stage = getValidatedStage(stageParam);
 
-  // Default age selection based on stage recommendation (non-binding)
-  const defaultAgeId =
-    stage.id === "classes-4-7"
+  // Non-binding initial age recommendation based on confirmed stage
+  const defaultAgeId: "under_13" | "13_to_17" | "18_plus" =
+    stage && stage.id === "classes-4-7"
       ? "under_13"
-      : stage.id === "classes-8-10" || stage.id === "classes-11-12"
+      : stage && (stage.id === "classes-8-10" || stage.id === "classes-11-12")
       ? "13_to_17"
       : "18_plus";
 
@@ -44,10 +44,47 @@ function StudentAccessContent() {
     defaultAgeId
   );
 
-  // Prototype state simulation switcher (for testing all 5 required conditions)
+  // Prototype state simulation switcher (for testing all 5 required conditions in dev mode)
   const [prototypeSimState, setPrototypeSimState] = useState<
     "standard" | "guardian_required" | "incomplete" | "pending" | "restricted"
   >("standard");
+
+  // If no stage is provided or stage is invalid, require student to pick a stage first
+  if (!stage) {
+    return (
+      <AuthLayout
+        role="student"
+        backHref="/get-started/student"
+        backLabel="Choose Stage"
+        activeStep={2}
+        totalSteps={4}
+        stepTitle="Stage Required"
+      >
+        <AuthCard>
+          <div className="text-center py-6 space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <h1 className="text-2xl font-black text-[#171A2B]">
+              No Academic Stage Selected
+            </h1>
+            <p className="text-sm text-[#626987] max-w-md mx-auto leading-relaxed">
+              To provide an age-appropriate exploration and safety framework, please select where you are in your learning journey first.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/get-started/student"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#6757F5] text-white font-bold hover:bg-[#5342E8] shadow-md transition-colors"
+              >
+                <span>Select Your Stage</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </AuthCard>
+      </AuthLayout>
+    );
+  }
 
   const handleAgeChange = (ageId: "under_13" | "13_to_17" | "18_plus") => {
     setSelectedAge(ageId);
@@ -63,8 +100,10 @@ function StudentAccessContent() {
       router.push(`/guardian-support?stage=${stage.id}`);
     } else if (prototypeSimState === "pending") {
       router.push(`/verify?type=guardian_pending&stage=${stage.id}`);
+    } else if (selectedAge === "13_to_17") {
+      router.push(`/sign-up/student?stage=${stage.id}&access=teen`);
     } else {
-      router.push(`/sign-up/student?stage=${stage.id}&access=standard`);
+      router.push(`/sign-up/student?stage=${stage.id}&access=adult`);
     }
   };
 
@@ -169,114 +208,132 @@ function StudentAccessContent() {
         </div>
 
         {/* Active Access Context Explanation Card */}
-        <div className="mt-5 p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-2">
+        <div className="mt-5 p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-3">
           <div className="flex items-center gap-2 text-xs font-bold text-[#6757F5]">
             <Info className="w-4 h-4 shrink-0" />
             <span>Why age-related authorization is required</span>
           </div>
 
           <p className="text-xs text-[#31364F] leading-relaxed">
-            In compliance with the <strong>Digital Personal Data Protection (DPDP) Act 2023</strong> and international minor safety guidelines, learners under 13 require parental assistance before starting digital exploratory journals.
+            Designed for compliance review under applicable Indian child-data protection guidelines (including phased DPDP implementation) and global minor safety practices. Real age verification and parental consent workflows are managed securely by Havyas&apos;s backend service.
           </p>
 
           {selectedAge === "under_13" ? (
-            <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2">
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
               <Users className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-              <span>
-                <strong>Guardian-Assisted Route:</strong> Continuing will guide you to connect a parent or guardian to authorize your workspace.
-              </span>
+              <div className="space-y-1">
+                <span className="font-bold block">Guardian-Led Co-Setup Required (Under 13):</span>
+                <p className="text-amber-800 leading-relaxed">
+                  Students under 13 require a parent or legal guardian to lead account creation and establish the workspace before digital exploration begins.
+                </p>
+              </div>
+            </div>
+          ) : selectedAge === "13_to_17" ? (
+            <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-indigo-600 mt-0.5" />
+              <div className="space-y-1">
+                <span className="font-bold block">Teen Student Entry with Guardian Authorization (13–17):</span>
+                <p className="text-indigo-800 leading-relaxed">
+                  You can set up your teen exploration profile now. In accordance with child-data protection frameworks, active continuous exploration and platform features will require guardian authorization and linking confirmation before activation.
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-start gap-2">
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
-              <span>
-                <strong>Standard Account Entry:</strong> You are eligible for direct student registration.
-              </span>
+              <div className="space-y-1">
+                <span className="font-bold block">Adult Autonomous Student Entry (18+):</span>
+                <p className="text-emerald-800 leading-relaxed">
+                  Standard independent student registration with full autonomous controls and self-managed privacy preferences.
+                </p>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Prototype State Simulation Switcher (Configurable Verification Tester) */}
-        <div className="mt-5 p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] text-left space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
-            <span className="flex items-center gap-1">
-              <Sliders className="w-3 h-3 text-[#6757F5]" />
-              <span>QA Simulation Switcher:</span>
-            </span>
-            <span className="text-[10px] text-[#6757F5]">Backend Ready</span>
+        {/* Prototype State Simulation Switcher (Development Only) */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-5 p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] text-left space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
+              <span className="flex items-center gap-1">
+                <Sliders className="w-3 h-3 text-[#6757F5]" />
+                <span>QA Simulation Switcher (Dev Mode Only):</span>
+              </span>
+              <span className="text-[10px] text-[#6757F5]">Dev Switcher</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
+              <button
+                type="button"
+                onClick={() => setPrototypeSimState("standard")}
+                className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
+                  prototypeSimState === "standard"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Standard Route
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrototypeSimState("guardian_required")}
+                className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
+                  prototypeSimState === "guardian_required"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Guardian Required
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrototypeSimState("pending")}
+                className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
+                  prototypeSimState === "pending"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Auth Pending
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrototypeSimState("incomplete")}
+                className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
+                  prototypeSimState === "incomplete"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Incomplete Data
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrototypeSimState("restricted")}
+                className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
+                  prototypeSimState === "restricted"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Restricted State
+              </button>
+            </div>
+
+            {prototypeSimState === "incomplete" && (
+              <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">
+                Age / verification information incomplete: Please confirm your birth year or legal jurisdiction before continuing.
+              </p>
+            )}
+
+            {prototypeSimState === "restricted" && (
+              <p className="text-[11px] text-rose-700 bg-rose-50 p-2 rounded border border-rose-200 flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>Unable to continue until authorization is confirmed by backend regulatory policy.</span>
+              </p>
+            )}
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
-            <button
-              type="button"
-              onClick={() => setPrototypeSimState("standard")}
-              className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
-                prototypeSimState === "standard"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Standard Route
-            </button>
-            <button
-              type="button"
-              onClick={() => setPrototypeSimState("guardian_required")}
-              className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
-                prototypeSimState === "guardian_required"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Guardian Required
-            </button>
-            <button
-              type="button"
-              onClick={() => setPrototypeSimState("pending")}
-              className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
-                prototypeSimState === "pending"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Auth Pending
-            </button>
-            <button
-              type="button"
-              onClick={() => setPrototypeSimState("incomplete")}
-              className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
-                prototypeSimState === "incomplete"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Incomplete Data
-            </button>
-            <button
-              type="button"
-              onClick={() => setPrototypeSimState("restricted")}
-              className={`px-2 py-1.5 rounded-lg border text-left transition-colors ${
-                prototypeSimState === "restricted"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Restricted State
-            </button>
-          </div>
-
-          {prototypeSimState === "incomplete" && (
-            <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">
-              Age / verification information incomplete: Please confirm your birth year or legal jurisdiction before continuing.
-            </p>
-          )}
-
-          {prototypeSimState === "restricted" && (
-            <p className="text-[11px] text-rose-700 bg-rose-50 p-2 rounded border border-rose-200 flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              <span>Unable to continue until authorization is confirmed by backend regulatory policy.</span>
-            </p>
-          )}
-        </div>
+        )}
 
         {/* Prototype Scope Banner */}
         <div className="mt-4">

@@ -125,6 +125,7 @@ function SignInContent() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={errors.password}
+              hint="Demo Note: Do NOT enter a real personal password; use a sample value like DemoPass123!."
               required
               autoComplete="current-password"
             />
@@ -176,78 +177,80 @@ function SignInContent() {
           </div>
         )}
 
-        {/* QA Simulation Switcher */}
-        <div className="mt-6 pt-4 border-t border-[#E8E6F3] text-left space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
-            <span className="flex items-center gap-1">
-              <Sliders className="w-3 h-3 text-[#6757F5]" />
-              <span>QA Backend Response Simulator:</span>
-            </span>
-          </div>
+        {/* QA Simulation Switcher (Development Only) */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-6 pt-4 border-t border-[#E8E6F3] text-left space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
+              <span className="flex items-center gap-1">
+                <Sliders className="w-3 h-3 text-[#6757F5]" />
+                <span>QA Backend Response Simulator (Dev Only):</span>
+              </span>
+            </div>
 
-          <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-            <button
-              type="button"
-              onClick={() => {
-                setSimState("normal");
-                setErrors({});
-              }}
-              className={`p-2 rounded-lg border text-left transition-colors ${
-                simState === "normal"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              1. Standard Pending
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setSimState("backend_unavailable");
-                setErrors({});
-              }}
-              className={`p-2 rounded-lg border text-left transition-colors ${
-                simState === "backend_unavailable"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              2. Backend 503 Unavailable
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setSimState("unverified_email");
-                setErrors({});
-              }}
-              className={`p-2 rounded-lg border text-left transition-colors ${
-                simState === "unverified_email"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              3. Unverified Email (403)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setSimState("guardian_pending");
-                setErrors({});
-              }}
-              className={`p-2 rounded-lg border text-left transition-colors ${
-                simState === "guardian_pending"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              4. Guardian Pending (403)
-            </button>
+            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+              <button
+                type="button"
+                onClick={() => {
+                  setSimState("normal");
+                  setErrors({});
+                }}
+                className={`p-2 rounded-lg border text-left transition-colors ${
+                  simState === "normal"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                1. Standard Pending
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSimState("backend_unavailable");
+                  setErrors({});
+                }}
+                className={`p-2 rounded-lg border text-left transition-colors ${
+                  simState === "backend_unavailable"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                2. Backend 503 Unavailable
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSimState("unverified_email");
+                  setErrors({});
+                }}
+                className={`p-2 rounded-lg border text-left transition-colors ${
+                  simState === "unverified_email"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                3. Unverified Email (403)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSimState("guardian_pending");
+                  setErrors({});
+                }}
+                className={`p-2 rounded-lg border text-left transition-colors ${
+                  simState === "guardian_pending"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                4. Guardian Pending (403)
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Prototype Scope Banner */}
         <div className="mt-5">
-          <PrototypeNotice message="Credentials entered are never persisted in localStorage or logs. When live authentication is connected, the backend will determine your role and redirect destination." />
+          <PrototypeNotice message="Prototype Mode: No credentials, tokens, or sessions are stored or transmitted. Do not enter a real or personal password." />
         </div>
 
         {/* New User Action */}

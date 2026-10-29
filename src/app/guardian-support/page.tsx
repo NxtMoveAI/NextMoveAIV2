@@ -27,6 +27,39 @@ function GuardianSupportContent() {
     "explanation" | "pending" | "unavailable"
   >("explanation");
 
+  if (!stage) {
+    return (
+      <AuthLayout
+        role="student"
+        backHref="/get-started/student"
+        backLabel="Choose Stage"
+        activeStep={2}
+        totalSteps={4}
+        stepTitle="Stage Required"
+      >
+        <AuthCard>
+          <div className="text-center py-6 space-y-4">
+            <h1 className="text-2xl font-black text-[#171A2B]">
+              No Academic Stage Selected
+            </h1>
+            <p className="text-sm text-[#626987] max-w-md mx-auto leading-relaxed">
+              Please select your academic stage first to continue with guardian support guidance.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/get-started/student"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#6757F5] text-white font-bold hover:bg-[#5342E8] shadow-md transition-colors"
+              >
+                <span>Select Your Stage</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </AuthCard>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout
       role="student"
@@ -167,45 +200,47 @@ function GuardianSupportContent() {
           </div>
         )}
 
-        {/* QA State Switcher */}
-        <div className="mt-6 pt-4 border-t border-[#E8E6F3] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#626987]">
-          <span>QA Preview States:</span>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setSimulatedState("explanation")}
-              className={`px-2 py-1 rounded text-[10px] font-semibold border ${
-                simulatedState === "explanation"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Default
-            </button>
-            <button
-              type="button"
-              onClick={() => setSimulatedState("pending")}
-              className={`px-2 py-1 rounded text-[10px] font-semibold border ${
-                simulatedState === "pending"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Pending
-            </button>
-            <button
-              type="button"
-              onClick={() => setSimulatedState("unavailable")}
-              className={`px-2 py-1 rounded text-[10px] font-semibold border ${
-                simulatedState === "unavailable"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Unavailable
-            </button>
+        {/* QA State Switcher (Development Only) */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-6 pt-4 border-t border-[#E8E6F3] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#626987]">
+            <span>QA Preview States (Dev Only):</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setSimulatedState("explanation")}
+                className={`px-2 py-1 rounded text-[10px] font-semibold border ${
+                  simulatedState === "explanation"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Default
+              </button>
+              <button
+                type="button"
+                onClick={() => setSimulatedState("pending")}
+                className={`px-2 py-1 rounded text-[10px] font-semibold border ${
+                  simulatedState === "pending"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Pending
+              </button>
+              <button
+                type="button"
+                onClick={() => setSimulatedState("unavailable")}
+                className={`px-2 py-1 rounded text-[10px] font-semibold border ${
+                  simulatedState === "unavailable"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Unavailable
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Prototype Scope Banner */}
         <div className="mt-4">

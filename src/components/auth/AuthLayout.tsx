@@ -36,7 +36,7 @@ export function AuthLayout({
   stepTitle,
 }: AuthLayoutProps) {
   const stage = getValidatedStage(stageParam);
-  const stageCopy = STAGE_AWARE_COPY[stage.id];
+  const stageCopy = stage ? STAGE_AWARE_COPY[stage.id] : null;
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col justify-between">
@@ -112,7 +112,9 @@ export function AuthLayout({
                   ? "Support their journey with calm clarity."
                   : role === "general"
                   ? "Every journey starts with understanding you."
-                  : stageCopy.tagline}
+                  : stageCopy
+                  ? stageCopy.tagline
+                  : "Every journey starts somewhere."}
               </h1>
 
               <p className="mt-4 text-sm sm:text-base text-[#31364F] leading-relaxed">
@@ -120,12 +122,14 @@ export function AuthLayout({
                   ? "Help your child explore real options without aggressive coaching sales, fake test scores, or high-pressure career dictates."
                   : role === "general"
                   ? "We don't decide careers; we enable clarity. Choose how you'd like to begin your journey."
-                  : stageCopy.subtext}
+                  : stageCopy
+                  ? stageCopy.subtext
+                  : "We adjust our guidance to your current educational context—never forcing a career prediction."}
               </p>
             </div>
 
-            {/* Recognized Stage Pill (if student role) */}
-            {role === "student" && (
+            {/* Recognized Stage Pill (if student role and stage is known) */}
+            {role === "student" && stage && stageCopy && (
               <div className="p-4 rounded-2xl bg-white border border-[#E8E6F3] shadow-xs space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-[#6757F5] uppercase tracking-wider flex items-center gap-1.5">

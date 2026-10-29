@@ -20,8 +20,8 @@ import { StageBadge } from "@/components/auth/StageBadge";
 import { ACADEMIC_STAGES, type AcademicStageId } from "@/data/landing-demo";
 import {
   STAGE_AWARE_COPY,
-  isValidStageId,
-  getValidatedStage,
+  getStageOrNull,
+  getStageById,
 } from "@/data/flow2-config";
 
 const STEPS: StepItem[] = [
@@ -45,19 +45,21 @@ function StudentStageSelectionContent() {
   const searchParams = useSearchParams();
   const stageParam = searchParams.get("stage");
 
-  const hasInitialValidStage = isValidStageId(stageParam);
-  const validatedStage = getValidatedStage(stageParam);
+  const initialStage = getStageOrNull(stageParam);
+  const hasInitialValidStage = initialStage !== null;
 
-  const [selectedStageId, setSelectedStageId] = useState<AcademicStageId>(
-    validatedStage.id
+  // If a valid stage was passed from landing page, initialize with it.
+  // CRITICAL CORRECTION: If missing or invalid, do NOT preselect any stage.
+  const [selectedStageId, setSelectedStageId] = useState<AcademicStageId | null>(
+    initialStage ? initialStage.id : null
   );
-  // If an initial valid stage was provided from landing page, default to recognized view; otherwise allow editing
   const [isEditing, setIsEditing] = useState<boolean>(!hasInitialValidStage);
 
-  const activeStage = getValidatedStage(selectedStageId);
-  const stageCopy = STAGE_AWARE_COPY[activeStage.id];
+  const activeStage = selectedStageId ? getStageById(selectedStageId) : null;
+  const stageCopy = activeStage ? STAGE_AWARE_COPY[activeStage.id] : null;
 
   const handleContinue = () => {
+    if (!selectedStageId) return;
     router.push(`/get-started/student/access?stage=${selectedStageId}`);
   };
 
@@ -90,7 +92,7 @@ function StudentStageSelectionContent() {
         </div>
 
         {/* State 1: Recognized Stage from Landing Page (Clean Confirmation) */}
-        {!isEditing && hasInitialValidStage ? (
+        {!isEditing && hasInitialValidStage && activeStage && stageCopy ? (
           <div className="space-y-5">
             <StageBadge
               stage={activeStage}
@@ -209,10 +211,17 @@ function StudentStageSelectionContent() {
         <div className="mt-8 space-y-3">
           <button
             type="button"
+            disabled={!selectedStageId}
             onClick={handleContinue}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer"
+            className={`w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-all ${
+              selectedStageId
+                ? "text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 hover:shadow-lg active:scale-[0.99] cursor-pointer"
+                : "text-[#626987] bg-[#E8E6F3] cursor-not-allowed opacity-70"
+            }`}
           >
-            <span>Confirm & Continue</span>
+            <span>
+              {selectedStageId ? "Confirm & Continue" : "Select an Academic Stage to Continue"}
+            </span>
             <ArrowRight className="w-4 h-4" />
           </button>
 

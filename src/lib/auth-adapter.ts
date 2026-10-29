@@ -219,20 +219,20 @@ export async function checkAgeEligibility(
       requiresGuardianConsent: true,
       minimumAgeForIndependentAccess: 18,
       explanation:
-        "Students in Classes 4–7 explore with active guardian support under the Indian DPDP Act minor consent framework.",
-      applicableLaw: "Digital Personal Data Protection Act 2023 (India)",
+        "Students in Classes 4–7 explore with active guardian-led co-setup under digital minor protection guidelines.",
+      applicableLaw: "Draft Framework for Minor Safety & DPDP Phased Implementation",
     };
   }
 
-  if (req.ageCategory === "13_to_17") {
+  if (req.ageCategory === "13_to_17" || req.academicStage === "classes-8-10" || req.academicStage === "classes-11-12") {
     return {
       eligible: true,
-      accessStatus: "standard_eligible",
-      requiresGuardianConsent: false,
+      accessStatus: "teen_guardian_required",
+      requiresGuardianConsent: true,
       minimumAgeForIndependentAccess: 18,
       explanation:
-        "Secondary school students (ages 13–17) have independent exploratory accounts with transparent guardian summary sharing.",
-      applicableLaw: "Digital Personal Data Protection Act 2023 (India)",
+        "Secondary school students (ages 13–17) create a teen profile; continuous recommendations and platform features require guardian authorization and linking confirmation.",
+      applicableLaw: "Draft Framework for Minor Safety & DPDP Phased Implementation",
     };
   }
 
@@ -242,6 +242,6 @@ export async function checkAgeEligibility(
     requiresGuardianConsent: false,
     minimumAgeForIndependentAccess: 18,
     explanation: "Autonomous student exploration with standard privacy protections.",
-    applicableLaw: "Standard Adult Digital Privacy Framework",
+    applicableLaw: "Standard Digital Privacy Framework",
   };
 }

@@ -72,25 +72,42 @@ export function isValidStageId(stage: string | null | undefined): stage is Acade
   return VALID_STAGE_IDS.includes(stage as AcademicStageId);
 }
 
-export function getValidatedStage(stageParam: string | null | undefined): AcademicStage {
+/**
+ * Returns the matching AcademicStage object if valid, or null if missing or invalid.
+ * CRITICAL: Never silently defaults to Class 12.
+ */
+export function getStageOrNull(stageParam: string | null | undefined): AcademicStage | null {
   if (isValidStageId(stageParam)) {
     const found = ACADEMIC_STAGES.find((s) => s.id === stageParam);
     if (found) return found;
   }
-  // Safe default: Classes 11-12 (Pre-University)
-  return ACADEMIC_STAGES[2];
+  return null;
+}
+
+/**
+ * Convenience helper to look up a stage known to be a valid AcademicStageId.
+ */
+export function getStageById(stageId: AcademicStageId): AcademicStage {
+  const found = ACADEMIC_STAGES.find((s) => s.id === stageId);
+  return found || ACADEMIC_STAGES[0];
+}
+
+// Deprecated alias for backwards-compatibility, strictly returns null when invalid
+export function getValidatedStage(stageParam: string | null | undefined): AcademicStage | null {
+  return getStageOrNull(stageParam);
 }
 
 // =============================================================================
-// 3. AGE & ACCESS CONTEXT DEFINITIONS
+// 3. AGE & ACCESS CONTEXT DEFINITIONS (3-Tier Framework)
 // =============================================================================
 
 export interface AgeCategoryOption {
   id: "under_13" | "13_to_17" | "18_plus";
   label: string;
   sublabel: string;
-  accessRoute: "guardian_required" | "guardian_notified" | "standard_eligible";
+  accessRoute: "guardian_led" | "teen_guardian_required" | "adult_independent";
   description: string;
+  authorizationRequirement: string;
 }
 
 export const AGE_CATEGORY_OPTIONS: AgeCategoryOption[] = [
@@ -98,21 +115,55 @@ export const AGE_CATEGORY_OPTIONS: AgeCategoryOption[] = [
     id: "under_13",
     label: "Under 13 Years",
     sublabel: "Middle School / Classes 4–7",
-    accessRoute: "guardian_required",
-    description: "Requires verified parent or guardian authorization to protect minor privacy under data protection guidelines.",
+    accessRoute: "guardian_led",
+    description: "Requires a parent or legal guardian to lead account creation and complete verified co-setup before exploration begins.",
+    authorizationRequirement: "Parent/Guardian Co-Setup Required",
   },
   {
     id: "13_to_17",
     label: "13 to 17 Years",
     sublabel: "High School & Pre-University (+2)",
-    accessRoute: "guardian_notified",
-    description: "Independent exploration space with periodic non-invasive guardian summary updates.",
+    accessRoute: "teen_guardian_required",
+    description: "Teen student entry space. Under minor safety frameworks (including phased DPDP review), active continuous features require guardian authorization and linking confirmation.",
+    authorizationRequirement: "Guardian Authorization Pending",
   },
   {
     id: "18_plus",
     label: "18 Years or Older",
     sublabel: "College, Polytechnic & Graduates",
-    accessRoute: "standard_eligible",
-    description: "Standard independent account route with full autonomous student controls.",
+    accessRoute: "adult_independent",
+    description: "Standard adult student account entry with autonomous student controls and privacy self-management.",
+    authorizationRequirement: "Direct Autonomous Entry",
+  },
+];
+
+// =============================================================================
+// 4. PARENT & GUARDIAN ROLE CLASSIFICATION
+// =============================================================================
+
+export type ParentAccountRoleType = "parent_guardian" | "mentor_advisor";
+
+export interface ParentRoleOption {
+  id: ParentAccountRoleType;
+  title: string;
+  badge: string;
+  description: string;
+  canAuthorizeMinors: boolean;
+}
+
+export const PARENT_ROLE_OPTIONS: ParentRoleOption[] = [
+  {
+    id: "parent_guardian",
+    title: "Parent or Legal Guardian",
+    badge: "Authorization Eligible",
+    description: "Eligible to provide legal guardian authorization for minor children (under 18) following secure identity verification.",
+    canAuthorizeMinors: true,
+  },
+  {
+    id: "mentor_advisor",
+    title: "Mentor, Teacher, or Academic Advisor",
+    badge: "Advisory Role Only",
+    description: "Educational support and guidance role. Does not hold legal parental authority to authorize minor data processing.",
+    canAuthorizeMinors: false,
   },
 ];

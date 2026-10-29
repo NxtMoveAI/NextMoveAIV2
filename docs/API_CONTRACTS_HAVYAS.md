@@ -85,12 +85,17 @@ This document specifies the 10 core API endpoints required to transition student
   {
     "fullName": "Meera Sharma",
     "email": "meera.sharma@example.com",
-    "passwordHash": "...",
-    "relationship": "parent",
-    "studentInviteCode": "INV-78923",
+    "passwordHash": "argon2id$...or TLS raw password",
+    "roleType": "parent_guardian",
     "acceptedTermsVersion": "v2.0-draft"
   }
   ```
+- **Role Differentiation:**
+  - `parent_guardian`: "Parent or Legally Authorized Guardian" — potentially eligible to provide guardian authorization after verification.
+  - `mentor_advisor`: "Mentor, Teacher, or Educational Advisor" — separate support role without legal guardian consent authority.
+- **Student Linking Security Rule:**
+  - Initial parent signup does NOT ask for or accept a student invite code or student private data.
+  - Student linking occurs exclusively post-verification in an authenticated session via `POST /api/v1/guardian/link-student` with mutual student consent.
 - **Response 201 Created:**
   ```json
   {
@@ -98,7 +103,8 @@ This document specifies the 10 core API endpoints required to transition student
     "email": "meera.sharma@example.com",
     "fullName": "Meera Sharma",
     "role": "parent",
-    "relationship": "parent",
+    "roleType": "parent_guardian",
+    "canAuthorizeMinors": true,
     "emailVerified": false,
     "linkedStudentsCount": 0,
     "nextStep": "verify_email",
@@ -144,25 +150,36 @@ This document specifies the 10 core API endpoints required to transition student
 
 ---
 
-### 2.4 Age & Access Eligibility Check
+### 2.4 Age & Access Eligibility Check (3-Tier Framework)
 - **Endpoint:** `POST /api/v1/auth/eligibility/check-age`
 - **Request Body:**
   ```json
   {
-    "academicStage": "classes-4-7",
-    "ageCategory": "under_13",
+    "academicStage": "classes-11-12",
+    "ageCategory": "13_to_17",
     "countryCode": "IN"
   }
   ```
-- **Response 200 OK:**
+- **Response 200 OK (Ages 13–17 Teen Framework):**
+  ```json
+  {
+    "eligible": true,
+    "accessStatus": "teen_guardian_required",
+    "requiresGuardianConsent": true,
+    "minimumAgeForIndependentAccess": 18,
+    "explanation": "Secondary students (ages 13–17) can configure profiles; continuous platform exploration requires verified guardian authorization under phased DPDP minor protection guidelines.",
+    "applicableLaw": "Draft Framework for Minor Safety & DPDP Phased Implementation"
+  }
+  ```
+- **Response 200 OK (Under 13 Guardian-Led):**
   ```json
   {
     "eligible": true,
     "accessStatus": "guardian_required",
     "requiresGuardianConsent": true,
     "minimumAgeForIndependentAccess": 18,
-    "explanation": "Students in Classes 4–7 explore with active guardian support under the Indian DPDP Act minor consent framework.",
-    "applicableLaw": "Digital Personal Data Protection Act 2023 (India)"
+    "explanation": "Learners under 13 require parental or legal guardian co-setup before platform entry.",
+    "applicableLaw": "Draft Framework for Minor Safety & DPDP Phased Implementation"
   }
   ```
 
@@ -170,7 +187,7 @@ This document specifies the 10 core API endpoints required to transition student
 
 ## 3. Flow 3 Transition Contract
 
-When a student successfully authenticates and passes access verification, the frontend navigates to:
+When a student successfully authenticates and passes access verification, the backend issues an authenticated HTTP-only session cookie and redirects the frontend to:
 ```
 /onboarding?stage={validated_stage_id}
 ```
@@ -187,6 +204,31 @@ When a student successfully authenticates and passes access verification, the fr
 
 ---
 
-## 4. Frontend Adapter Implementation Note
+## 4. Security Architecture Specification for Havyas
 
-The frontend provides `src/lib/auth-adapter.ts` which mirrors these exact request and response interfaces. When Havyas is ready to connect the live Supabase / Node.js backend, swapping the mock adapter for the `fetch()` network layer requires zero UI component refactoring.
+### 4.1 Session Management
+- **HTTP-Only Cookies:** Sessions MUST be stored in secure HTTP-only cookies (`__Host-nextmove-session`) with `SameSite=Lax` (or `Strict`), `Secure: true`, and `Path=/`.
+- **No Client Credential Storage:** The client application never accesses or stores session tokens in `localStorage` or `sessionStorage`.
+- **CSRF Defense:** State-changing requests (`POST`, `PUT`, `DELETE`) require an anti-CSRF token (Double Submit Cookie or custom header `X-CSRF-Token`).
+
+### 4.2 Authentication Provider Integration Options
+1. **Option A: Supabase Auth (Recommended)**
+   - Use Supabase GoTrue Auth with server-side cookie handlers (`@supabase/ssr`).
+   - Store role (`student`, `parent`, `admin`), `academic_stage`, and `guardian_authorization_status` in JWT custom user metadata and `profiles` table with Row Level Security (RLS).
+2. **Option B: Node.js / FastAPI Custom Auth Server**
+   - Issue cryptographically signed session IDs stored in Redis or PostgreSQL.
+   - Use Argon2id for password hashing.
+   - Enforce rate-limiting using Redis token bucket algorithms (e.g. max 5 failed attempts per IP/account per 15 minutes).
+
+### 4.3 Flow 3 Gatekeeper Verification
+Before allowing access to `/onboarding`, the backend API gateway or middleware verifies:
+1. `session.authenticated === true`
+2. `user.email_verified === true`
+3. If `user.age < 18` or `user.access_status === "teen_guardian_required"`, confirm `guardian_consent_status === "approved"`.
+4. If consent is pending, route to `/verify?type=guardian_pending`.
+
+---
+
+## 5. Frontend Adapter Implementation Note
+
+The frontend provides `src/lib/auth-adapter.ts` which mirrors these exact request and response interfaces. When Havyas is ready to connect the live backend, swapping the mock adapter for the `fetch()` network layer requires zero UI component refactoring.

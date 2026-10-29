@@ -29,6 +29,7 @@ const STEPS: StepItem[] = [
 function StudentSignUpContent() {
   const searchParams = useSearchParams();
   const stageParam = searchParams.get("stage");
+  const accessParam = searchParams.get("access");
   const stage = getValidatedStage(stageParam);
 
   const [displayName, setDisplayName] = useState("");
@@ -40,6 +41,46 @@ function StudentSignUpContent() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [submissionFeedback, setSubmissionFeedback] = useState<string | null>(null);
+
+  // If no stage is provided or stage is invalid, require student to pick a stage first
+  if (!stage) {
+    return (
+      <AuthLayout
+        role="student"
+        backHref="/get-started/student"
+        backLabel="Choose Stage"
+        activeStep={2}
+        totalSteps={4}
+        stepTitle="Stage Required"
+      >
+        <AuthCard>
+          <div className="text-center py-6 space-y-4">
+            <h1 className="text-2xl font-black text-[#171A2B]">
+              No Academic Stage Selected
+            </h1>
+            <p className="text-sm text-[#626987] max-w-md mx-auto leading-relaxed">
+              Please select your academic stage first so we can tailor your signup experience appropriately.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/get-started/student"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#6757F5] text-white font-bold hover:bg-[#5342E8] shadow-md transition-colors"
+              >
+                <span>Select Your Stage</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </AuthCard>
+      </AuthLayout>
+    );
+  }
+
+  const isTeen =
+    accessParam === "teen" ||
+    stage.id === "classes-4-7" ||
+    stage.id === "classes-8-10" ||
+    stage.id === "classes-11-12";
 
   const validateForm = () => {
     const errs: Record<string, string> = {};
@@ -131,13 +172,26 @@ function StudentSignUpContent() {
         </div>
 
         {/* Recognized Stage Pill */}
-        <div className="mb-6">
+        <div className="mb-4">
           <StageBadge
             stage={stage}
             editHref={`/get-started/student?stage=${stage.id}`}
             showEdit={true}
           />
         </div>
+
+        {/* Teen Minor Notice (if under 18) */}
+        {isTeen && (
+          <div className="mb-5 p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-left space-y-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Under-18 Account Entry (Phased Minor Protection)</span>
+            </div>
+            <p className="text-[11px] text-indigo-800 leading-relaxed">
+              Your personal profile will be created now. Under child-data protection guidelines, full continuous exploration and recommendations will require guardian authorization and linking confirmation before activation.
+            </p>
+          </div>
+        )}
 
         {/* Minimal Signup Form */}
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -174,7 +228,7 @@ function StudentSignUpContent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
-            hint="Minimum 8 characters"
+            hint="Minimum 8 characters. Demo Note: Do NOT enter a real personal password; use a sample value like DemoPass123!."
             required
             autoComplete="new-password"
           />
@@ -273,7 +327,7 @@ function StudentSignUpContent() {
 
         {/* Prototype Scope Banner */}
         <div className="mt-6">
-          <PrototypeNotice message="No real credentials are saved or logged. Full authentication, OAuth, and student profile persistence will be integrated with Supabase in backend release." />
+          <PrototypeNotice message="Prototype Mode: No credentials, tokens, or sessions are stored or transmitted. Do not enter a real or personal password." />
         </div>
 
         {/* Footer Link */}

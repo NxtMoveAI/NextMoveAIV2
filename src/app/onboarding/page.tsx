@@ -19,9 +19,45 @@ function OnboardingHandoffContent() {
   const searchParams = useSearchParams();
   const stageParam = searchParams.get("stage");
   const stage = getValidatedStage(stageParam);
-  const stageCopy = STAGE_AWARE_COPY[stage.id];
-
   const isPreview = searchParams.get("preview") === "true";
+
+  if (!stage) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col justify-between">
+        <header className="border-b border-[#E8E6F3] bg-white sticky top-0 z-40">
+          <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3">
+              <span className="font-extrabold text-base tracking-tight text-[#171A2B]">
+                Next Move <span className="text-[#6757F5]">AI</span>
+              </span>
+            </Link>
+          </div>
+        </header>
+
+        <main className="max-w-md w-full mx-auto px-4 py-12 flex-1 flex flex-col justify-center">
+          <div className="p-8 rounded-3xl bg-white border border-[#DDD8FE] shadow-xl text-center space-y-4">
+            <h1 className="text-xl font-bold text-[#171A2B]">
+              Academic Stage Required
+            </h1>
+            <p className="text-xs text-[#626987] leading-relaxed">
+              To preview or begin Flow 3 onboarding, please select an academic stage first.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/get-started/student"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs font-bold hover:bg-[#5342E8] shadow-md transition-colors"
+              >
+                <span>Select Academic Stage</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const stageCopy = STAGE_AWARE_COPY[stage.id];
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col justify-between">
@@ -129,11 +165,14 @@ function OnboardingHandoffContent() {
             </ul>
           </div>
 
-          {/* Safety & Scope Notice */}
-          <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] text-left text-xs text-[#626987] flex items-start gap-2">
-            <Lock className="w-4 h-4 text-[#6757F5] shrink-0 mt-0.5" />
+          {/* Transition Security Architecture Notice */}
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-left text-xs text-amber-900 space-y-2">
+            <div className="flex items-center gap-2 font-bold">
+              <Lock className="w-4 h-4 text-amber-700 shrink-0" />
+              <span>Backend Transition Contract (Design Preview Only)</span>
+            </div>
             <p className="leading-relaxed">
-              <strong>Scope Boundary:</strong> In accordance with development plan instructions, Flow 3 will be engineered in the next phase. No fake accounts or mock profiles are generated.
+              This preview screen demonstrates the handoff contract from Flow 2 carrying the validated academic stage. In production, entry requires an authenticated HTTP-only session issued by Havyas, verified email ownership, and guardian authorization for under-18 learners. No fake accounts or mock sessions are created.
             </p>
           </div>
 

@@ -198,66 +198,68 @@ function VerifyContent() {
           </div>
         )}
 
-        {/* QA Mode Switcher for Quick State Review */}
-        <div className="mt-8 pt-4 border-t border-[#E8E6F3] text-left space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
-            <span>QA Verification States:</span>
+        {/* QA Mode Switcher for Quick State Review (Development Only) */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-8 pt-4 border-t border-[#E8E6F3] text-left space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
+              <span>QA Verification States (Dev Only):</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[10px]">
+              <button
+                type="button"
+                onClick={() => setActiveType("email_pending")}
+                className={`p-2 rounded-lg border text-center transition-colors ${
+                  activeType === "email_pending"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Email Pending
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveType("email_expired")}
+                className={`p-2 rounded-lg border text-center transition-colors ${
+                  activeType === "email_expired"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Link Expired
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveType("guardian_pending")}
+                className={`p-2 rounded-lg border text-center transition-colors ${
+                  activeType === "guardian_pending"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Guardian Pending
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveType("backend_unavailable")}
+                className={`p-2 rounded-lg border text-center transition-colors ${
+                  activeType === "backend_unavailable"
+                    ? "bg-[#6757F5] text-white border-[#6757F5]"
+                    : "bg-white text-[#31364F] border-[#E8E6F3]"
+                }`}
+              >
+                Unavailable
+              </button>
+            </div>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[10px]">
-            <button
-              type="button"
-              onClick={() => setActiveType("email_pending")}
-              className={`p-2 rounded-lg border text-center transition-colors ${
-                activeType === "email_pending"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Email Pending
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveType("email_expired")}
-              className={`p-2 rounded-lg border text-center transition-colors ${
-                activeType === "email_expired"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Link Expired
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveType("guardian_pending")}
-              className={`p-2 rounded-lg border text-center transition-colors ${
-                activeType === "guardian_pending"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Guardian Pending
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveType("backend_unavailable")}
-              className={`p-2 rounded-lg border text-center transition-colors ${
-                activeType === "backend_unavailable"
-                  ? "bg-[#6757F5] text-white border-[#6757F5]"
-                  : "bg-white text-[#31364F] border-[#E8E6F3]"
-              }`}
-            >
-              Unavailable
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* Prototype Scope Banner */}
         <div className="mt-5">
-          <PrototypeNotice message="Verification actions are simulated in frontend prototype mode. Havyas will configure Supabase Auth email redirect links and token verification." />
+          <PrototypeNotice message="Prototype Mode: Verification states shown for UI evaluation. Live email token validation is managed by Havyas's backend." />
         </div>
       </AuthCard>
     </AuthLayout>

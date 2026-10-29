@@ -19,7 +19,8 @@ export type UserRole = "student" | "parent" | "admin";
 
 export type AccessRouteStatus =
   | "standard_eligible"        // 18+ or standard legal digital consent
-  | "guardian_required"        // Minors requiring parental/guardian authorization
+  | "teen_guardian_required"   // Teen (13-17) requiring guardian authorization
+  | "guardian_required"        // Under 13 requiring parental/guardian co-setup
   | "verification_pending"     // Email or identity verification awaiting completion
   | "guardian_pending"         // Waiting on guardian approval
   | "incomplete_data"          // Missing required age/jurisdiction data
@@ -29,6 +30,7 @@ export type GuardianRelationType =
   | "parent"
   | "legal_guardian"
   | "educator_sponsor"
+  | "mentor_advisor"
   | "other";
 
 export type VerificationType =
