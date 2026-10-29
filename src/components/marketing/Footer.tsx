@@ -143,13 +143,13 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link href="/onboarding" className="hover:text-white transition-colors">
-                  Onboarding Entry
+                <Link href="/get-started" className="hover:text-white transition-colors">
+                  Get Started (Role Entry)
                 </Link>
               </li>
               <li>
                 <Link href="/sign-in" className="hover:text-white transition-colors">
-                  Sign In (Phase 2 Preview)
+                  Sign In
                 </Link>
               </li>
             </ul>

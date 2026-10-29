@@ -4,44 +4,49 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { ACADEMIC_STAGES } from "@/data/landing-demo";
 import {
   ArrowLeft,
   Sparkles,
   CheckCircle2,
   GraduationCap,
-  ShieldAlert,
+  Layers,
+  ArrowRight,
+  Lock,
 } from "lucide-react";
+import { getValidatedStage, STAGE_AWARE_COPY } from "@/data/flow2-config";
 
-function OnboardingContent() {
+function OnboardingHandoffContent() {
   const searchParams = useSearchParams();
-  const stageParam = searchParams.get("stage") || "classes-11-12";
-  const stageData =
-    ACADEMIC_STAGES.find((s) => s.id === stageParam) || ACADEMIC_STAGES[2];
+  const stageParam = searchParams.get("stage");
+  const stage = getValidatedStage(stageParam);
+  const stageCopy = STAGE_AWARE_COPY[stage.id];
+
+  const isPreview = searchParams.get("preview") === "true";
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-[#E8E6F3] bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-[#E8E6F3] flex items-center justify-center">
+      {/* Top Header */}
+      <header className="border-b border-[#E8E6F3] bg-white sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-[#E8E6F3] flex items-center justify-center group-hover:border-[#6757F5]/50 transition-colors">
               <Image
                 src="/logo.png"
                 alt="Next Move AI"
                 width={32}
                 height={32}
                 className="object-contain"
+                priority
               />
             </div>
-            <span className="font-bold text-lg tracking-tight">
+            <span className="font-extrabold text-base tracking-tight text-[#171A2B]">
               Next Move <span className="text-[#6757F5]">AI</span>
             </span>
           </Link>
 
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#626987] hover:text-[#171A2B] px-3 py-1.5 rounded-lg border border-[#E8E6F3] hover:bg-[#FAF9F6]"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#626987] hover:text-[#171A2B] px-3 py-1.5 rounded-lg border border-[#E8E6F3] hover:bg-[#FAF9F6] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Landing Page</span>
@@ -50,88 +55,111 @@ function OnboardingContent() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-2xl mx-auto px-4 py-12 flex-1 flex flex-col justify-center">
-        <div className="p-8 sm:p-10 rounded-3xl bg-white border border-[#DDD8FE] shadow-xl text-center">
+      <main className="max-w-2xl w-full mx-auto px-4 py-10 flex-1 flex flex-col justify-center">
+        <div className="p-8 sm:p-10 rounded-3xl bg-white border border-[#DDD8FE] shadow-xl text-center space-y-6">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-6 border border-[#DDD8FE]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider border border-[#DDD8FE]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Phase 2 Handoff Destination</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#171A2B] tracking-tight">
-            Ready to Begin Your Onboarding Journey
-          </h1>
-
-          <p className="mt-3 text-sm text-[#31364F] leading-relaxed">
-            You navigated from the landing page with your selected academic stage:
-          </p>
-
-          {/* Academic Stage Preview Box */}
-          <div className="mt-6 p-4 rounded-2xl bg-[#FAF9F6] border border-[#DDD8FE] flex items-center justify-between text-left">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#6757F5] text-white flex items-center justify-center">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-[#6757F5] uppercase tracking-wider block">
-                  Preserved Selection
-                </span>
-                <span className="text-base font-bold text-[#171A2B]">
-                  {stageData.label} ({stageData.sublabel})
-                </span>
-              </div>
-            </div>
-            <span className="text-xs font-semibold text-[#626987] bg-white px-2.5 py-1 rounded-md border border-[#E8E6F3]">
-              {stageData.ageRange}
+            <span>
+              {isPreview
+                ? "Flow 3 Preview Mode"
+                : "Flow 3 Transition Contract Destination"}
             </span>
           </div>
 
-          {/* Upcoming Phase Notice */}
-          <div className="mt-6 p-5 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#6757F5]">
-              <ShieldAlert className="w-4 h-4" />
-              <span>Upcoming Phase 2 Implementation Notice</span>
-            </div>
-            <p className="text-xs text-[#626987] leading-relaxed">
-              In Phase 2, backend services engineered by Havyas will provide:
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#171A2B] tracking-tight">
+              Adaptive Student Onboarding
+            </h1>
+
+            <p className="mt-2 text-sm text-[#474D66] leading-relaxed max-w-lg mx-auto">
+              You arrived from Flow 2 with your verified academic stage. Flow 3 will dynamically personalize your starting exploration.
             </p>
-            <ul className="space-y-1.5 text-xs text-[#31364F]">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#35B8C5]" />
-                <span>Role selection (Student / Parent)</span>
+          </div>
+
+          {/* Preserved Stage Card */}
+          <div className="p-5 rounded-2xl bg-[#FAF9F6] border border-[#DDD8FE] text-left space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6757F5] flex items-center gap-1.5">
+                <GraduationCap className="w-4 h-4" />
+                <span>Carried Forward Stage Identifier</span>
+              </span>
+              <span className="text-xs font-semibold text-[#626987] bg-white px-2.5 py-1 rounded-md border border-[#E8E6F3]">
+                {stage.ageRange}
+              </span>
+            </div>
+
+            <div className="text-lg font-black text-[#171A2B]">
+              {stage.label} ({stage.sublabel})
+            </div>
+
+            <div className="p-3 rounded-xl bg-white border border-[#E8E6F3] text-xs text-[#31364F] space-y-1">
+              <div className="font-bold text-[#6757F5]">Stage Contextual Focus:</div>
+              <p className="leading-relaxed">&ldquo;{stageCopy.tagline}&rdquo;</p>
+              <p className="text-[11px] text-[#626987]">{stageCopy.subtext}</p>
+            </div>
+          </div>
+
+          {/* Upcoming Flow 3 Milestones */}
+          <div className="p-5 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-3">
+            <div className="text-xs font-bold text-[#6757F5] uppercase tracking-wider flex items-center gap-1.5">
+              <Layers className="w-4 h-4" />
+              <span>Upcoming Flow 3 Modules (Scheduled Next Phase)</span>
+            </div>
+
+            <ul className="space-y-2 text-xs text-[#31364F]">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0 mt-0.5" />
+                <span>
+                  <strong>1. Curiosity Discovery:</strong> Deep-dive into specific sub-domains without forced career tests.
+                </span>
               </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#35B8C5]" />
-                <span>Age verification, parental consent & secure Supabase auth</span>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0 mt-0.5" />
+                <span>
+                  <strong>2. Starter Micro-Trial:</strong> Experience a hands-on 15-minute practical challenge.
+                </span>
               </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#35B8C5]" />
-                <span>Adaptive onboarding & starting student intelligence profile</span>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0 mt-0.5" />
+                <span>
+                  <strong>3. Student Workspace Activation:</strong> Generate your starter private roadmap.
+                </span>
               </li>
             </ul>
           </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* Safety & Scope Notice */}
+          <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3] text-left text-xs text-[#626987] flex items-start gap-2">
+            <Lock className="w-4 h-4 text-[#6757F5] shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Scope Boundary:</strong> In accordance with development plan instructions, Flow 3 will be engineered in the next phase. No fake accounts or mock profiles are generated.
+            </p>
+          </div>
+
+          {/* Action Navigation */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href={`/get-started/student?stage=${stage.id}`}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-xs font-bold text-[#6757F5] bg-white border border-[#DDD8FE] hover:bg-[#EDEAFF] transition-colors"
+            >
+              <span>Edit Stage ({stage.label})</span>
+            </Link>
+
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 transition-all"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Landing Page</span>
-            </Link>
-            <Link
-              href="/#explorer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-[#31364F] bg-white border border-[#E8E6F3] hover:bg-[#FAF9F6]"
-            >
-              <span>Explore Other Stages</span>
+              <span>Return to Landing Page</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="py-6 border-t border-[#E8E6F3] text-center text-xs text-[#626987]">
-        A product by Navlore AI Technologies LLP.
+      <footer className="border-t border-[#E8E6F3] bg-white py-4 text-center text-xs text-[#626987]">
+        © {new Date().getFullYear()} Next Move AI — Flow 3 Adaptive Onboarding will connect here.
       </footer>
     </div>
   );
@@ -139,8 +167,14 @@ function OnboardingContent() {
 
 export default function OnboardingPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center">Loading handoff...</div>}>
-      <OnboardingContent />
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center text-sm text-[#626987]">
+          Loading...
+        </div>
+      }
+    >
+      <OnboardingHandoffContent />
     </Suspense>
   );
 }

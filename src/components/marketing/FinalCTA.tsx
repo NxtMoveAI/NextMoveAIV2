@@ -31,7 +31,7 @@ export function FinalCTA() {
         {/* CTAs */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            href="/onboarding"
+            href="/get-started"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_12px_30px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_16px_36px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
           >
             <span>Start Exploring</span>

@@ -1,106 +1,280 @@
 "use client";
 
-import React from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
-  Sparkles,
   Lock,
-  ShieldCheck,
   ArrowRight,
+  ShieldCheck,
+  AlertTriangle,
+  Loader2,
+  Sliders,
 } from "lucide-react";
+import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { FormField } from "@/components/auth/FormField";
+import { PrototypeNotice } from "@/components/auth/PrototypeNotice";
+import { submitSignIn } from "@/lib/auth-adapter";
+
+function SignInContent() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  // QA simulation state switcher
+  const [simState, setSimState] = useState<
+    "normal" | "backend_unavailable" | "unverified_email" | "guardian_pending"
+  >("normal");
+
+  const validate = () => {
+    const errs: Record<string, string> = {};
+
+    if (!email.trim()) {
+      errs.email = "Please enter your email address.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errs.email = "Please enter a valid email address.";
+    }
+
+    if (!password) {
+      errs.password = "Please enter your password.";
+    }
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsLoading(true);
+    setFeedback(null);
+
+    const result = await submitSignIn(
+      {
+        email,
+        passwordHash: "not_logged_or_persisted",
+      },
+      simState === "normal" ? "success" : simState
+    );
+
+    setIsLoading(false);
+
+    if (result.success) {
+      setFeedback(
+        "Authentication request submitted. When secure backend authentication is connected by Havyas, you will be redirected to your personal dashboard or onboarding."
+      );
+    } else if (result.error) {
+      if (result.error.errorCode === "UNVERIFIED_EMAIL") {
+        router.push("/verify?type=email_pending");
+      } else if (result.error.errorCode === "GUARDIAN_APPROVAL_PENDING") {
+        router.push("/verify?type=guardian_pending");
+      } else {
+        setErrors({ form: result.error.message });
+      }
+    }
+  };
+
+  return (
+    <AuthLayout
+      role="general"
+      backHref="/"
+      backLabel="Return to Landing Page"
+    >
+      <AuthCard>
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-2 border border-[#DDD8FE]">
+            <Lock className="w-3.5 h-3.5" />
+            <span>Secure Access</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black text-[#171A2B] tracking-tight">
+            Welcome back. Your journey continues.
+          </h1>
+
+          <p className="mt-2 text-xs sm:text-sm text-[#626987] leading-relaxed">
+            Sign in to access your private exploration space, evidence log, or parent summaries.
+          </p>
+        </div>
+
+        {/* Sign In Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
+          <FormField
+            id="signin-email"
+            label="Email Address"
+            type="email"
+            placeholder="student@example.com or parent@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={errors.email}
+            required
+            autoComplete="email"
+          />
+
+          <div>
+            <FormField
+              id="signin-password"
+              label="Password"
+              isPassword
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={errors.password}
+              required
+              autoComplete="current-password"
+            />
+
+            <div className="mt-1.5 text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs font-semibold text-[#6757F5] hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+
+          {errors.form && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <span>{errors.form}</span>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Authenticating...</span>
+              </>
+            ) : (
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Feedback / Pending State Message */}
+        {feedback && (
+          <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-left space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
+              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <span>Backend Authentication Pending</span>
+            </div>
+            <p className="text-xs text-amber-900 leading-relaxed">{feedback}</p>
+          </div>
+        )}
+
+        {/* QA Simulation Switcher */}
+        <div className="mt-6 pt-4 border-t border-[#E8E6F3] text-left space-y-2">
+          <div className="flex items-center justify-between text-[11px] text-[#626987] font-semibold">
+            <span className="flex items-center gap-1">
+              <Sliders className="w-3 h-3 text-[#6757F5]" />
+              <span>QA Backend Response Simulator:</span>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+            <button
+              type="button"
+              onClick={() => {
+                setSimState("normal");
+                setErrors({});
+              }}
+              className={`p-2 rounded-lg border text-left transition-colors ${
+                simState === "normal"
+                  ? "bg-[#6757F5] text-white border-[#6757F5]"
+                  : "bg-white text-[#31364F] border-[#E8E6F3]"
+              }`}
+            >
+              1. Standard Pending
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSimState("backend_unavailable");
+                setErrors({});
+              }}
+              className={`p-2 rounded-lg border text-left transition-colors ${
+                simState === "backend_unavailable"
+                  ? "bg-[#6757F5] text-white border-[#6757F5]"
+                  : "bg-white text-[#31364F] border-[#E8E6F3]"
+              }`}
+            >
+              2. Backend 503 Unavailable
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSimState("unverified_email");
+                setErrors({});
+              }}
+              className={`p-2 rounded-lg border text-left transition-colors ${
+                simState === "unverified_email"
+                  ? "bg-[#6757F5] text-white border-[#6757F5]"
+                  : "bg-white text-[#31364F] border-[#E8E6F3]"
+              }`}
+            >
+              3. Unverified Email (403)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSimState("guardian_pending");
+                setErrors({});
+              }}
+              className={`p-2 rounded-lg border text-left transition-colors ${
+                simState === "guardian_pending"
+                  ? "bg-[#6757F5] text-white border-[#6757F5]"
+                  : "bg-white text-[#31364F] border-[#E8E6F3]"
+              }`}
+            >
+              4. Guardian Pending (403)
+            </button>
+          </div>
+        </div>
+
+        {/* Prototype Scope Banner */}
+        <div className="mt-5">
+          <PrototypeNotice message="Credentials entered are never persisted in localStorage or logs. When live authentication is connected, the backend will determine your role and redirect destination." />
+        </div>
+
+        {/* New User Action */}
+        <div className="mt-6 pt-4 border-t border-[#E8E6F3] text-center text-xs text-[#626987]">
+          <span>New to Next Move AI? </span>
+          <Link
+            href="/get-started"
+            className="font-bold text-[#6757F5] hover:underline"
+          >
+            Get Started
+          </Link>
+        </div>
+      </AuthCard>
+    </AuthLayout>
+  );
+}
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-[#E8E6F3] bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-[#E8E6F3] flex items-center justify-center">
-              <Image
-                src="/logo.png"
-                alt="Next Move AI"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
-            </div>
-            <span className="font-bold text-lg tracking-tight">
-              Next Move <span className="text-[#6757F5]">AI</span>
-            </span>
-          </Link>
-
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#626987] hover:text-[#171A2B] px-3 py-1.5 rounded-lg border border-[#E8E6F3] hover:bg-[#FAF9F6]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Landing Page</span>
-          </Link>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center text-sm text-[#626987]">
+          Loading...
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-xl mx-auto px-4 py-12 flex-1 flex flex-col justify-center">
-        <div className="p-8 sm:p-10 rounded-3xl bg-white border border-[#DDD8FE] shadow-xl text-center">
-          {/* Lock Icon */}
-          <div className="w-12 h-12 rounded-2xl bg-[#EDEAFF] text-[#6757F5] flex items-center justify-center mx-auto mb-5">
-            <Lock className="w-6 h-6" />
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F6] text-[#626987] text-xs font-semibold border border-[#E8E6F3] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#6757F5]" />
-            <span>Phase 2 Authentication Route</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#171A2B] tracking-tight">
-            Student & Parent Sign In
-          </h1>
-
-          <p className="mt-3 text-sm text-[#626987] leading-relaxed">
-            Authentication, age verification, and student profile persistence are scheduled
-            for Phase 2 backend integration with Supabase.
-          </p>
-
-          <div className="mt-6 p-5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6F3] text-left space-y-2.5">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#6757F5]">
-              Scope Boundary Notice:
-            </div>
-            <p className="text-xs text-[#31364F] leading-relaxed">
-              In accordance with Phase 1 design boundaries, no fake login forms or dummy
-              credentials are used. You can explore all interactive features directly on
-              the landing page without an account!
-            </p>
-            <div className="pt-2 flex items-center gap-2 text-xs text-[#35B8C5] font-semibold">
-              <ShieldCheck className="w-4 h-4 shrink-0" />
-              <span>Full privacy by design — no credentials collected in public preview</span>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/#explorer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
-            >
-              <span>Explore Without Account</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-[#31364F] bg-white border border-[#E8E6F3] hover:bg-[#FAF9F6]"
-            >
-              <span>Back to Home</span>
-            </Link>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-6 border-t border-[#E8E6F3] text-center text-xs text-[#626987]">
-        A product by Navlore AI Technologies LLP.
-      </footer>
-    </div>
+      }
+    >
+      <SignInContent />
+    </Suspense>
   );
 }

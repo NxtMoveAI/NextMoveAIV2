@@ -1408,7 +1408,7 @@ export function StudentExplorer() {
             </div>
 
             <Link
-              href={`/onboarding?stage=${selectedStage}`}
+              href={`/get-started/student?stage=${selectedStage}`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 hover:shadow-lg transition-all duration-200 group whitespace-nowrap active:scale-[0.98]"
             >
               <span>Start My Journey with {currentStageData.label}</span>

@@ -114,7 +114,7 @@ export function Header() {
             Sign In
           </Link>
           <Link
-            href="/onboarding"
+            href="/get-started"
             className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98]"
           >
             <span>Get Started</span>
@@ -125,7 +125,7 @@ export function Header() {
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center gap-2">
           <Link
-            href="/onboarding"
+            href="/get-started"
             className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
           >
             Get Started
@@ -181,7 +181,7 @@ export function Header() {
               </div>
 
               <Link
-                href="/onboarding"
+                href="/get-started"
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
               >
