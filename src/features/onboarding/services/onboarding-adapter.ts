@@ -19,6 +19,8 @@ import {
 } from "../schemas/types";
 import { createInitialOnboardingState } from "../data/questions";
 
+import { studentProfileStore } from "@/features/student-home/services/profile-store";
+
 // =============================================================================
 // 1. RECOMMENDATION GENERATOR (HEURISTIC FIXTURE ENGINE)
 // Generates curated exploration ideas with explicit "What Remains Unknown"
@@ -665,7 +667,7 @@ export const onboardingAdapter: OnboardingAdapter = {
   async submitConfirmedProfile(
     profile: StudentIntelligenceProfile
   ): Promise<{ success: boolean; confirmationId: string; nextHandoff: string }> {
-    void profile;
+    studentProfileStore.setConfirmedProfile(profile);
     await new Promise((r) => setTimeout(r, 120));
     return {
       success: true,

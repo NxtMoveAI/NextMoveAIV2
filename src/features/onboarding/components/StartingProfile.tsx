@@ -9,6 +9,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   Sparkles,
   GraduationCap,
@@ -556,6 +557,18 @@ export function StartingProfile({
             )}
           </button>
         </div>
+
+        {isConfirmed && (
+          <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <Link
+              href="/dashboard/student"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-xs font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-lg shadow-[#6757F5]/25 transition-all transform hover:-translate-y-0.5"
+            >
+              <span>Enter My Student Workspace</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
 
         {/* Development Demo Notice */}
         <div className="pt-4 border-t border-[#E8E6F3] text-[11px] text-[#626987] max-w-lg mx-auto flex items-center justify-center gap-1.5">

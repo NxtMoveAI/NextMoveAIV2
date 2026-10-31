@@ -18,7 +18,7 @@ import {
   FastForward,
 } from "lucide-react";
 import { type AcademicStageId } from "@/data/landing-demo";
-import { type ActivityAttemptResult } from "../schemas/types";
+import { type ActivityAttemptResult, type ActivityOption } from "../schemas/types";
 import { STAGE_MICRO_ACTIVITIES, type MicroActivity } from "../data/activities";
 
 interface MicroExplorationProps {
@@ -89,7 +89,7 @@ export function MicroExploration({
             Select your response:
           </div>
 
-          {activity.options.map((opt) => {
+          {activity.options.map((opt: ActivityOption) => {
             const isThisChosen = selectedOpt === opt.id || attempt?.selectedOptionId === opt.id;
             const showFeedback = hasAnswered && isThisChosen;
 

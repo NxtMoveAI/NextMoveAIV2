@@ -9,7 +9,9 @@
  */
 
 import { type AcademicStageId } from "@/data/landing-demo";
-import { type MicroActivity, type AcademicContextData } from "../schemas/types";
+import { type MicroActivity, type ActivityOption, type AcademicContextData } from "../schemas/types";
+
+export type { MicroActivity, ActivityOption };
 
 // =============================================================================
 // COMPLETE DIVERSE ACTIVITIES CATALOG
@@ -550,6 +552,12 @@ export function resolveMicroActivity(
         return (
           MICRO_ACTIVITIES_CATALOG.find((a) => a.id === "act_mech_manufacturing") ||
           MICRO_ACTIVITIES_CATALOG[7]
+        );
+      }
+      if (isDiplomaElectricalOrTech) {
+        return (
+          MICRO_ACTIVITIES_CATALOG.find((a) => a.id === "act_telemetry_diagnostic") ||
+          MICRO_ACTIVITIES_CATALOG[6]
         );
       }
       return (

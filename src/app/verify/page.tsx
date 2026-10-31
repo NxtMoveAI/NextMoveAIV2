@@ -24,6 +24,16 @@ function VerifyContent() {
   const [activeType, setActiveType] = useState<VerificationType>(initialType);
   const [resendStatus, setResendStatus] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (activeType === "guardian_pending") {
+        sessionStorage.setItem("access_status", "guardian_pending");
+      } else {
+        sessionStorage.removeItem("access_status");
+      }
+    }
+  }, [activeType]);
+
   const handleResend = () => {
     setResendStatus("Simulated verification link re-sent! Check your inbox.");
     setTimeout(() => setResendStatus(null), 4000);
