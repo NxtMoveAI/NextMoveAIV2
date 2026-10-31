@@ -61,7 +61,7 @@ export function StartingPointStep({
         <div className="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#DDD8FE] text-left flex items-start gap-2.5">
           <HelpCircle className="w-4 h-4 text-[#6757F5] shrink-0 mt-0.5" />
           <p className="text-xs text-[#474D66] leading-relaxed">
-            <strong>Student Intelligence Guarantee:</strong> Next Move AI preserves a strict boundary between <em>self-reported familiarity</em> and <em>demonstrated work</em>. We never convert self-ratings into fake psychometric or general aptitude scores.
+            <strong>Evidence Integrity Principle:</strong> Next Move AI preserves a strict boundary between <em>self-reported familiarity</em> and <em>demonstrated work</em>. We never convert self-ratings into fake psychometric or general aptitude scores.
           </p>
         </div>
 

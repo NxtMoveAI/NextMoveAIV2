@@ -186,36 +186,39 @@ export const MICRO_ACTIVITIES_CATALOG: MicroActivity[] = [
     stageId: "classes-11-12",
     type: "decision_tradeoff",
     title: "The Educational Pathway & Skill Trade-Off Matrix",
-    subtitle: "Evaluate realistic career readiness constraints between two higher education pathways.",
+    subtitle: "Evaluate multi-dimensional trade-offs between higher education pathways after Class 12.",
     estimatedMinutes: 5,
     scenario:
-      "Student A chooses a traditional 4-year degree focusing purely on theoretical coursework with zero portfolio projects. Student B pursues a 3-year applied degree with 2 published open-source applications, Git commit history, and a specialized cloud certification. When applying for modern junior tech/product roles, which observation reflects industry reality?",
+      "When evaluating higher education pathways after Class 12 (such as a 4-year structured university degree versus a 3-year applied degree or diploma route), which perspective best captures realistic trade-offs across curriculum, cost, and practical readiness?",
     options: [
       {
         id: "opt_1",
-        label: "Student B has stronger verifiable hiring evidence; modern technology teams evaluate demonstrable capability over degree pedigree alone.",
+        label:
+          "Both pathways involve trade-offs: 4-year programs provide structured theoretical depth and institutional campus pipelines, while 3-year applied routes offer lower direct cost and earlier practical entry. Success in either path depends on complementing coursework with verifiable practical evidence.",
         isCorrect: true,
         feedback:
-          "Accurate. Industry hiring data consistently shows that verified project artifacts, public code repositories, and practical problem-solving carry enormous weight alongside degree foundations.",
+          "Balanced and accurate. Real-world career outcomes depend on aligning curriculum depth, financial constraints, and practical project proof with personal learning goals rather than assuming one format is universally superior.",
       },
       {
         id: "opt_2",
-        label: "Student A is automatically preferred everywhere because 4-year degrees always guarantee immediate job readiness.",
+        label:
+          "A 4-year degree is always universally superior for every student, guaranteeing immediate job readiness without requiring any internships or practical projects.",
         isCorrect: false,
         feedback:
-          "A common misconception. Degrees provide valuable theoretical foundations, but without demonstrable practical work, candidates face significant skill gaps.",
+          "An oversimplified assumption. While formal 4-year degrees offer strong foundational breadth, graduates across technical and applied domains increasingly need self-directed projects and verifiable proof of competence.",
       },
       {
         id: "opt_3",
-        label: "Neither pathway matters; only memorizing competitive entrance exam questions determines career success.",
+        label:
+          "Short applied programs make formal curriculum, accredited institutions, and entrance prerequisites completely irrelevant across all career sectors.",
         isCorrect: false,
         feedback:
-          "Entrance exams help with college admissions, but ongoing career progression and real-world impact depend on building continuous capability.",
+          "Inaccurate. Many regulated professions, research careers, public-sector positions, and advanced postgraduate programs strictly mandate formal degree accreditation and specific coursework prerequisites.",
       },
     ],
     explanation:
-      "Next Move AI helps you look past superficial labels. The strongest career position blends credible foundational education with continuous, verifiable portfolio evidence.",
-    demonstratedCompetency: "Realistic Educational Evaluation & Portfolio Awareness",
+      "Next Move AI helps you evaluate pathways objectively. Career decisions involve multi-dimensional trade-offs across curricular depth, entrance criteria, cost, and practical experience rather than rigid stereotypes.",
+    demonstratedCompetency: "Educational Pathway & Trade-Off Analysis",
   },
 
   // ---------------------------------------------------------------------------

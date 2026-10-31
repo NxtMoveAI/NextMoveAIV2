@@ -17,3 +17,4 @@ export default function StudentLayout({
 }) {
   return <StudentAppShell>{children}</StudentAppShell>;
 }
+

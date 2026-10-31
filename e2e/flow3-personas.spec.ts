@@ -168,7 +168,7 @@ test.describe('Flow 3 — Adaptive Student Onboarding Persona Verification', () 
     await page.click('button:has-text("Yes, Try Practical Challenge")');
 
     // Answer challenge
-    await page.click('button:has-text("Student B has stronger verifiable hiring evidence")');
+    await page.click('button:has-text("Both pathways involve trade-offs")');
     await page.click('button:has-text("Continue to Reflection")');
 
     // Reflection

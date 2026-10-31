@@ -85,7 +85,7 @@ export interface RecentActivityEvent {
   stageId: AcademicStageId;
   completedAt: string;
   timeAgo: string;
-  feedbackGiven: string;
+  feedbackGiven?: string;
   competencyPractised: string;
   wasCorrect?: boolean;
 }

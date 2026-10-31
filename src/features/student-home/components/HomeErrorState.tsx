@@ -54,3 +54,4 @@ export function HomeErrorState({ errorMessage, onRetry }: HomeErrorStateProps) {
     </div>
   );
 }
+

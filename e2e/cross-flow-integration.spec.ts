@@ -77,7 +77,7 @@ test.describe('Flow 1–3 Complete Cross-Flow Integration Journeys', () => {
     await page.locator('button:has-text("Yes, Try Practical Challenge")').click();
     await expect(page.locator('text=Educational Pathway & Skill Trade-Off Matrix')).toBeVisible();
     // Choose correct option
-    await page.locator('button:has-text("Student B has stronger verifiable hiring evidence")').click();
+    await page.locator('button:has-text("Both pathways involve trade-offs")').click();
     await expect(page.locator('text=Insight Verified:')).toBeVisible();
     await page.locator('button:has-text("Continue to Reflection")').click();
 
@@ -88,8 +88,8 @@ test.describe('Flow 1–3 Complete Cross-Flow Integration Journeys', () => {
     // Step 8: Starting Profile Review
     await expect(page.getByRole('heading', { name: 'Your journey starts here.' })).toBeVisible();
     await expect(page.locator('text=Draft (Under Review)')).toBeVisible();
-    await expect(page.locator('text=Class 12')).toBeVisible();
-    await expect(page.locator('text=Science (PCM)')).toBeVisible();
+    await expect(page.locator('text=Class 12 • Science (PCM)').first()).toBeVisible();
+    await expect(page.locator('text=Science (PCM)').first()).toBeVisible();
     await expect(page.locator('text=Practised in Challenge').first()).toBeVisible();
     await expect(page.locator('text=Self-Reported Familiarity').first()).toBeVisible();
   });

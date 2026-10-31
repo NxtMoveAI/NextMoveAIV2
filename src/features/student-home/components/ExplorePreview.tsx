@@ -24,7 +24,7 @@ interface ExplorePreviewProps {
 
 export function ExplorePreview({ possibilities, stageLabel }: ExplorePreviewProps) {
   return (
-    <section aria-labelledby="possibilities-heading" className="space-y-4">
+    <section id="explore-possibilities" aria-labelledby="possibilities-heading" className="space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2">

@@ -192,6 +192,37 @@ export function generateCuratedPossibilities(
     // 3. Classes 11-12
     // -------------------------------------------------------------------------
     case "classes-11-12":
+      if (isStillExploring) {
+        return [
+          {
+            id: "poss_high_applied_sciences",
+            title: "Applied Sciences & Engineering Exploration",
+            type: "degree_or_pathway",
+            summary: "Evaluating foundational physics, mathematics, and engineering alternatives without premature branch lock-in.",
+            whySuggested: "Exploratory pathway suggested based on your Class 12 Science (PCM) coursework while you evaluate potential directions.",
+            whatRemainsUnknown: "Which specific branch (computational, physical systems, or pure sciences) fits your long-term curiosity.",
+            sampleNextActions: ["Compare foundational B.Tech vs B.Sc (Research) curriculum structures", "Audit introductory science lab modules"],
+          },
+          {
+            id: "poss_high_quantitative_analytics",
+            title: "Quantitative Analytics & Economic Systems",
+            type: "exploration_domain",
+            summary: "Applying mathematical reasoning to data modeling, market mechanics, and computational economics.",
+            whySuggested: "Suggested as an analytical possibility leveraging your mathematics background while exploring broader options.",
+            whatRemainsUnknown: "Whether you lean towards economic forecasting or statistical data analysis.",
+            sampleNextActions: ["Analyze a simple economic dataset in Google Sheets", "Explore introductory data reasoning frameworks"],
+          },
+          {
+            id: "poss_high_design_architecture",
+            title: "Design, Architecture & Spatial Innovation",
+            type: "applied_skill_track",
+            summary: "Bridging analytical problem solving with spatial reasoning, user experience, and structural design.",
+            whySuggested: "Suggested as an applied creative pathway complementing analytical PCM skills.",
+            whatRemainsUnknown: "Your interest in digital product design vs physical architecture.",
+            sampleNextActions: ["Conduct a 15-minute interface usability critique", "Explore introductory architectural drafting basics"],
+          },
+        ];
+      }
       if (isBusiness) {
         return [
           {
@@ -220,7 +251,7 @@ export function generateCuratedPossibilities(
           title: "Modern Computing & Software Engineering (B.Tech / BCA + Portfolio)",
           type: "degree_or_pathway",
           summary: "Evaluating traditional engineering versus flexible computer applications and direct project building.",
-          whySuggested: "You indicated interest in technology while currently balancing 11th/12th grade academics.",
+          whySuggested: "You indicated an explicit interest in technology while currently balancing 11th/12th grade academics.",
           whatRemainsUnknown: "Your target balance between entrance examination preparation and practical coding.",
           sampleNextActions: ["Compare curriculum modules between B.Tech CS and BCA programs", "Build your first GitHub repo"],
         },
@@ -484,6 +515,10 @@ export function generateFirstNextMove(
     (academicContext.data.branch.includes("Mechanical") ||
       academicContext.data.branch.includes("Automobile"));
 
+  const isStillExploring =
+    selectedCategoryIds.includes("still_exploring") ||
+    selectedCategoryIds.length === 0;
+
   const isBCA =
     academicContext?.type === "degree-engineering" &&
     academicContext.data.degreeProgram === "BCA";
@@ -508,6 +543,15 @@ export function generateFirstNextMove(
       };
 
     case "classes-11-12":
+      if (isStillExploring) {
+        return {
+          id: "fnm_high_explore_sampling",
+          title: "Compare 2 Diverse Undergraduate Directions for Science (PCM)",
+          description: "Review curriculum modules and admission patterns for Applied Sciences/Engineering vs Quantitative Analytics or Design.",
+          estimatedTime: "25 mins",
+          actionType: "compare_pathways",
+        };
+      }
       if (isBusiness) {
         return {
           id: "fnm_high_commerce_starter",

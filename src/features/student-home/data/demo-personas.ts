@@ -230,7 +230,7 @@ export const DEMO_PERSONAS: Record<PersonaFixtureId, {
         },
         {
           id: "skill_pathway_eval",
-          name: "Educational Pathway & Skill Trade-Off Matrix",
+          name: "Educational Pathway & Trade-Off Analysis",
           category: "Strategic Decision Making",
           familiarity: "practised",
           evidenceStatus: "practised",
@@ -242,7 +242,7 @@ export const DEMO_PERSONAS: Record<PersonaFixtureId, {
         selectedOptionId: "opt_student_b",
         isCorrect: true,
         retriesCount: 0,
-        feedback: "Insight verified! Student B demonstrated practical evidence through public GitHub projects and internships.",
+        feedback: "Balanced and accurate. Real-world career outcomes depend on aligning curriculum depth, financial constraints, and practical project proof with personal learning goals rather than assuming one format is universally superior.",
         status: "completed",
       },
       reflection: {

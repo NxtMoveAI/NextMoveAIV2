@@ -48,3 +48,4 @@ export function StudentAppShell({ children }: StudentAppShellProps) {
     </div>
   );
 }
+

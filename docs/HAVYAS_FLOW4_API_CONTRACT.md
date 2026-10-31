@@ -326,3 +326,4 @@ HTTP status codes:
 - `403 Forbidden`: Cross-student access attempt
 - `404 Not Found`: Profile or action does not exist
 - `500 Internal Server Error`: Backend processing fault
+

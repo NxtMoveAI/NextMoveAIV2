@@ -82,7 +82,7 @@ export function StartingPointCard({ viewModel }: StartingPointCardProps) {
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#6757F5]">
             Primary Focus
           </span>
-          <p className="text-xs sm:text-sm font-bold text-[#171A2B] leading-snug truncate">
+          <p className="text-xs sm:text-sm font-bold text-[#171A2B] leading-snug line-clamp-2 break-words">
             {viewModel.primaryGoal}
           </p>
           <p className="text-[11px] text-[#059669] font-semibold">

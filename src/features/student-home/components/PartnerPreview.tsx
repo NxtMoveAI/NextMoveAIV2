@@ -60,7 +60,7 @@ export function PartnerPreview({ prompts, stageLabel }: PartnerPreviewProps) {
               </span>
             </div>
             <p className="text-xs text-[#626987]">
-              Context-grounded guidance • No hallucinations or ungrounded predictions
+              Deterministic Preview • Context-grounded exploration guidance
             </p>
           </div>
         </div>

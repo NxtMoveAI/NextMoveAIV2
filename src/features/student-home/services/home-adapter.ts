@@ -9,7 +9,10 @@ import { type AcademicStageId, ACADEMIC_STAGES } from "@/data/landing-demo";
 import {
   type StudentIntelligenceProfile,
   type AcademicContextData,
+  type InterestsData,
+  type ClarityData,
 } from "@/features/onboarding/schemas/types";
+import { MICRO_ACTIVITIES_CATALOG } from "@/features/onboarding/data/activities";
 import {
   type StudentHomeViewModel,
   type NextMoveAction,
@@ -48,15 +51,25 @@ export function formatAcademicSummary(context: AcademicContextData): string {
   }
 }
 
-export function formatClarityLabel(clarityLevel: string): string {
+export function formatClarityLabel(
+  clarityLevel: string,
+  isStillExploring?: boolean
+): string {
+  if (isStillExploring) {
+    if (clarityLevel === "very_clear") {
+      return "Initial Direction • Exploring Options";
+    }
+    return "Exploring Multiple Directions";
+  }
   switch (clarityLevel) {
     case "very_confused":
     case "still_exploring":
       return "Exploring Multiple Directions";
     case "somewhat_clear":
     case "few_interests":
+      return "Evaluating Potential Directions";
     case "have_an_idea":
-      return "Testing Specific Interests";
+      return "Exploring Early Ideas";
     case "very_clear":
       return "Focused on Defined Path";
     case "direction_changing":
@@ -275,8 +288,11 @@ export function generateAlternativeActions(
 
 export function generatePartnerPrompts(
   stageId: AcademicStageId,
-  context: AcademicContextData
+  context: AcademicContextData,
+  interests?: InterestsData,
+  clarity?: ClarityData
 ): PartnerQuestionPrompt[] {
+  void clarity;
   switch (stageId) {
     case "classes-4-7":
       return [
@@ -342,19 +358,57 @@ export function generatePartnerPrompts(
         },
       ];
 
-    case "classes-11-12":
+    case "classes-11-12": {
+      const isStillExploring =
+        interests?.selectedCategoryIds.includes("still_exploring") ||
+        interests?.isStillExploring ||
+        (interests?.selectedCategoryIds.length ?? 0) === 0;
+
+      if (isStillExploring) {
+        return [
+          {
+            id: "pq_c1112_explore_1",
+            question: "How can I explore degree options across engineering, pure sciences, and analytics without feeling overwhelmed?",
+            contextTag: "Broad Horizons",
+            response: {
+              acknowledgement: "In Class 12 Science (PCM), keeping multiple options open is completely normal. Your analytical foundations open up a wide range of degrees beyond just one narrow track.",
+              explorationDirections: [
+                "Compare core curriculum and career directions across B.Tech engineering branches, B.Sc research programs, and quantitative economics.",
+                "Dedicate short 20-minute sessions to syllabus audits or sample projects across two distinct fields to test what energizes you.",
+              ],
+              tradeoffOrUnknown: "Balancing board preparation and exam cutoffs requires steady focus, but exploring options early helps you make intentional degree choices without rushing.",
+              suggestedFirstStep: "Review the exploratory Next Move action on your dashboard to compare 2 distinct degree tracks side-by-side.",
+            },
+          },
+          {
+            id: "pq_c1112_explore_2",
+            question: "What if I'm not sure whether traditional engineering is the right fit for me?",
+            contextTag: "Alternative Pathways",
+            response: {
+              acknowledgement: "That is a thoughtful and valid question. A Science (PCM) background is valuable across data science, economics, industrial design, and scientific research—not just engineering.",
+              explorationDirections: [
+                "Investigate emerging multidisciplinary fields that blend analytical logic with computing, design, or economics.",
+                "Look into flexible undergraduate programs where you can take both technical and humanities or business electives.",
+              ],
+              tradeoffOrUnknown: "Traditional engineering provides familiar campus placement pipelines, while alternative and interdisciplinary degrees reward self-driven project portfolios and initiative.",
+              suggestedFirstStep: "Sample a short practical micro-activity in your next move to experience hands-on problem solving.",
+            },
+          },
+        ];
+      }
+
       return [
         {
           id: "pq_c1112_1",
           question: "How do I balance entrance exam prep with building real skills?",
           contextTag: "Preparation Strategy",
           response: {
-            acknowledgement: "This is the single most common dilemma for Class 12 students. Entrance exams open university doors, but real skills determine what you do once you arrive.",
+            acknowledgement: "This is a frequent dilemma for Class 12 students. Entrance exams help clear university cutoffs, while demonstrable skills build lasting capability once you begin your degree.",
             explorationDirections: [
-              "Dedicate 85% of your core academic hours to your board/entrance syllabus, but reserve 2-3 hours on weekends for hands-on projects.",
-              "Focus your weekend exploration on projects that reinforce school concepts—like coding a physics simulation or analyzing real market data.",
+              "Maintain consistent focus on your core board and entrance preparation, while reserving small weekend blocks for hands-on problem solving.",
+              "Select exploratory mini-projects that reinforce your physics, mathematics, or computing curriculum rather than distracting from it.",
             ],
-            tradeoffOrUnknown: "Ignoring exams entirely risks admission cutoffs, but having zero practical evidence by 1st year of college puts you behind peer interns.",
+            tradeoffOrUnknown: "Strong entrance scores satisfy formal admission criteria, while early hands-on projects build practical intuition and long-term momentum.",
             suggestedFirstStep: "Review our 2-pathway undergraduate comparison (B.Tech CS vs BCA + Practical Portfolio).",
           },
         },
@@ -363,16 +417,17 @@ export function generatePartnerPrompts(
           question: "Can I explore computer science if I'm not in an elite coaching institute?",
           contextTag: "Self-Directed Learning",
           response: {
-            acknowledgement: "Yes, 100%. The vast majority of world-class open-source software and developer ecosystems are free, open, and merit-based.",
+            acknowledgement: "Yes, absolutely. The global developer and open-source ecosystems are merit-based, accessible, and rich with free learning resources.",
             explorationDirections: [
-              "Build working mini-projects and document them openly on GitHub.",
-              "Participate in student hackathons and open-source documentation sprints where hiring teams recruit directly.",
+              "Build small, working projects and document your learning progression with clean code and explanations.",
+              "Participate in beginner-friendly open-source sprints and student technical communities to learn alongside peers.",
             ],
-            tradeoffOrUnknown: "Self-directed learning requires more discipline and curiosity than spoon-fed coaching, but builds lasting independence.",
-            suggestedFirstStep: "Check out our guided starter project recommendations in your Next Move card.",
+            tradeoffOrUnknown: "Self-directed learning requires self-discipline and curiosity, but builds durable problem-solving habits that coaching alone cannot provide.",
+            suggestedFirstStep: "Check out the guided starter project recommendations in your Next Move card.",
           },
         },
       ];
+    }
 
     case "diploma":
       return [
@@ -505,6 +560,11 @@ export function transformProfileToHomeViewModel(
     activeMove.status = "postponed";
   }
 
+  const isStillExploring =
+    profile.interests.selectedCategoryIds.includes("still_exploring") ||
+    profile.interests.isStillExploring ||
+    profile.interests.selectedCategoryIds.length === 0;
+
   // Format possibilities
   const possibilities: ExplorePossibilityItem[] = profile.possibilities.map((p, idx) => ({
     id: p.id,
@@ -514,7 +574,13 @@ export function transformProfileToHomeViewModel(
       : p.type === "applied_skill_track"
       ? "applied_skill_track"
       : "interest_exploration") as PossibilityDomainType,
-    badgeLabel: idx === 0 ? "High Alignment" : "Curiosity Explorer",
+    badgeLabel: isStillExploring
+      ? idx === 0
+        ? "Exploration Pathway"
+        : "Curiosity Direction"
+      : idx === 0
+      ? "High Alignment"
+      : "Curiosity Explorer",
     summary: p.summary,
     whySuggested: p.whySuggested,
     whatRemainsUnknown: p.whatRemainsUnknown,
@@ -546,26 +612,39 @@ export function transformProfileToHomeViewModel(
     notes: s.userNotes,
   }));
 
-  // Recent activity event (if attempted)
+  // Recent activity event (ONLY IF ACTUALLY COMPLETED WITH VALID ATTEMPT)
   let recentActivity: RecentActivityEvent | undefined;
-  if (profile.activityAttempt?.attempted) {
+  const isActivityCompleted =
+    profile.activityAttempt?.status === "completed" &&
+    Boolean(profile.activityAttempt?.selectedOptionId);
+
+  if (isActivityCompleted && profile.activityAttempt) {
     const isReturning = options?.isReturningUser || false;
+    const activityDef = MICRO_ACTIVITIES_CATALOG.find(
+      (a) => a.id === profile.activityAttempt?.activityId
+    );
+    const activityTitle = activityDef?.title || "Practical Micro-Exploration";
+    const competency =
+      activityDef?.demonstratedCompetency ||
+      profile.startingSkills.find((s) => s.evidenceStatus === "practised")?.name ||
+      "Practical Diagnosis & Problem Solving";
+
     recentActivity = {
       id: `evt_${profile.activityAttempt.activityId}`,
       activityId: profile.activityAttempt.activityId,
-      title: profile.startingSkills.find((s) => s.evidenceStatus === "practised")?.name || "Practical Micro-Exploration",
+      title: activityTitle,
       stageId: profile.academicStageId,
       completedAt: profile.updatedAt,
       timeAgo: isReturning ? "3 days ago" : "Just now (during onboarding)",
-      feedbackGiven: profile.activityAttempt.feedback,
-      competencyPractised: "Critical Evaluation & Practical Diagnosis",
+      feedbackGiven: profile.activityAttempt.feedback?.trim() || undefined,
+      competencyPractised: competency,
       wasCorrect: profile.activityAttempt.isCorrect,
     };
   }
 
   const practisedCount = profile.startingSkills.filter((s) => s.evidenceStatus === "practised").length;
   const selfReportedCount = profile.startingSkills.filter((s) => s.evidenceStatus === "self_reported").length;
-  const hasAttempted = (profile.activityAttempt?.attempted ?? false) || practisedCount > 0;
+  const hasAttempted = practisedCount > 0 || isActivityCompleted;
 
   const growthSnapshot: GrowthSnapshotViewModel = {
     hasAttemptedActivity: hasAttempted,
@@ -576,10 +655,15 @@ export function transformProfileToHomeViewModel(
     recentActivity,
     emptyStateMessage: hasAttempted
       ? undefined
-      : "You haven't tried an activity yet. That's a place to begin, not a problem.",
+      : "You haven't completed an activity yet. That's a place to begin, not a problem.",
   };
 
-  const partnerPrompts = generatePartnerPrompts(stageId, profile.academicContext);
+  const partnerPrompts = generatePartnerPrompts(
+    stageId,
+    profile.academicContext,
+    profile.interests,
+    profile.clarity
+  );
 
   return {
     profileRevision: profile.profileId,
@@ -593,7 +677,7 @@ export function transformProfileToHomeViewModel(
     clarity: profile.clarity,
     interests: profile.interests,
     primaryGoal: profile.clarity.primaryHelpReason || "Explore possibilities and build clarity.",
-    clarityLevelLabel: formatClarityLabel(profile.clarity.clarityLevel),
+    clarityLevelLabel: formatClarityLabel(profile.clarity.clarityLevel, isStillExploring),
     recommendedNextAction: activeMove,
     alternativeNextActions: alternatives,
     possibilities,

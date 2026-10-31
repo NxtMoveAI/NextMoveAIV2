@@ -350,7 +350,11 @@ export function StartingProfile({
               Clarity Assessment:
             </span>
             <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#EDEAFF] text-[#5342E8]">
-              {profile.clarity.clarityLevel.replace(/_/g, " ")}
+              {profile.interests.selectedCategoryIds.includes("still_exploring")
+                ? "Exploring Multiple Directions"
+                : profile.clarity.clarityLevel === "somewhat_clear" || profile.clarity.clarityLevel === "few_interests"
+                ? "Evaluating Potential Directions"
+                : profile.clarity.clarityLevel.replace(/_/g, " ")}
             </span>
           </div>
 

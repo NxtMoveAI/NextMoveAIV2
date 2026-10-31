@@ -26,6 +26,15 @@ import {
 } from "lucide-react";
 import { useStudentHome } from "../hooks/useStudentHome";
 
+function formatEffortMinutes(effort: string | number): string {
+  const str = String(effort).trim();
+  const match = str.match(/^(\d+)/);
+  if (match) {
+    return `${match[1]} mins`;
+  }
+  return str.endsWith("mins") ? str : `${str} mins`;
+}
+
 export function NextMoveCard() {
   const {
     viewModel,
@@ -82,7 +91,7 @@ export function NextMoveCard() {
         {!isPostponed && (
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F7F6FF] text-[#6757F5] border border-[#DDD8FE] text-xs font-bold self-start sm:self-auto">
             <Clock className="w-3.5 h-3.5" />
-            <span>{activeMove.effortMinutes} mins</span>
+            <span>{formatEffortMinutes(activeMove.effortMinutes)}</span>
           </div>
         )}
       </div>
@@ -200,7 +209,7 @@ export function NextMoveCard() {
 
           {/* Alternatives Drawer/Accordion */}
           {showAlternatives && (
-            <div className="mt-4 pt-4 border-t border-[#E8E6F3] space-y-3 animate-in fade-in duration-200">
+            <div id="alternative-moves-container" className="mt-4 pt-4 border-t border-[#E8E6F3] space-y-3 animate-in fade-in duration-200">
               <span className="text-xs font-bold text-[#171A2B] block">
                 Choose an alternative next move that fits your mood today:
               </span>
@@ -223,7 +232,7 @@ export function NextMoveCard() {
                         </span>
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-[#6757F5] border border-[#DDD8FE]">
-                            ~{alt.effortMinutes} mins
+                            ~{formatEffortMinutes(alt.effortMinutes)}
                           </span>
                           {!isCurrent && (
                             <button

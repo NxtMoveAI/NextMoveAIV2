@@ -93,3 +93,4 @@ class StudentProfileStore {
 
 // Global singleton instance
 export const studentProfileStore = new StudentProfileStore();
+

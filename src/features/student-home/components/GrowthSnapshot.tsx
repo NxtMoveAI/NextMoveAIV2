@@ -48,7 +48,7 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
               What you&apos;ve explored so far
             </h2>
             <p className="text-xs text-[#626987]">
-              Truthful evidence record • No arbitrary scores or fake streaks
+              Truthful evidence record • Building real capability rather than assigning arbitrary fit percentages
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
       {/* Main card */}
       <div className="p-6 sm:p-7 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs space-y-6">
         {/* Metric counts grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0]/60 space-y-0.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#059669]">
               Practised in Challenge
@@ -73,7 +73,7 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
             <p className="text-xl sm:text-2xl font-black text-[#065F46]">
               {totalPractisedCount}
             </p>
-            <p className="text-[10px] text-[#047857]">Verified through tasks</p>
+            <p className="text-[10px] text-[#047857]">Attempted in platform challenges</p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE]/60 space-y-0.5">
@@ -93,17 +93,7 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
             <p className="text-xl sm:text-2xl font-black text-[#4338CA]">
               {unassessedAreasCount}
             </p>
-            <p className="text-[10px] text-[#626987]">Ready to explore</p>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-[#F4F3F8] border border-[#E8E6F3] space-y-0.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#474D66]">
-              Career-Fit Score
-            </span>
-            <p className="text-xl sm:text-2xl font-black text-[#626987]">
-              None
-            </p>
-            <p className="text-[10px] text-[#8C93AD]">We don&apos;t fabricate scores</p>
+            <p className="text-[10px] text-[#626987]">Open for future exploration</p>
           </div>
         </div>
 
@@ -141,9 +131,11 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
                 {recentActivity.timeAgo}
               </span>
             </div>
-            <p className="text-xs text-[#31364F] leading-relaxed">
-              &ldquo;{recentActivity.feedbackGiven}&rdquo;
-            </p>
+            {recentActivity.feedbackGiven && recentActivity.feedbackGiven.trim().length > 0 && (
+              <p className="text-xs text-[#31364F] leading-relaxed">
+                &ldquo;{recentActivity.feedbackGiven}&rdquo;
+              </p>
+            )}
             <div className="flex items-center gap-2 pt-1 text-[11px] text-[#059669] font-semibold">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Competency: {recentActivity.competencyPractised}</span>

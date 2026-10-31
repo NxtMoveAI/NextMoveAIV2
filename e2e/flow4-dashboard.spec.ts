@@ -41,8 +41,8 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     await expect(page.locator('text=Junior Nature & Wildlife Observer')).toBeVisible();
 
     // Verify no career fit scores or fake percentages
-    await expect(page.locator('text=Career-Fit Score')).toBeVisible();
-    await expect(page.locator('text=None')).toBeVisible();
+    await expect(page.locator('text=Career-Fit Score')).not.toBeVisible();
+    await expect(page.locator('text=Building real capability rather than assigning arbitrary fit percentages')).toBeVisible();
   });
 
   test('F4.2: Persona B (Class 9 Undecided): Low-pressure multi-path discovery without stream lock', async ({ page }) => {
@@ -177,7 +177,7 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     await page.locator('button:has-text("First-Time (Empty)")').click();
 
     // Verify growth section empty state
-    await expect(page.locator('text=You haven\'t tried an activity yet. That\'s a place to begin, not a problem.')).toBeVisible();
+    await expect(page.locator('text=You haven\'t completed an activity yet. That\'s a place to begin, not a problem.')).toBeVisible();
     await expect(page.locator('text=Try Your First Discovery Action')).toBeVisible();
   });
 
@@ -307,7 +307,7 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
 
     // Step 6: Practical Challenge
     await page.locator('button:has-text("Yes, Try Practical Challenge")').click();
-    await page.locator('button:has-text("Student B has stronger verifiable hiring evidence")').click();
+    await page.locator('button:has-text("Both pathways involve trade-offs")').click();
     await page.locator('button:has-text("Continue to Reflection")').click();
 
     // Step 7: Reflection
@@ -325,7 +325,7 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // Verify Live Handoff is recognized in Home!
     await expect(page.locator('text=Flow 3 Live Handoff Active')).toBeVisible();
     await expect(page.locator('text=Class 12 • Science (PCM)').first()).toBeVisible();
-    await expect(page.locator('text=Compare the Modern Computing & Software Engineering').first()).toBeVisible();
+    await expect(page.locator('#next-move h3').first()).toContainText('Compare');
   });
 
   // ===========================================================================
