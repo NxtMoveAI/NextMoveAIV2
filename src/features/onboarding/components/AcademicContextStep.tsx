@@ -344,10 +344,12 @@ export function AcademicContextStep({
         return (
           <div className="space-y-6 text-left">
             <div>
-              <label className="block text-xs font-bold text-[#6757F5] uppercase tracking-wider mb-2">
+              <label htmlFor="diploma-branch" className="block text-xs font-bold text-[#6757F5] uppercase tracking-wider mb-2">
                 Diploma Branch / Field
               </label>
               <select
+                id="diploma-branch"
+                aria-label="Diploma Branch or Field"
                 value={data.branch}
                 onChange={(e) =>
                   onUpdate({
@@ -473,10 +475,12 @@ export function AcademicContextStep({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#6757F5] uppercase tracking-wider mb-2">
+              <label htmlFor="degree-branch" className="block text-xs font-bold text-[#6757F5] uppercase tracking-wider mb-2">
                 Branch or Major
               </label>
               <select
+                id="degree-branch"
+                aria-label="Degree Branch or Major"
                 value={data.branchOrMajor}
                 onChange={(e) =>
                   onUpdate({

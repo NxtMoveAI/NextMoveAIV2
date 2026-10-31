@@ -62,7 +62,6 @@ export function Header() {
         <Link
           href="/"
           className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] rounded-xl p-1"
-          aria-label="Next Move AI Homepage"
         >
           <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-[#E4E1F8] bg-white flex items-center justify-center p-1 group-hover:scale-105 transition-transform duration-200">
             <Image
@@ -91,7 +90,7 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav
-          className="hidden md:flex items-center gap-1 lg:gap-2"
+          className="hidden lg:flex items-center gap-1 xl:gap-2"
           aria-label="Primary navigation"
         >
           {navLinks.map((link) => (
@@ -106,7 +105,7 @@ export function Header() {
         </nav>
 
         {/* Desktop CTA actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <Link
             href="/sign-in"
             className="text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors"
@@ -123,7 +122,7 @@ export function Header() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           <Link
             href="/get-started"
             className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"

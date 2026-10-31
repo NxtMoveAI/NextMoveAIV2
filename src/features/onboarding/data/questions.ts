@@ -204,7 +204,36 @@ export const YOUNGER_CLARITY_OPTIONS = [
 // 4. DEFAULT SKILLS PER STAGE (STAGE E: STARTING POINT)
 // =============================================================================
 
-export function getDefaultStarterSkills(stageId: AcademicStageId): SkillItem[] {
+export function getDefaultStarterSkills(
+  stageId: AcademicStageId,
+  academicContext?: AcademicContextData,
+  selectedCategoryIds?: string[]
+): SkillItem[] {
+  // Check for business / commerce context
+  const isBusiness =
+    selectedCategoryIds?.includes("business_entrepreneurship") ||
+    (academicContext?.type === "degree-engineering" &&
+      (academicContext.data.degreeProgram === "BCom" ||
+        academicContext.data.degreeProgram === "BBA" ||
+        academicContext.data.branchOrMajor === "Finance & Accounting" ||
+        academicContext.data.branchOrMajor === "Marketing & Management")) ||
+    (academicContext?.type === "classes-11-12" && academicContext.data.stream === "Commerce");
+
+  const isHumanities =
+    selectedCategoryIds?.includes("social_impact") ||
+    (academicContext?.type === "final-year-grad" &&
+      (academicContext.data.completedDegree.includes("Humanities") ||
+        academicContext.data.completedDegree.includes("Arts") ||
+        academicContext.data.completedDegree.includes("Commerce") ||
+        academicContext.data.completedDegree.includes("B.Com") ||
+        academicContext.data.specialization.includes("Economics") ||
+        academicContext.data.specialization.includes("Literature")));
+
+  const isMechanicalDiploma =
+    academicContext?.type === "diploma" &&
+    (academicContext.data.branch.includes("Mechanical") ||
+      academicContext.data.branch.includes("Automobile"));
+
   switch (stageId) {
     case "classes-4-7":
       return [
@@ -221,6 +250,14 @@ export function getDefaultStarterSkills(stageId: AcademicStageId): SkillItem[] {
         { id: "sk_creative_design", name: "Visual Art & Presentations", category: "Creativity", familiarity: "not_explored", evidenceStatus: "not_assessed" },
       ];
     case "classes-11-12":
+      if (isBusiness) {
+        return [
+          { id: "sk_commercial_concepts", name: "Accountancy & Business Studies", category: "Commerce", familiarity: "practised", evidenceStatus: "self_reported" },
+          { id: "sk_data_interpretation", name: "Financial Data & Graph Interpretation", category: "Analysis", familiarity: "tried_it", evidenceStatus: "self_reported" },
+          { id: "sk_concept_synthesis", name: "Economic Reasoning & Analysis", category: "Commerce", familiarity: "heard_about", evidenceStatus: "self_reported" },
+          { id: "sk_spreadsheet_tools", name: "Spreadsheet Basics (Excel/Sheets)", category: "Tools", familiarity: "not_explored", evidenceStatus: "not_assessed" },
+        ];
+      }
       return [
         { id: "sk_concept_synthesis", name: "Analytical Problem Solving", category: "Core Academic", familiarity: "practised", evidenceStatus: "self_reported" },
         { id: "sk_intro_programming", name: "Introductory Programming (Python/C++)", category: "Technology", familiarity: "heard_about", evidenceStatus: "self_reported" },
@@ -228,6 +265,14 @@ export function getDefaultStarterSkills(stageId: AcademicStageId): SkillItem[] {
         { id: "sk_commercial_concepts", name: "Financial / Economic Basics", category: "Commerce", familiarity: "not_explored", evidenceStatus: "not_assessed" },
       ];
     case "diploma":
+      if (isMechanicalDiploma) {
+        return [
+          { id: "sk_workshop_machining", name: "Hands-on Workshop & Machine Operations", category: "Manufacturing", familiarity: "practised", evidenceStatus: "self_reported" },
+          { id: "sk_cad_tools", name: "CAD / Technical Drafting (AutoCAD/SolidWorks)", category: "Design Tools", familiarity: "tried_it", evidenceStatus: "self_reported" },
+          { id: "sk_quality_tolerance", name: "Tolerance Inspection & Metrology", category: "Quality", familiarity: "heard_about", evidenceStatus: "self_reported" },
+          { id: "sk_troubleshooting", name: "Mechanical Equipment Maintenance", category: "Practical", familiarity: "practised", evidenceStatus: "self_reported" },
+        ];
+      }
       return [
         { id: "sk_lab_workshop", name: "Hands-on Lab & Workshop Practice", category: "Engineering", familiarity: "practised", evidenceStatus: "self_reported" },
         { id: "sk_cad_tools", name: "CAD / Technical Drawing / Circuit Design", category: "Tools", familiarity: "tried_it", evidenceStatus: "self_reported" },
@@ -235,6 +280,14 @@ export function getDefaultStarterSkills(stageId: AcademicStageId): SkillItem[] {
         { id: "sk_troubleshooting", name: "Hardware / System Troubleshooting", category: "Practical", familiarity: "practised", evidenceStatus: "self_reported" },
       ];
     case "degree-engineering":
+      if (isBusiness) {
+        return [
+          { id: "sk_fin_accounting", name: "Financial Accounting & Reporting Basics", category: "Finance", familiarity: "practised", evidenceStatus: "self_reported" },
+          { id: "sk_spreadsheet_mod", name: "Spreadsheet & Financial Modeling (Excel)", category: "Analysis Tools", familiarity: "tried_it", evidenceStatus: "self_reported" },
+          { id: "sk_business_analytics", name: "Business Analytics & Metrics Interpretation", category: "Strategy", familiarity: "heard_about", evidenceStatus: "self_reported" },
+          { id: "sk_commercial_law", name: "Commercial Operations & Cost Analysis", category: "Commerce", familiarity: "heard_about", evidenceStatus: "self_reported" },
+        ];
+      }
       return [
         { id: "sk_core_programming", name: "Data Structures & Algorithms / Core Code", category: "Technology", familiarity: "practised", evidenceStatus: "self_reported" },
         { id: "sk_web_or_app_dev", name: "Web / Mobile Project Development", category: "Applied Tech", familiarity: "tried_it", evidenceStatus: "self_reported" },
@@ -242,6 +295,15 @@ export function getDefaultStarterSkills(stageId: AcademicStageId): SkillItem[] {
         { id: "sk_git_version_control", name: "Git & Collaborative Development", category: "Tools", familiarity: "heard_about", evidenceStatus: "self_reported" },
       ];
     case "final-year-grad":
+    default:
+      if (isHumanities) {
+        return [
+          { id: "sk_primary_research", name: "Primary Source Research & Synthesis", category: "Research", familiarity: "practised", evidenceStatus: "self_reported" },
+          { id: "sk_policy_writing", name: "Structured Policy & Analytical Writing", category: "Communication", familiarity: "practised", evidenceStatus: "self_reported" },
+          { id: "sk_stakeholder_pres", name: "Stakeholder Presentation & Discussion", category: "Leadership", familiarity: "tried_it", evidenceStatus: "self_reported" },
+          { id: "sk_capstone_thesis", name: "Capstone Thesis / Empirical Paper", category: "Portfolio", familiarity: "heard_about", evidenceStatus: "self_reported" },
+        ];
+      }
       return [
         { id: "sk_capstone_project", name: "Full Lifecycle Capstone Project", category: "Portfolio", familiarity: "practised", evidenceStatus: "self_reported" },
         { id: "sk_technical_writing", name: "Technical Documentation & Reports", category: "Communication", familiarity: "practised", evidenceStatus: "self_reported" },
@@ -259,14 +321,12 @@ export function createInitialOnboardingState(
   stageId: AcademicStageId,
   isDemo: boolean = true
 ): OnboardingState {
-  const defaultSkills = getDefaultStarterSkills(stageId);
-
   let initialAcademic: AcademicContextData;
   switch (stageId) {
     case "classes-4-7":
       initialAcademic = {
         type: "classes-4-7",
-        data: { currentClass: "Class 6", favoriteSchoolActivities: ["Drawing & Art", "Science Experiments"] },
+        data: { currentClass: "Class 6", favoriteSchoolActivities: ["Drawing & Art", "Storytelling & Reading"] },
       };
       break;
     case "classes-8-10":
@@ -301,15 +361,29 @@ export function createInitialOnboardingState(
       break;
   }
 
+  const initialInterests: InterestsData = {
+    selectedCategoryIds:
+      stageId === "classes-4-7"
+        ? ["creativity"]
+        : stageId === "diploma"
+        ? ["technology"]
+        : ["still_exploring"],
+    selectedSubInterestIds:
+      stageId === "classes-4-7"
+        ? ["creat_visual_design", "creat_storytelling"]
+        : [],
+    isStillExploring: stageId !== "classes-4-7" && stageId !== "diploma",
+  };
+
+  const defaultSkills = getDefaultStarterSkills(
+    stageId,
+    initialAcademic,
+    initialInterests.selectedCategoryIds
+  );
+
   const initialClarity: ClarityData = {
     clarityLevel: stageId === "classes-4-7" ? "few_interests" : "somewhat_clear",
     primaryHelpReason: "Explore realistic possibilities and understand what practical skills to build.",
-  };
-
-  const initialInterests: InterestsData = {
-    selectedCategoryIds: ["technology"],
-    selectedSubInterestIds: ["tech_programming"],
-    isStillExploring: false,
   };
 
   const initialReflection: ReflectionData = {

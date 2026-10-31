@@ -107,7 +107,7 @@ export function AuthLayout({
                 </span>
               </div>
 
-              <h1 className="text-3xl xl:text-4xl font-black text-[#171A2B] tracking-tight leading-tight">
+              <h2 className="text-3xl xl:text-4xl font-black text-[#171A2B] tracking-tight leading-tight">
                 {role === "parent"
                   ? "Support their journey with calm clarity."
                   : role === "general"
@@ -115,7 +115,7 @@ export function AuthLayout({
                   : stageCopy
                   ? stageCopy.tagline
                   : "Every journey starts somewhere."}
-              </h1>
+              </h2>
 
               <p className="mt-4 text-sm sm:text-base text-[#31364F] leading-relaxed">
                 {role === "parent"

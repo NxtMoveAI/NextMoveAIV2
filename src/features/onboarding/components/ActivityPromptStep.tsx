@@ -11,10 +11,11 @@
 import React from "react";
 import { ArrowLeft, Play, FastForward, Clock, Zap } from "lucide-react";
 import { type AcademicStageId } from "@/data/landing-demo";
-import { STAGE_MICRO_ACTIVITIES } from "../data/activities";
+import { STAGE_MICRO_ACTIVITIES, type MicroActivity } from "../data/activities";
 
 interface ActivityPromptStepProps {
   stageId: AcademicStageId;
+  activity?: MicroActivity;
   onAccept: () => void;
   onSkip: () => void;
   onBack: () => void;
@@ -22,11 +23,12 @@ interface ActivityPromptStepProps {
 
 export function ActivityPromptStep({
   stageId,
+  activity: customActivity,
   onAccept,
   onSkip,
   onBack,
 }: ActivityPromptStepProps) {
-  const activity = STAGE_MICRO_ACTIVITIES[stageId] || STAGE_MICRO_ACTIVITIES["classes-11-12"];
+  const activity = customActivity || STAGE_MICRO_ACTIVITIES[stageId] || STAGE_MICRO_ACTIVITIES["classes-11-12"];
 
   return (
     <div className="max-w-2xl w-full mx-auto px-4 py-8 sm:py-10 flex flex-col justify-center">

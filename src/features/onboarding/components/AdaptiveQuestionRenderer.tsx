@@ -34,6 +34,7 @@ export function AdaptiveQuestionRenderer({
 }: AdaptiveQuestionRendererProps) {
   const {
     state,
+    currentActivity,
     currentStepIndex,
     totalSteps,
     progressPercentage,
@@ -127,6 +128,7 @@ export function AdaptiveQuestionRenderer({
         {state.currentStep === "activity-prompt" && (
           <ActivityPromptStep
             stageId={state.stageId}
+            activity={currentActivity}
             onAccept={acceptOptionalActivity}
             onSkip={skipOptionalActivity}
             onBack={goBack}
@@ -136,6 +138,7 @@ export function AdaptiveQuestionRenderer({
         {state.currentStep === "activity" && (
           <MicroExploration
             stageId={state.stageId}
+            activity={currentActivity}
             attempt={state.activityAttempt}
             onSubmitChoice={submitActivityChoice}
             onRetry={retryActivity}

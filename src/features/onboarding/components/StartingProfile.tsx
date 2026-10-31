@@ -208,14 +208,20 @@ export function StartingProfile({
 
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
-            {profile.interests.selectedCategoryIds.map((catId) => (
-              <span
-                key={catId}
-                className="px-3 py-1.5 rounded-xl bg-[#F7F6FF] text-[#5342E8] border border-[#DDD8FE] text-xs font-bold capitalize"
-              >
-                {catId.replace(/_/g, " ")}
+            {profile.interests.selectedCategoryIds.length > 0 ? (
+              profile.interests.selectedCategoryIds.map((catId) => (
+                <span
+                  key={catId}
+                  className="px-3 py-1.5 rounded-xl bg-[#F7F6FF] text-[#5342E8] border border-[#DDD8FE] text-xs font-bold capitalize"
+                >
+                  {catId.replace(/_/g, " ")}
+                </span>
+              ))
+            ) : (
+              <span className="px-3 py-1.5 rounded-xl bg-[#F7F6FF] text-[#5342E8] border border-[#DDD8FE] text-xs font-bold">
+                Still Exploring (Open to all directions)
               </span>
-            ))}
+            )}
           </div>
 
           {profile.interests.selectedSubInterestIds.length > 0 && (

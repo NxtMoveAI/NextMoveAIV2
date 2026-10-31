@@ -18,8 +18,15 @@ import {
   type ReflectionData,
   type ActivityAttemptResult,
 } from "../schemas/types";
-import { createInitialOnboardingState } from "../data/questions";
-import { STAGE_MICRO_ACTIVITIES } from "../data/activities";
+import {
+  createInitialOnboardingState,
+  getDefaultStarterSkills,
+} from "../data/questions";
+import {
+  resolveMicroActivity,
+  MICRO_ACTIVITIES_CATALOG,
+  STAGE_MICRO_ACTIVITIES,
+} from "../data/activities";
 import {
   compileStudentIntelligenceProfile,
   onboardingAdapter,
@@ -59,6 +66,26 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
   const progressPercentage = Math.round(
     ((currentStepIndex + 1) / totalSteps) * 100
   );
+
+  // Compute active resolved activity for the current stage, interests & context
+  const currentActivity = useMemo(() => {
+    if (state.activityAttempt?.activityId) {
+      const found = MICRO_ACTIVITIES_CATALOG.find(
+        (a) => a.id === state.activityAttempt?.activityId
+      );
+      if (found) return found;
+    }
+    return resolveMicroActivity(
+      state.stageId,
+      state.interests.selectedCategoryIds,
+      state.academicContext
+    );
+  }, [
+    state.activityAttempt?.activityId,
+    state.stageId,
+    state.interests.selectedCategoryIds,
+    state.academicContext,
+  ]);
 
   // ---------------------------------------------------------------------------
   // Step Navigation
@@ -153,10 +180,18 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
   // ---------------------------------------------------------------------------
 
   const updateAcademicContext = useCallback((context: AcademicContextData) => {
-    setState((prev) => ({
-      ...prev,
-      academicContext: context,
-    }));
+    setState((prev) => {
+      const refreshedSkills = getDefaultStarterSkills(
+        prev.stageId,
+        context,
+        prev.interests.selectedCategoryIds
+      );
+      return {
+        ...prev,
+        academicContext: context,
+        startingSkills: refreshedSkills,
+      };
+    });
   }, []);
 
   const updateClarity = useCallback((update: Partial<ClarityData>) => {
@@ -177,13 +212,23 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
         ? current.filter((id) => id !== categoryId)
         : [...current, categoryId];
 
+      const refreshedSkills = getDefaultStarterSkills(
+        prev.stageId,
+        prev.academicContext,
+        nextCategories
+      );
+
       return {
         ...prev,
         interests: {
           ...prev.interests,
           selectedCategoryIds: nextCategories,
-          isStillExploring: categoryId === "still_exploring" ? !isSelected : prev.interests.isStillExploring,
+          isStillExploring:
+            categoryId === "still_exploring"
+              ? !isSelected
+              : prev.interests.isStillExploring,
         },
+        startingSkills: refreshedSkills,
       };
     });
   }, []);
@@ -246,26 +291,38 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
   // ---------------------------------------------------------------------------
 
   const acceptOptionalActivity = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      activityAttempt: {
-        activityId: STAGE_MICRO_ACTIVITIES[prev.stageId]?.id || "act_default",
-        attempted: true,
-        retriesCount: 0,
-        feedback: "",
-        status: "in_progress",
-      },
-      currentStep: "activity",
-    }));
+    setState((prev) => {
+      const activity = resolveMicroActivity(
+        prev.stageId,
+        prev.interests.selectedCategoryIds,
+        prev.academicContext
+      );
+      return {
+        ...prev,
+        activityAttempt: {
+          activityId: activity?.id || STAGE_MICRO_ACTIVITIES[prev.stageId]?.id || "act_default",
+          attempted: true,
+          retriesCount: 0,
+          feedback: "",
+          status: "in_progress",
+        },
+        currentStep: "activity",
+      };
+    });
   }, []);
 
   const skipOptionalActivity = useCallback(() => {
     setState((prev) => {
+      const activity = resolveMicroActivity(
+        prev.stageId,
+        prev.interests.selectedCategoryIds,
+        prev.academicContext
+      );
       const nextStep: OnboardingStepId = "reflection";
       return {
         ...prev,
         activityAttempt: {
-          activityId: STAGE_MICRO_ACTIVITIES[prev.stageId]?.id || "act_default",
+          activityId: activity?.id || STAGE_MICRO_ACTIVITIES[prev.stageId]?.id || "act_default",
           attempted: false,
           retriesCount: 0,
           feedback: "Activity skipped by student. Marked as 'not_assessed' on intelligence profile.",
@@ -278,7 +335,15 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
 
   const submitActivityChoice = useCallback((optionId: string) => {
     setState((prev) => {
-      const activity = STAGE_MICRO_ACTIVITIES[prev.stageId];
+      const activity =
+        MICRO_ACTIVITIES_CATALOG.find(
+          (a) => a.id === prev.activityAttempt?.activityId
+        ) ||
+        resolveMicroActivity(
+          prev.stageId,
+          prev.interests.selectedCategoryIds,
+          prev.academicContext
+        );
       if (!activity) return prev;
       const chosenOption = activity.options.find((opt) => opt.id === optionId);
       const isCorrect = chosenOption?.isCorrect ?? false;
@@ -381,6 +446,7 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
 
   return {
     state,
+    currentActivity,
     currentStepIndex,
     totalSteps,
     progressPercentage,

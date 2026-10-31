@@ -70,7 +70,6 @@ export function HowItWorks() {
                       ? "bg-white border-[#6757F5] shadow-xl shadow-[#6757F5]/10 ring-2 ring-[#6757F5]/30 -translate-y-1"
                       : "bg-white/80 border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-white"
                   }`}
-                  aria-label={`Inspect ${stage.title}`}
                 >
                   <div>
                     {/* Step number and icon badge */}

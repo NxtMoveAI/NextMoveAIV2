@@ -19,10 +19,11 @@ import {
 } from "lucide-react";
 import { type AcademicStageId } from "@/data/landing-demo";
 import { type ActivityAttemptResult } from "../schemas/types";
-import { STAGE_MICRO_ACTIVITIES } from "../data/activities";
+import { STAGE_MICRO_ACTIVITIES, type MicroActivity } from "../data/activities";
 
 interface MicroExplorationProps {
   stageId: AcademicStageId;
+  activity?: MicroActivity;
   attempt?: ActivityAttemptResult;
   onSubmitChoice: (optionId: string) => void;
   onRetry: () => void;
@@ -33,6 +34,7 @@ interface MicroExplorationProps {
 
 export function MicroExploration({
   stageId,
+  activity: customActivity,
   attempt,
   onSubmitChoice,
   onRetry,
@@ -40,7 +42,7 @@ export function MicroExploration({
   onNext,
   onBack,
 }: MicroExplorationProps) {
-  const activity = STAGE_MICRO_ACTIVITIES[stageId] || STAGE_MICRO_ACTIVITIES["classes-11-12"];
+  const activity = customActivity || STAGE_MICRO_ACTIVITIES[stageId] || STAGE_MICRO_ACTIVITIES["classes-11-12"];
   const [selectedOpt, setSelectedOpt] = useState<string | null>(
     attempt?.selectedOptionId || null
   );

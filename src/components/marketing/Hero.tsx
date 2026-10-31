@@ -300,7 +300,7 @@ export function Hero() {
                     setActiveStageId(heroStages[nextIndex].id);
                   }}
                   className="inline-flex items-center gap-1 font-bold text-[#6757F5] hover:text-[#5342E8] p-1 rounded-md transition-colors"
-                  aria-label="Proceed to next transformation stage"
+                  aria-label={`Next: ${heroStages[(activeIndex + 1) % heroStages.length].title}`}
                 >
                   <span>Next: {heroStages[(activeIndex + 1) % heroStages.length].title}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
