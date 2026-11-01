@@ -78,7 +78,7 @@ test.describe('Flow 1–3 Complete Cross-Flow Integration Journeys', () => {
     await expect(page.locator('text=Educational Pathway & Skill Trade-Off Matrix')).toBeVisible();
     // Choose correct option
     await page.locator('button:has-text("Both pathways involve trade-offs")').click();
-    await expect(page.locator('text=Insight Verified:')).toBeVisible();
+    await expect(page.locator('text=Learning Insight:')).toBeVisible();
     await page.locator('button:has-text("Continue to Reflection")').click();
 
     // Step 7: Reflection
@@ -156,7 +156,7 @@ test.describe('Flow 1–3 Complete Cross-Flow Integration Journeys', () => {
 
     // Solve challenge (Working capital timing gap)
     await page.locator('button:has-text("Revenue was booked on accrual credit")').click();
-    await expect(page.locator('text=Insight Verified:')).toBeVisible();
+    await expect(page.locator('text=Learning Insight:')).toBeVisible();
     await page.locator('button:has-text("Continue to Reflection")').click();
 
     // 11. Step 7: Reflection

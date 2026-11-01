@@ -30,7 +30,7 @@ import { HomeEmptyState } from "@/features/student-home/components/HomeEmptyStat
 
 export default function StudentHomePage() {
   const router = useRouter();
-  const { viewModel, isLoading, error, retryLoad } = useStudentHome();
+  const { viewModel, hasRealHandoff, isLoading, error, retryLoad } = useStudentHome();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -49,15 +49,16 @@ export default function StudentHomePage() {
     return <HomeErrorState errorMessage={error} onRetry={retryLoad} />;
   }
 
-  // If in production without any confirmed profile, show the honest empty onboarding prompt
-  if (!viewModel && process.env.NODE_ENV === "production") {
+  // Never display the default synthetic Class 12 fixture on a production public route.
+  // Until Havyas supplies a server-validated session/profile, no demo account is available.
+  if (process.env.NODE_ENV === "production" && !hasRealHandoff) {
     return <HomeEmptyState />;
   }
 
   return (
     <div className="space-y-8 pb-8">
       {/* 1. Development Persona Switcher (Non-production only) */}
-      <PersonaSwitcherBar />
+      {process.env.NODE_ENV !== "production" && <PersonaSwitcherBar />}
 
       {/* 2. Personalized Welcome Area */}
       <WelcomePanel

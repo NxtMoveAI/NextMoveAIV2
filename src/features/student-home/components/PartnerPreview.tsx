@@ -164,7 +164,7 @@ export function PartnerPreview({ prompts, stageLabel }: PartnerPreviewProps) {
 
         {/* Demo preview notice */}
         <p className="text-[11px] text-[#8C93AD] text-center italic">
-          Demo preview • In future releases, My Partner provides continuous personal context-aware guidance powered by Havyas&apos;s verified knowledge engine.
+          Demo preview • In future releases, My Partner provides continuous personal context-aware guidance powered by Havyas&apos;s curated knowledge engine.
         </p>
       </div>
     </section>

@@ -201,6 +201,8 @@ export interface ActivityAttemptResult {
   retriesCount: number;
   feedback: string;
   status: "completed" | "skipped" | "in_progress";
+  completedAt?: string;
+  isSyntheticFixture?: boolean;
 }
 
 // =============================================================================

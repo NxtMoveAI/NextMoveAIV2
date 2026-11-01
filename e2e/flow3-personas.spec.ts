@@ -54,7 +54,7 @@ test.describe('Flow 3 — Adaptive Student Onboarding Persona Verification', () 
     await expect(page.locator('text=Practical Scenario')).toBeVisible();
     // Select option 1: hook, climax, resolution
     await page.click('button:has-text("1. The Hook (Baby owl wakes up alone")');
-    await expect(page.locator('text=Key Learning Takeaway:').or(page.locator('text=Insight Verified:'))).toBeVisible();
+    await expect(page.locator('text=Key Learning Takeaway:').or(page.locator('text=Learning Insight:'))).toBeVisible();
     await page.click('button:has-text("Continue to Reflection")');
 
     // Reflection step

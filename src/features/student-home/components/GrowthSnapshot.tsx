@@ -127,18 +127,25 @@ export function GrowthSnapshot({ snapshot }: GrowthSnapshotProps) {
                   Latest Activity Completed: {recentActivity.title}
                 </span>
               </div>
-              <span className="text-[11px] text-[#626987] font-medium">
-                {recentActivity.timeAgo}
-              </span>
+              {recentActivity.timeAgo && (
+                <span className="text-[11px] text-[#626987] font-medium">
+                  {recentActivity.timeAgo}
+                </span>
+              )}
             </div>
             {recentActivity.feedbackGiven && recentActivity.feedbackGiven.trim().length > 0 && (
               <p className="text-xs text-[#31364F] leading-relaxed">
                 &ldquo;{recentActivity.feedbackGiven}&rdquo;
               </p>
             )}
-            <div className="flex items-center gap-2 pt-1 text-[11px] text-[#059669] font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Competency: {recentActivity.competencyPractised}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1 text-[11px]">
+              <div className="flex items-center gap-2 text-[#059669] font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                <span>Practised topic: {recentActivity.competencyPractised}</span>
+              </div>
+              <span className="text-[10px] text-[#626987]">
+                Self-guided practice • Rubric review required for verified mastery
+              </span>
             </div>
           </div>
         ) : null}

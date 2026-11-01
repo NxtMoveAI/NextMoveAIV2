@@ -36,7 +36,7 @@ export function HomeEmptyState() {
           <li>Adaptive context for your specific academic stage</li>
           <li>Your self-selected exploration interests</li>
           <li>A practical, low-stakes micro-exploration challenge</li>
-          <li>Your initial verified starting profile baseline</li>
+          <li>Your initial student intelligence starting profile baseline</li>
         </ul>
       </div>
 

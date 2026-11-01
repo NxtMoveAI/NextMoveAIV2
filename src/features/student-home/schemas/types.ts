@@ -83,11 +83,12 @@ export interface RecentActivityEvent {
   activityId: string;
   title: string;
   stageId: AcademicStageId;
-  completedAt: string;
-  timeAgo: string;
+  completedAt?: string;
+  timeAgo?: string;
   feedbackGiven?: string;
   competencyPractised: string;
   wasCorrect?: boolean;
+  isSyntheticFixture?: boolean;
 }
 
 export interface GrowthSnapshotViewModel {

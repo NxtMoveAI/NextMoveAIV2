@@ -150,7 +150,7 @@ export function MicroExploration({
                         <AlertCircle className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" />
                       )}
                       <div>
-                        <strong>{isCorrect ? "Insight Verified:" : "Learning Note:"}</strong>{" "}
+                        <strong>{isCorrect ? "Learning Insight:" : "Learning Note:"}</strong>{" "}
                         {attempt?.feedback || opt.feedback}
                       </div>
                     </div>
@@ -165,7 +165,7 @@ export function MicroExploration({
         {hasAnswered && (
           <div className="p-4 rounded-2xl bg-[#F0FCFD] border border-[#B2EFF4] text-left space-y-1">
             <span className="text-[11px] font-bold text-[#0891B2] uppercase tracking-wider block">
-              Competency Insight: {activity.demonstratedCompetency}
+              Practice Topic: {activity.demonstratedCompetency}
             </span>
             <p className="text-xs text-[#155E75] leading-relaxed">
               {activity.explanation}

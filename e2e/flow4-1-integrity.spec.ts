@@ -165,7 +165,7 @@ test.describe('Flow 4.1 — Visual Review Corrections & Profile Integrity', () =
     // Complete the challenge
     await page.locator('button:has-text("Yes, Try Practical Challenge")').click();
     await page.locator('button:has-text("Both pathways involve trade-offs")').click();
-    await expect(page.locator('text=Insight Verified:')).toBeVisible();
+    await expect(page.locator('text=Learning Insight:')).toBeVisible();
     await page.locator('button:has-text("Continue to Reflection")').click();
 
     // Reflection & submit
@@ -185,7 +185,7 @@ test.describe('Flow 4.1 — Visual Review Corrections & Profile Integrity', () =
 
     // Latest Activity Completed card must be visible with genuine catalog competency
     await expect(growthSection.locator('text=Latest Activity Completed: The Educational Pathway & Skill Trade-Off Matrix')).toBeVisible();
-    await expect(growthSection.locator('text=Competency: Educational Pathway & Trade-Off Analysis')).toBeVisible();
+    await expect(growthSection.locator('text=Practised topic: Educational Pathway & Trade-Off Analysis')).toBeVisible();
 
     // Feedback must not be empty
     const growthText = await growthSection.innerText();

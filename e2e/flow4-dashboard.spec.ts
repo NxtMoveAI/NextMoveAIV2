@@ -190,7 +190,7 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
 
     // Verify recent activity event
     await expect(page.locator('text=Latest Activity Completed:')).toBeVisible();
-    await expect(page.locator('text=3 days ago')).toBeVisible();
+    await expect(page.locator('text=28 Oct 2026 · Synthetic fixture')).toBeVisible();
     await expect(page.locator('text=Continue: 12-Month Cash Flow Statement Modeling')).toBeVisible();
   });
 

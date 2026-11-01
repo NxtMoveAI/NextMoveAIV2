@@ -328,6 +328,11 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
           feedback: "Activity skipped by student. Marked as 'not_assessed' on intelligence profile.",
           status: "skipped",
         },
+        // A student may return to the challenge and skip it after completing it.
+        // In that case, clear task-derived practice evidence rather than retaining a ghost record.
+        startingSkills: prev.startingSkills.filter((skill) =>
+          skill.id !== `act_evidence_${prev.activityAttempt?.activityId}`
+        ),
         currentStep: nextStep,
       };
     });
@@ -346,7 +351,8 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
         );
       if (!activity) return prev;
       const chosenOption = activity.options.find((opt) => opt.id === optionId);
-      const isCorrect = chosenOption?.isCorrect ?? false;
+      if (!chosenOption) return prev; // Invalid option must not create a completed/practised record.
+      const isCorrect = chosenOption.isCorrect;
       const feedback = chosenOption?.feedback || "";
 
       const attempt: ActivityAttemptResult = {
@@ -357,6 +363,8 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
         retriesCount: prev.activityAttempt?.retriesCount || 0,
         feedback,
         status: "completed",
+        completedAt: new Date().toISOString(),
+        isSyntheticFixture: false,
       };
 
       // Add practised evidence item to skills list if correct
@@ -396,10 +404,14 @@ export function useOnboardingState(initialStageId: AcademicStageId, isDemoMode: 
           ...prev.activityAttempt,
           selectedOptionId: undefined,
           isCorrect: undefined,
+          completedAt: undefined,
           retriesCount: (prev.activityAttempt.retriesCount || 0) + 1,
           feedback: "",
           status: "in_progress",
         },
+        startingSkills: prev.startingSkills.filter((skill) =>
+          skill.id !== `act_evidence_${prev.activityAttempt?.activityId}`
+        ),
       };
     });
   }, []);

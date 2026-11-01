@@ -11,6 +11,7 @@ import {
   type AcademicContextData,
   type InterestsData,
   type ClarityData,
+  type StartingPossibility,
 } from "@/features/onboarding/schemas/types";
 import { MICRO_ACTIVITIES_CATALOG } from "@/features/onboarding/data/activities";
 import {
@@ -543,7 +544,7 @@ export function transformProfileToHomeViewModel(
       id: profile.firstNextMove.id,
       title: profile.firstNextMove.title,
       description: profile.firstNextMove.description,
-      whySuggested: `Suggested based on your ${profile.academicStageId} starting baseline and demonstrated interests.`,
+      whySuggested: `Suggested from your ${profile.academicStageId} starting profile and stated exploration goals.`,
       supportingContext: "Recommended by your starting baseline",
       effortMinutes: profile.firstNextMove.estimatedTime,
       learningOutcome: "Builds practical evidence and clarifies your next exploration step.",
@@ -565,6 +566,15 @@ export function transformProfileToHomeViewModel(
     profile.interests.isStillExploring ||
     profile.interests.selectedCategoryIds.length === 0;
 
+  // A first-position suggestion or a broad keyword match is NOT evidence of fit.
+  // Until an independently reviewed alignment model exists, use neutral labels.
+  const determineBadge = (_p: StartingPossibility, idx: number): string => {
+    if (isStillExploring) {
+      return idx === 0 ? "Exploration Pathway" : "Curiosity Direction";
+    }
+    return "Suggested Exploration";
+  };
+
   // Format possibilities
   const possibilities: ExplorePossibilityItem[] = profile.possibilities.map((p, idx) => ({
     id: p.id,
@@ -574,13 +584,7 @@ export function transformProfileToHomeViewModel(
       : p.type === "applied_skill_track"
       ? "applied_skill_track"
       : "interest_exploration") as PossibilityDomainType,
-    badgeLabel: isStillExploring
-      ? idx === 0
-        ? "Exploration Pathway"
-        : "Curiosity Direction"
-      : idx === 0
-      ? "High Alignment"
-      : "Curiosity Explorer",
+    badgeLabel: determineBadge(p, idx),
     summary: p.summary,
     whySuggested: p.whySuggested,
     whatRemainsUnknown: p.whatRemainsUnknown,
@@ -612,46 +616,70 @@ export function transformProfileToHomeViewModel(
     notes: s.userNotes,
   }));
 
-  // Recent activity event (ONLY IF ACTUALLY COMPLETED WITH VALID ATTEMPT)
+  // Only a real completed attempt with a catalogued option may appear in history.
+  // An activity practice topic is NOT a verified or demonstrated competency.
   let recentActivity: RecentActivityEvent | undefined;
-  const isActivityCompleted =
-    profile.activityAttempt?.status === "completed" &&
-    Boolean(profile.activityAttempt?.selectedOptionId);
+  const attempt = profile.activityAttempt;
+  const activityDef = MICRO_ACTIVITIES_CATALOG.find(
+    (activity) => activity.id === attempt?.activityId
+  );
+  const selectedOption = activityDef?.options.find(
+    (option) => option.id === attempt?.selectedOptionId
+  );
+  const hasConsistentResult =
+    selectedOption &&
+    (attempt?.isCorrect === undefined || attempt.isCorrect === selectedOption.isCorrect);
 
-  if (isActivityCompleted && profile.activityAttempt) {
-    const isReturning = options?.isReturningUser || false;
-    const activityDef = MICRO_ACTIVITIES_CATALOG.find(
-      (a) => a.id === profile.activityAttempt?.activityId
-    );
-    const activityTitle = activityDef?.title || "Practical Micro-Exploration";
-    const competency =
-      activityDef?.demonstratedCompetency ||
-      profile.startingSkills.find((s) => s.evidenceStatus === "practised")?.name ||
-      "Practical Diagnosis & Problem Solving";
+  if (
+    attempt?.attempted === true &&
+    attempt.status === "completed" &&
+    activityDef &&
+    selectedOption &&
+    hasConsistentResult
+  ) {
+    // Only the activity event's own timestamp can be shown. A missing or invalid
+    // timestamp is omitted instead of being replaced with the profile update date.
+    const rawTimestamp = attempt.completedAt;
+    const eventDate = rawTimestamp && Number.isFinite(Date.parse(rawTimestamp))
+      ? new Date(rawTimestamp)
+      : undefined;
+    const completedAt = eventDate?.toISOString();
+    const isSynthetic = attempt.isSyntheticFixture === true;
+    const dateLabel = eventDate
+      ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(eventDate)
+      : undefined;
 
     recentActivity = {
-      id: `evt_${profile.activityAttempt.activityId}`,
-      activityId: profile.activityAttempt.activityId,
-      title: activityTitle,
+      id: `evt_${activityDef.id}`,
+      activityId: activityDef.id,
+      title: activityDef.title,
       stageId: profile.academicStageId,
-      completedAt: profile.updatedAt,
-      timeAgo: isReturning ? "3 days ago" : "Just now (during onboarding)",
-      feedbackGiven: profile.activityAttempt.feedback?.trim() || undefined,
-      competencyPractised: competency,
-      wasCorrect: profile.activityAttempt.isCorrect,
+      completedAt,
+      // Do not manufacture relative times from returning-user status.
+      timeAgo: dateLabel ? `${dateLabel}${isSynthetic ? " · Synthetic fixture" : ""}` : undefined,
+      feedbackGiven: (attempt.feedback || selectedOption.feedback)?.trim() || undefined,
+      competencyPractised: activityDef.demonstratedCompetency,
+      wasCorrect: selectedOption.isCorrect,
+      isSyntheticFixture: isSynthetic,
     };
   }
 
-  const practisedCount = profile.startingSkills.filter((s) => s.evidenceStatus === "practised").length;
-  const selfReportedCount = profile.startingSkills.filter((s) => s.evidenceStatus === "self_reported").length;
-  const hasAttempted = practisedCount > 0 || isActivityCompleted;
+  // This first-onboarding baseline records only one in-app micro-activity.
+  // Do not count or display practice entries when that activity has no valid record.
+  // Future backend history must provide separately attributable task events.
+  const supportedEvidenceItems = recentActivity
+    ? evidenceItems
+    : evidenceItems.filter((entry) => entry.evidenceStatus !== "practised");
+  const practisedCount = supportedEvidenceItems.filter((entry) => entry.evidenceStatus === "practised").length;
+  const selfReportedCount = supportedEvidenceItems.filter((entry) => entry.evidenceStatus === "self_reported").length;
+  const hasAttempted = Boolean(recentActivity);
 
   const growthSnapshot: GrowthSnapshotViewModel = {
     hasAttemptedActivity: hasAttempted,
     totalPractisedCount: practisedCount,
     totalSelfReportedCount: selfReportedCount,
     unassessedAreasCount: Math.max(1, 4 - (practisedCount + selfReportedCount)),
-    evidenceItems,
+    evidenceItems: supportedEvidenceItems,
     recentActivity,
     emptyStateMessage: hasAttempted
       ? undefined
@@ -683,7 +711,7 @@ export function transformProfileToHomeViewModel(
     possibilities,
     growthSnapshot,
     partnerPrompts,
-    latestMeaningfulActivity: profile.activityAttempt,
+    latestMeaningfulActivity: recentActivity ? profile.activityAttempt : undefined,
     updatedAt: profile.updatedAt,
   };
 }

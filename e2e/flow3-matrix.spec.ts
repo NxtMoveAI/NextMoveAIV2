@@ -177,7 +177,7 @@ test.describe('Flow 3 — Adaptive Navigation, Stage Switching & 42-Combination 
 
     // Click correct option
     await page.click('button:has-text("1. The Hook (Baby owl wakes up alone")');
-    await expect(page.locator('text=Insight Verified:').or(page.locator('text=Key Learning Takeaway:'))).toBeVisible();
+    await expect(page.locator('text=Learning Insight:').or(page.locator('text=Key Learning Takeaway:'))).toBeVisible();
 
     await page.click('button:has-text("Continue to Reflection")');
     await expect(page.locator('text=Reflecting on your exploration')).toBeVisible();
