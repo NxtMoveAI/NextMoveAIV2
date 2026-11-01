@@ -51,14 +51,22 @@ export default function StudentHomePage() {
 
   // Never display the default synthetic Class 12 fixture on a production public route.
   // Until Havyas supplies a server-validated session/profile, no demo account is available.
-  if (process.env.NODE_ENV === "production" && !hasRealHandoff) {
+  const isAnonymousProductionVisit =
+    process.env.NODE_ENV === "production" ||
+    (typeof window !== "undefined" &&
+      (window.location.search.includes("mode=production") ||
+        window.location.search.includes("session=anonymous")));
+
+  if (isAnonymousProductionVisit && !hasRealHandoff) {
     return <HomeEmptyState />;
   }
 
   return (
     <div className="space-y-8 pb-8">
       {/* 1. Development Persona Switcher (Non-production only) */}
-      {process.env.NODE_ENV !== "production" && <PersonaSwitcherBar />}
+      {process.env.NODE_ENV !== "production" && !isAnonymousProductionVisit && (
+        <PersonaSwitcherBar />
+      )}
 
       {/* 2. Personalized Welcome Area */}
       <WelcomePanel

@@ -10,7 +10,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Compass,
   TrendingUp,
@@ -20,6 +20,8 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { useStudentHome } from "@/features/student-home/hooks/useStudentHome";
+import { studentProfileStore } from "@/features/student-home/services/profile-store";
 
 // Home icon using SVG to avoid Lucide import collisions if needed
 function HomeIcon({ className }: { className?: string }) {
@@ -90,6 +92,8 @@ const SECONDARY_NAV: NavItem[] = [
 
 export function StudentSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { hasConfirmedProfile } = useStudentHome();
 
   const isCurrent = (href: string) => {
     if (href === "/dashboard/student") {
@@ -208,13 +212,36 @@ export function StudentSidebar() {
                 );
               })}
 
-              <Link
-                href="/sign-in"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#C026D3] hover:bg-[#FDF4FF] transition-all group"
-              >
-                <LogOut className="w-4 h-4 shrink-0 text-[#C026D3]" />
-                <span>Sign Out</span>
-              </Link>
+              {hasConfirmedProfile ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    studentProfileStore.clearConfirmedProfile();
+                    router.push("/sign-in");
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#C026D3] hover:bg-[#FDF4FF] transition-all group text-left"
+                >
+                  <LogOut className="w-4 h-4 shrink-0 text-[#C026D3]" />
+                  <span>Sign Out</span>
+                </button>
+              ) : (
+                <div className="space-y-1 pt-1">
+                  <Link
+                    href="/sign-in"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#6757F5] hover:bg-[#EDEAFF] transition-all group"
+                  >
+                    <User className="w-4 h-4 shrink-0 text-[#6757F5]" />
+                    <span>Sign In</span>
+                  </Link>
+                  <Link
+                    href="/get-started"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#059669] hover:bg-[#ECFDF5] transition-all group"
+                  >
+                    <Sparkles className="w-4 h-4 shrink-0 text-[#059669]" />
+                    <span>Get Started</span>
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
 

@@ -27,15 +27,20 @@ export function useStudentHome() {
 
   const activePersonaId = studentProfileStore.getActivePersonaId();
   const hasRealHandoff = studentProfileStore.hasRealHandoff();
+  const isProductionMode = studentProfileStore.isAnonymousMode();
+  const hasConfirmedProfile = hasRealHandoff || (!isProductionMode && activePersonaId !== "persona_empty");
+
   const profile = studentProfileStore.getActiveProfile();
   const selectedAltId = studentProfileStore.getSelectedAlternativeMove();
   const isPostponed = studentProfileStore.getIsMovePostponed();
 
-  // Find persona display name if available
+  // Find persona display name if available - never invent identity in production or when unconfirmed
   const studentName = useMemo(() => {
+    if (!hasConfirmedProfile) return undefined;
     if (hasRealHandoff) return undefined; // neutral or read from student session
+    if (isProductionMode) return undefined;
     return DEMO_PERSONAS[activePersonaId]?.name;
-  }, [hasRealHandoff, activePersonaId]);
+  }, [hasConfirmedProfile, hasRealHandoff, isProductionMode, activePersonaId]);
 
   const viewModel: StudentHomeViewModel = useMemo(() => {
     return transformProfileToHomeViewModel(profile, {
@@ -83,6 +88,7 @@ export function useStudentHome() {
     error,
     activePersonaId,
     hasRealHandoff,
+    hasConfirmedProfile,
     selectAlternativeMove,
     restoreSuggestedMove,
     postponeMove,

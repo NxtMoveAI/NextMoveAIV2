@@ -25,25 +25,92 @@ class StudentProfileStore {
     this.confirmedProfile = profile;
     this.selectedAlternativeMoveId = null;
     this.isMovePostponed = false;
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("confirmed_student_profile", JSON.stringify(profile));
+      } catch {
+        // Safe storage write fallback
+      }
+    }
     this.notify();
   }
 
   /**
-   * Get confirmed profile or fall back to active persona fixture
+   * Clear confirmed profile and session prototype state (e.g., on sign out)
    */
-  public getActiveProfile(): StudentIntelligenceProfile {
+  public clearConfirmedProfile(): void {
+    this.confirmedProfile = null;
+    this.selectedAlternativeMoveId = null;
+    this.isMovePostponed = false;
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("confirmed_student_profile");
+      } catch {
+        // Safe storage removal fallback
+      }
+    }
+    this.notify();
+  }
+
+  /**
+   * Retrieve genuine confirmed profile if present in memory or session storage
+   */
+  public getConfirmedProfile(): StudentIntelligenceProfile | null {
+    if (
+      typeof window !== "undefined" &&
+      window.location.search.includes("session=anonymous")
+    ) {
+      return null;
+    }
     if (this.confirmedProfile) {
       return this.confirmedProfile;
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("confirmed_student_profile");
+        if (stored) {
+          const parsed = JSON.parse(stored) as StudentIntelligenceProfile;
+          if (parsed && parsed.academicStageId && parsed.profileId) {
+            this.confirmedProfile = parsed;
+            return parsed;
+          }
+        }
+      } catch {
+        // Malformed storage ignored
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get confirmed profile or fall back to active persona fixture (development only)
+   */
+  public getActiveProfile(): StudentIntelligenceProfile {
+    const confirmed = this.getConfirmedProfile();
+    if (confirmed) {
+      return confirmed;
     }
     return DEMO_PERSONAS[this.activePersonaId]?.profile || DEMO_PERSONAS.persona_c_class12.profile;
   }
 
+  public isAnonymousMode(): boolean {
+    if (process.env.NODE_ENV === "production") return true;
+    if (typeof window !== "undefined") {
+      return (
+        window.location.search.includes("mode=production") ||
+        window.location.search.includes("session=anonymous") ||
+        window.sessionStorage.getItem("anonymous_session") === "true"
+      );
+    }
+    return false;
+  }
+
   public hasRealHandoff(): boolean {
-    return this.confirmedProfile !== null;
+    return this.getConfirmedProfile() !== null;
   }
 
   public setActivePersonaId(personaId: PersonaFixtureId): void {
-    this.confirmedProfile = null; // switching fixture clears in-memory handoff
+    this.clearConfirmedProfile(); // switching fixture clears in-memory and session handoff
     this.activePersonaId = personaId;
     this.selectedAlternativeMoveId = null;
     this.isMovePostponed = false;

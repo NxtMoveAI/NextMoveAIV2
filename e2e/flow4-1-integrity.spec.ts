@@ -309,4 +309,81 @@ test.describe('Flow 4.1 — Visual Review Corrections & Profile Integrity', () =
     await expect(page.locator('text=Visual Storyteller & Comic Creator')).toBeVisible();
   });
 
+
+  // ===========================================================================
+  // PRIORITY 8: PRODUCTION IDENTITY-STATE INTEGRITY
+  // ===========================================================================
+
+  test('F4.1-8: Anonymous visit to /dashboard/student displays neutral workspace, empty state, and no placeholder identity', async ({ page }) => {
+    // 1. Visit with anonymous simulation parameter and clean local storage
+    await page.goto('/dashboard/student?session=anonymous');
+    await page.evaluate(() => sessionStorage.clear());
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    // 2. Header must show neutral "Student Workspace", NEVER "Class 12 · Science (PCM)"
+    const headerContext = page.locator('header span:has-text("Student Workspace")');
+    await expect(headerContext).toBeVisible();
+    const headerText = await page.locator('header').innerText();
+    expect(headerText).not.toContain('Class 12 • Science (PCM)');
+    expect(headerText).not.toContain('Class 12 · Science (PCM)');
+
+    // 3. Avatar must not show synthetic initials like "A" or "S"
+    const avatarButton = page.locator('header button[aria-label="Account Options"]');
+    await expect(avatarButton).toBeVisible();
+    const avatarContent = await avatarButton.innerText();
+    expect(avatarContent.trim()).toBe(''); // Icon only, no letter text
+
+    // 4. Dropdown must offer Sign In / Get Started, never Sign Out
+    await avatarButton.click();
+    await expect(page.locator('header a[href="/sign-in"]')).toBeVisible();
+    await expect(page.locator('header a[href="/get-started"]')).toBeVisible();
+    await expect(page.locator('header button:has-text("Sign Out")')).not.toBeVisible();
+    await page.keyboard.press('Escape');
+
+    // 5. Sidebar must offer Sign In / Get Started, never Sign Out
+    const sidebar = page.locator('aside');
+    if (await sidebar.isVisible()) {
+      await expect(sidebar.locator('a[href="/sign-in"]')).toBeVisible();
+      await expect(sidebar.locator('button:has-text("Sign Out")')).not.toBeVisible();
+    }
+
+    // 6. Page must render HomeEmptyState with onboarding invitation
+    await expect(page.locator('h1:has-text("Welcome to Next Move AI")')).toBeVisible();
+    await expect(page.locator('text=Your personal home dashboard is built around your confirmed starting profile.')).toBeVisible();
+    await expect(page.locator('a:has-text("Begin Adaptive Onboarding")')).toBeVisible();
+
+    // 7. Developer PersonaSwitcherBar must NOT be rendered
+    await expect(page.locator('text=DEVELOPER PERSONA PREVIEWS')).not.toBeVisible();
+  });
+
+  test('F4.1-9: Returning student with confirmed profile retains academic context and sign-out affordance', async ({ page }) => {
+    // 1. Complete onboarding for Class 10 (Stage classes-8-10)
+    await page.goto('/onboarding?stage=classes-8-10&preview=true');
+    await page.waitForLoadState('networkidle');
+
+    await page.locator('button:has-text("Begin My Journey")').click();
+    await page.locator('button:has-text("Class 10")').click();
+    await page.locator('main button:has-text("Continue")').first().click();
+    await page.locator('button:has-text("I have a few directions in mind")').click();
+    await page.locator('main button:has-text("Continue")').first().click();
+    await page.locator('text=Technology & Software').click();
+    await page.locator('main button:has-text("Continue")').first().click();
+    await page.locator('main button:has-text("Continue")').first().click();
+    await page.locator('button:has-text("Skip Challenge & Continue")').click();
+    await page.locator('button:has-text("Explore new career & project possibilities")').click();
+    await page.locator('button:has-text("View My Starting Profile")').click();
+    await page.locator('button:has-text("Confirm My Starting Point")').click();
+    await page.locator('a:has-text("Enter My Student Workspace")').click();
+    await page.waitForURL(/\/dashboard\/student/);
+
+    // 2. Confirmed profile context must show Class 10
+    const header = page.locator('header');
+    await expect(header.locator('text=Class 10')).toBeVisible();
+
+    // 3. Sign Out button must be available in avatar menu
+    const avatarButton = page.locator('header button[aria-label="Student Account Menu"]');
+    await avatarButton.click();
+    await expect(page.locator('header button:has-text("Sign Out")')).toBeVisible();
+  });
 });

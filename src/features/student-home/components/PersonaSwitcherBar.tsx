@@ -29,8 +29,12 @@ const PERSONA_OPTIONS: { id: PersonaFixtureId; label: string; badge: string }[] 
 export function PersonaSwitcherBar() {
   const { activePersonaId, hasRealHandoff, switchPersona, restoreSuggestedMove } = useStudentHome();
 
-  // Exclude from production builds
-  if (process.env.NODE_ENV === "production") {
+  // Exclude from production builds or anonymous production preview visits
+  const isAnonymousPreview = typeof window !== "undefined" && (
+    window.location.search.includes("mode=production") ||
+    window.location.search.includes("session=anonymous")
+  );
+  if (process.env.NODE_ENV === "production" || isAnonymousPreview) {
     return null;
   }
 
