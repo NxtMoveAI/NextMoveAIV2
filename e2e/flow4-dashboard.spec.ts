@@ -340,12 +340,11 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     const sidebar = page.locator('aside[aria-label="Student Application Sidebar"]');
     await expect(sidebar).toBeVisible();
 
-    // 1. Navigate to Explore
+    // 1. Navigate to Explore (Flow 5 Live Discovery Workspace)
     await sidebar.locator('a:has-text("Explore")').click();
     await page.waitForURL(/\/dashboard\/student\/explore/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Explore Possibilities & Pathways' })).toBeVisible();
-    await expect(page.locator('text=Scheduled for Flow 5')).toBeVisible();
-    await page.locator('a:has-text("Return to Personalized Home")').first().click();
+    await expect(page.getByRole('heading', { level: 1, name: /Explore.*Possibilities/ })).toBeVisible();
+    await page.locator('a:has-text("Back to Home Dashboard")').first().click();
     await page.waitForURL(/\/dashboard\/student$/);
 
     // 2. Navigate to My Growth

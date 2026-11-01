@@ -1,23 +1,28 @@
+/**
+ * NEXT MOVE AI V2 — FLOW 5: EXPLORE POSSIBILITIES PAGE
+ * 
+ * Route: /dashboard/student/explore
+ * Serves the full interactive educational and career pathway discovery workspace.
+ */
+
 "use client";
 
-import React from "react";
-import { Compass } from "lucide-react";
-import { FutureModulePlaceholder } from "@/components/student-layout/FutureModulePlaceholder";
+import React, { Suspense } from "react";
+import { ExploreWorkspace } from "@/features/explore/components/ExploreWorkspace";
 
-export default function StudentExplorePage() {
+function ExploreLoadingFallback() {
   return (
-    <FutureModulePlaceholder
-      moduleName="Explore Possibilities & Pathways"
-      flowNumber="Flow 5"
-      shortDescription="A comprehensive, multi-dimensional discovery space to evaluate educational streams, university degrees, vocational alternatives, and emerging career domains."
-      upcomingCapabilities={[
-        "Side-by-side degree and pathway trade-off matrix",
-        "Syllabus comparisons and semester workload previews",
-        "Direct connections from student interests to verified industry requirements",
-        "Grounded 'What Remains Unknown' analysis for every career avenue",
-      ]}
-      icon={<Compass className="w-8 h-8" />}
-    />
+    <div className="p-8 sm:p-12 text-center space-y-3">
+      <div className="w-8 h-8 rounded-full border-2 border-[#6757F5] border-t-transparent animate-spin mx-auto" />
+      <p className="text-xs font-semibold text-[#626987]">Loading possibilities...</p>
+    </div>
   );
 }
 
+export default function StudentExplorePage() {
+  return (
+    <Suspense fallback={<ExploreLoadingFallback />}>
+      <ExploreWorkspace />
+    </Suspense>
+  );
+}
