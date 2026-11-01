@@ -8,9 +8,10 @@
 
 type StoreListener = () => void;
 
-const SAVED_STORAGE_KEY = "nextmove_saved_pathways";
+const BASE_STORAGE_KEY = "nextmove_saved_pathways";
 
 class SavedPathwaysStore {
+  private activeScope: string = "anonymous";
   private savedIds: Set<string> = new Set();
   private comparisonIds: string[] = [];
   private listeners: Set<StoreListener> = new Set();
@@ -20,18 +21,26 @@ class SavedPathwaysStore {
     this.hydrateFromStorage();
   }
 
+  private getStorageKey(): string {
+    return `${BASE_STORAGE_KEY}_${this.activeScope}`;
+  }
+
   private hydrateFromStorage(): void {
     if (typeof window === "undefined") return;
     try {
-      const stored = sessionStorage.getItem(SAVED_STORAGE_KEY);
+      const stored = sessionStorage.getItem(this.getStorageKey());
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
           this.savedIds = new Set(parsed);
+        } else {
+          this.savedIds = new Set();
         }
+      } else {
+        this.savedIds = new Set();
       }
     } catch {
-      // Storage access fallback
+      this.savedIds = new Set();
     }
     this.isHydrated = true;
   }
@@ -40,12 +49,41 @@ class SavedPathwaysStore {
     if (typeof window === "undefined") return;
     try {
       sessionStorage.setItem(
-        SAVED_STORAGE_KEY,
+        this.getStorageKey(),
         JSON.stringify(Array.from(this.savedIds))
       );
     } catch {
       // Storage write fallback
     }
+  }
+
+  /**
+   * Switch the active profile scope (e.g. student ID, persona ID, or "anonymous").
+   * Automatically isolates saved items and clears comparison trays so data never leaks across profiles.
+   */
+  public setProfileScope(scope: string, studentStageId?: string): void {
+    const normalizedScope = scope || "anonymous";
+    if (this.activeScope === normalizedScope && this.isHydrated) {
+      return;
+    }
+    this.activeScope = normalizedScope;
+    // Always clear comparison tray when switching profile/persona
+    this.comparisonIds = [];
+    this.hydrateFromStorage();
+
+    // Additional middle school protection: ensure no higher-stage pathways linger
+    if (studentStageId === "classes-4-7") {
+      const sanitized = new Set<string>();
+      this.savedIds.forEach((id) => {
+        if (id.startsWith("path_c47_")) {
+          sanitized.add(id);
+        }
+      });
+      this.savedIds = sanitized;
+      this.persistToStorage();
+    }
+
+    this.notify();
   }
 
   public subscribe(listener: StoreListener): () => void {

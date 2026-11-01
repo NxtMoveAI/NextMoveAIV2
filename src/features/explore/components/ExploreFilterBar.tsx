@@ -66,12 +66,25 @@ export function ExploreFilterBar({
   onToggleDivergent,
   onResetFilters,
 }: ExploreFilterBarProps) {
+  const isMiddleSchool = studentStageId === "classes-4-7";
+
+  const visibleStages = isMiddleSchool
+    ? [{ id: "classes-4-7" as const, label: "Classes 4–7 · Curiosity Mode" }]
+    : STAGES;
+
+  const visibleTypes = isMiddleSchool
+    ? [
+        { id: "all" as const, label: "All Exploration" },
+        { id: "curiosity_theme" as const, label: "Curiosity Themes" },
+      ]
+    : PATHWAY_TYPES;
+
   const hasActiveFilters =
     filters.searchQuery.trim().length > 0 ||
     filters.selectedCategory !== "all" ||
     filters.selectedType !== "all" ||
     filters.showDivergentOnly ||
-    (studentStageId && filters.selectedStage !== studentStageId);
+    (!isMiddleSchool && studentStageId && filters.selectedStage !== studentStageId);
 
   return (
     <div
@@ -170,7 +183,7 @@ export function ExploreFilterBar({
             <span>Academic Stage:</span>
           </span>
           <div className="flex flex-wrap items-center gap-1">
-            {STAGES.map((stg) => {
+            {visibleStages.map((stg) => {
               const isSelected = filters.selectedStage === stg.id;
               return (
                 <button
@@ -194,7 +207,7 @@ export function ExploreFilterBar({
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[#626987] font-semibold text-[11px]">Type:</span>
           <div className="flex flex-wrap items-center gap-1">
-            {PATHWAY_TYPES.map((pt) => {
+            {visibleTypes.map((pt) => {
               const isSelected = filters.selectedType === pt.id;
               return (
                 <button

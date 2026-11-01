@@ -234,13 +234,18 @@ export function PathwayDetailModal({
 
           {/* Section 4: Educational Routes & Duration */}
           <section aria-labelledby="section-routes" className="space-y-3">
-            <h2
-              id="section-routes"
-              className="text-sm font-black text-[#171A2B] uppercase tracking-wider flex items-center gap-2"
-            >
-              <GraduationCap className="w-4 h-4 text-[#6757F5]" />
-              <span>Possible Educational Routes</span>
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2
+                id="section-routes"
+                className="text-sm font-black text-[#171A2B] uppercase tracking-wider flex items-center gap-2"
+              >
+                <GraduationCap className="w-4 h-4 text-[#6757F5]" />
+                <span>Illustrative Educational Routes & Entrance Exam Examples</span>
+              </h2>
+              <span className="text-[10px] font-bold text-[#626987] bg-[#F4F3F8] px-2.5 py-0.5 rounded-full border border-[#E8E6F3]">
+                Reference: AICTE / UGC / Official Portals (2025–2026)
+              </span>
+            </div>
             <div className="space-y-3">
               {pathway.educationRoutes.map((route) => (
                 <div
@@ -268,6 +273,9 @@ export function PathwayDetailModal({
                 </div>
               ))}
             </div>
+            <p className="text-[11px] text-[#626987] italic pt-1 leading-relaxed">
+              *Entrance examinations (e.g. JEE, CUET, NID, GATE) and degree durations are presented as illustrative examples derived from official accrediting bodies. Specific cutoffs, seat allocations, and criteria vary annually and must be verified on official examination portals.
+            </p>
           </section>
 
           {/* Section 5: Eligibility & Academic Realities */}
@@ -293,7 +301,7 @@ export function PathwayDetailModal({
                 </ul>
               </div>
               <div className="text-[11px] italic text-[#B45309] pt-1 border-t border-[#FDE68A]">
-                Note: {pathway.eligibilityAndRealities.honestDisclaimer} We never invent admission cutoffs or guarantee placements.
+                Notice: {pathway.eligibilityAndRealities.honestDisclaimer} We never invent admission cutoffs or guarantee placements. Entrance requirements reflect established institutional guidelines (AICTE / UGC / NTA); Next Move AI does not publish speculative ranks, scores, or commercial admission guarantees.
               </div>
             </div>
           </section>

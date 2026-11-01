@@ -58,7 +58,15 @@ export function useExploreWorkspace() {
   const [activeDetailPathway, setActiveDetailPathway] = useState<Pathway | null>(() => {
     const focusId = searchParams.get("focus");
     if (focusId) {
-      return exploreService.getPathwayById(focusId) || null;
+      const p = exploreService.getPathwayById(focusId);
+      if (p) {
+        // Child safety: block higher-stage pathway if student is in classes-4-7
+        const currentStage = profile?.academicStageId;
+        if (currentStage === "classes-4-7" && !p.stageSuitability.includes("classes-4-7")) {
+          return null;
+        }
+        return p;
+      }
     }
     return null;
   });
@@ -66,6 +74,12 @@ export function useExploreWorkspace() {
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [comparisonToast, setComparisonToast] = useState<string | null>(null);
+
+  // Synchronize profile scope on mount
+  useEffect(() => {
+    const scope = profile ? profile.profileId || profile.academicStageId : "anonymous";
+    savedPathwaysStore.setProfileScope(scope, profile?.academicStageId);
+  }, [profile]);
 
   // Synchronize with studentProfileStore
   useEffect(() => {
@@ -75,6 +89,11 @@ export function useExploreWorkspace() {
         : studentProfileStore.getConfirmedProfile() ||
           studentProfileStore.getActiveProfile();
       setProfile(nextProfile);
+
+      // Isolate saved pathways & comparisons per profile/persona to prevent data leakage
+      const nextScope = nextProfile ? nextProfile.profileId || nextProfile.academicStageId : "anonymous";
+      savedPathwaysStore.setProfileScope(nextScope, nextProfile?.academicStageId);
+
       if (nextProfile) {
         setFilters((prev) => ({
           ...prev,
@@ -112,6 +131,14 @@ export function useExploreWorkspace() {
 
   // Active pathways before general filtering
   const basePool = useMemo(() => {
+    // Classes 4-7 Child Safety Gate: Middle school students can NEVER access adult career content
+    if (profile?.academicStageId === "classes-4-7") {
+      if (filters.showDivergentOnly) {
+        return divergentPathways.length > 0 ? divergentPathways : primaryPathways;
+      }
+      return primaryPathways;
+    }
+
     if (filters.showDivergentOnly) {
       return divergentPathways.length > 0
         ? divergentPathways
@@ -167,8 +194,21 @@ export function useExploreWorkspace() {
   }, []);
 
   const handleStageChange = useCallback((stage: AcademicStageId | "all") => {
+    // Child safety gate: Classes 4-7 students cannot switch stage to adult levels
+    if (profile?.academicStageId === "classes-4-7") {
+      return;
+    }
     setFilters((prev) => ({ ...prev, selectedStage: stage }));
-  }, []);
+  }, [profile]);
+
+  const handleSetActiveDetailPathway = useCallback((pathway: Pathway | null) => {
+    if (pathway && profile?.academicStageId === "classes-4-7") {
+      if (!pathway.stageSuitability.includes("classes-4-7")) {
+        return; // Child safety gate
+      }
+    }
+    setActiveDetailPathway(pathway);
+  }, [profile]);
 
   const handleTypeChange = useCallback((type: PathwayType | "all") => {
     setFilters((prev) => ({ ...prev, selectedType: type }));
@@ -249,7 +289,7 @@ export function useExploreWorkspace() {
     toggleComparePathway,
     removeFromComparison,
     clearComparison,
-    setActiveDetailPathway,
+    setActiveDetailPathway: handleSetActiveDetailPathway,
     setActiveProvenancePathway,
     setIsComparisonOpen,
     setIsSavedDrawerOpen,

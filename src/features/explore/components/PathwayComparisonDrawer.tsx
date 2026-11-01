@@ -178,7 +178,8 @@ export function PathwayComparisonDrawer({
                   {/* Row 3: Educational Routes & Duration */}
                   <tr>
                     <td className="py-3 px-4 font-bold text-[#171A2B] bg-[#FAF9F6]">
-                      Typical Duration & Routes
+                      <div>Typical Duration & Routes</div>
+                      <span className="text-[10px] font-normal text-[#8C93AD] block">Illustrative AICTE/UGC Models</span>
                     </td>
                     {pathways.map((p) => (
                       <td key={p.id} className="py-3 px-4 space-y-1.5">

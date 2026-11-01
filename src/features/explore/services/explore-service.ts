@@ -10,6 +10,7 @@
 
 import { type AcademicStageId } from "@/data/landing-demo";
 import { type StudentIntelligenceProfile } from "@/features/onboarding/schemas/types";
+import { MICRO_ACTIVITIES_CATALOG } from "@/features/onboarding/data/activities";
 import { PATHWAY_CATALOG } from "../data/pathway-catalog";
 import {
   type Pathway,
@@ -154,12 +155,18 @@ export class ExploreService {
 
     // 3. Mini-challenge demonstration signal
     if (hasActivityProof) {
+      const activity = MICRO_ACTIVITIES_CATALOG.find(
+        (a) => a.id === profile.activityAttempt?.activityId
+      );
+      const activityTitle = activity ? activity.title : "Introductory Micro-Challenge";
+      const competency = activity ? activity.demonstratedCompetency : "problem-solving logic";
+
       signals.push({
         type: "practised_activity_evidence",
-        label: "Mini-Challenge Participation",
-        description: `You engaged with the optional micro-activity during onboarding, demonstrating initial problem-solving comfort.`,
+        label: `Demonstrated Mini-Challenge Practice (${competency})`,
+        description: `You completed '${activityTitle}', demonstrating initial practice in ${competency}.`,
         truthBoundary:
-          "Reflects participation in one introductory interactive exercise; not a predictive career assessment.",
+          "Demonstrated evidence from one short onboarding challenge; this does NOT constitute an evaluated vocational aptitude score or career lock.",
       });
     }
 

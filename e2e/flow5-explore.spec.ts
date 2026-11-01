@@ -36,6 +36,12 @@ test.describe('Flow 5 — Explore Possibilities (/dashboard/student/explore)', (
     await expect(page.getByRole('heading', { level: 2, name: 'Visual Storytelling & Comic Worlds' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'Nature Observation & Habitat Journals' })).toBeVisible();
 
+    // Verify stage filter restrictions: Middle School student CANNOT access adult stages
+    await expect(page.locator('button:has-text("Classes 4–7 · Curiosity Mode")')).toBeVisible();
+    await expect(page.locator('button:has-text("Classes 11–12")')).not.toBeVisible();
+    await expect(page.locator('button:has-text("Degree / Eng")')).not.toBeVisible();
+    await expect(page.locator('button:has-text("Final-Year / Grad")')).not.toBeVisible();
+
     // Verify epistemic safety: No corporate job titles, no salary claims, no placement stats
     await expect(page.locator('text=Corporate Salary')).not.toBeVisible();
     await expect(page.locator('text=Average Package')).not.toBeVisible();
@@ -210,8 +216,9 @@ test.describe('Flow 5 — Explore Possibilities (/dashboard/student/explore)', (
     // Verify Section 3: Skills & Foundations
     await expect(modal.locator('text=Data Structures & Algorithms')).toBeVisible();
 
-    // Verify Section 4: Possible Educational Routes
-    await expect(modal.locator('text=Possible Educational Routes')).toBeVisible();
+    // Verify Section 4: Possible Educational Routes (Illustrative examples with official sources)
+    await expect(modal.locator('text=Illustrative Educational Routes & Entrance Exam Examples')).toBeVisible();
+    await expect(modal.locator('text=Reference: AICTE / UGC / Official Portals')).toBeVisible();
     await expect(modal.locator('text=4-Year B.Tech / B.E. in Computer Science & Engineering')).toBeVisible();
 
     // Verify Section 5: Eligibility & Realities (Assert NO fake cutoffs/salaries)
@@ -239,21 +246,34 @@ test.describe('Flow 5 — Explore Possibilities (/dashboard/student/explore)', (
   // 5. SAVED PATHWAYS BOOKMARK LIST
   // ===========================================================================
 
-  test('F5.5: Save pathway to exploration list and retrieve in saved drawer', async ({ page }) => {
+  test('F5.5: Save pathway to exploration list and verify zero data leakage across persona switching', async ({ page }) => {
     await page.goto('/dashboard/student/explore');
     await page.waitForLoadState('networkidle');
+
+    // Switch to Persona C
+    await page.locator('button:has-text("Class 12 PCM")').click();
 
     // Locate B.Tech CS card and click Save
     const card = page.locator('article:has-text("B.Tech Computer Science & Software Engineering")');
     const saveBtn = card.locator('button[aria-label^="Save"]');
     await saveBtn.click();
 
-    // Verify header counter shows 1
+    // Verify header counter shows 1 for Persona C
     const savedPill = page.locator('button[aria-label="View Saved Pathways (1)"]');
     await expect(savedPill).toBeVisible();
 
-    // Open Saved Pathways drawer
-    await savedPill.click();
+    // Switch to Persona A (Middle School Class 6)
+    await page.locator('button:has-text("Class 6 Creative")').click();
+
+    // Verify Persona A does NOT inherit Persona C's saved items (zero cross-profile leak)
+    await expect(page.locator('button[aria-label="View Saved Pathways (1)"]')).not.toBeVisible();
+
+    // Switch back to Persona C
+    await page.locator('button:has-text("Class 12 PCM")').click();
+    await expect(page.locator('button[aria-label="View Saved Pathways (1)"]')).toBeVisible();
+
+    // Open Saved Pathways drawer for Persona C
+    await page.locator('button[aria-label="View Saved Pathways (1)"]').click();
     const savedModal = page.locator('div[role="dialog"]:has-text("Saved Exploration List")');
     await expect(savedModal).toBeVisible();
     await expect(savedModal.locator('text=B.Tech Computer Science & Software Engineering')).toBeVisible();
