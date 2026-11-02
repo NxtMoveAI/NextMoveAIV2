@@ -1,0 +1,97 @@
+/**
+ * NEXT MOVE AI V2 — FLOW 7: PRACTICAL EXPERIENCES CATALOG
+ * 
+ * Extended hands-on challenges and simulations connecting Flow 6 Validate Fit
+ * to deeper project-based exploration.
+ */
+
+import { type PracticalExperienceItem } from "../types";
+
+export const EXPERIENCES_CATALOG: PracticalExperienceItem[] = [
+  {
+    id: "exp_c47_shadow_botanist",
+    title: "A Day in the Field with an Urban Botanist",
+    subtitle: "Map micro-habitats and sample rainwater runoff around your school or home",
+    stageSuitability: ["classes-4-7"],
+    experienceType: "career_tasting",
+    typeLabel: "Fieldwork Tasting",
+    estimatedMinutes: 30,
+    overview: "Walk in the shoes of an urban ecologist analyzing how tree cover reduces heat in concrete neighborhoods.",
+    handsOnDeliverable: "1-page color-coded neighborhood shade and flora map",
+    whatYouWillDiscover: "Whether outdoor field investigation and environmental science feel naturally engaging.",
+    relatedTrialId: "trial_c47_eco_journal",
+    tags: ["Nature", "Fieldwork", "Ecology", "Classes 4-7"],
+  },
+  {
+    id: "exp_c810_break_even_stall",
+    title: "School Carnival Retail Simulator",
+    subtitle: "Simulate pricing, foot traffic dips, and inventory waste for a refreshment stall",
+    stageSuitability: ["classes-8-10"],
+    experienceType: "guided_simulation",
+    typeLabel: "Commercial Simulation",
+    estimatedMinutes: 35,
+    overview: "Experience the real-time trade-offs of purchasing perishable ingredients when weather turns rainy.",
+    handsOnDeliverable: "Dynamic sensitivity spreadsheet showing profit at 50 vs 150 customer footfalls",
+    whatYouWillDiscover: "Whether commerce, retail management, and financial risk calculation align with your interests.",
+    relatedTrialId: "trial_c810_finance_breakeven",
+    tags: ["Commerce", "Business", "Simulation", "Classes 8-10"],
+  },
+  {
+    id: "exp_c1112_cash_flow_triage",
+    title: "High-Growth SME Liquidity Triage Challenge",
+    subtitle: "Balance supplier payment terms against bank borrowing lines during seasonal inventory build",
+    stageSuitability: ["classes-11-12"],
+    experienceType: "real_world_problem",
+    typeLabel: "Managerial Case Study",
+    estimatedMinutes: 40,
+    overview: "Step into the shoes of a corporate treasurer deciding whether to offer prompt-payment cash discounts or draw down expensive overdraft debt.",
+    handsOnDeliverable: "Executive recommendation memo outlining working capital strategy",
+    whatYouWillDiscover: "How financial accounting and treasury management operate in practical corporate environments.",
+    relatedTrialId: "trial_c1112_working_capital",
+    tags: ["Finance", "Accounting", "Commerce", "Classes 11-12"],
+  },
+  {
+    id: "exp_dip_plc_fault_injection",
+    title: "Automated Packaging Line Virtual Fault Injection",
+    subtitle: "Isolate intermittent digital sensor ground loops using simulated oscilloscope telemetry",
+    stageSuitability: ["diploma"],
+    experienceType: "guided_simulation",
+    typeLabel: "Industrial Troubleshooting",
+    estimatedMinutes: 45,
+    overview: "A packaging robot shuts down randomly every 35 minutes; analyze PLC cycle scan times and wiring diagrams to trace the noise source.",
+    safetyOrSupervisionNotice: "Virtual software simulation only. Live industrial panels require certified Lockout/Tagout (LOTO) protocols.",
+    handsOnDeliverable: "Root Cause Corrective Action (RCCA) maintenance log",
+    whatYouWillDiscover: "Whether you thrive in hands-on mechatronics and plant diagnostic problem solving.",
+    relatedTrialId: "trial_dip_plc_ladder",
+    tags: ["PLC", "Automation", "Mechatronics", "Diploma"],
+  },
+  {
+    id: "exp_deg_cloud_outage_postmortem",
+    title: "Production Outage Post-Mortem & Incident Response",
+    subtitle: "Analyze database connection pool exhaustion and draft a blameless post-mortem",
+    stageSuitability: ["degree-engineering"],
+    experienceType: "real_world_problem",
+    typeLabel: "Systems Reliability Engineering",
+    estimatedMinutes: 45,
+    overview: "Simulate a live production outage where an unindexed query caused cascading connection starvation across 12 microservices.",
+    handsOnDeliverable: "Blameless Post-Mortem document with Timeline, Root Cause, and Preventative Action Items",
+    whatYouWillDiscover: "What real backend reliability engineering and architectural incident response feel like.",
+    relatedTrialId: "trial_deg_db_partition",
+    tags: ["Cloud", "Backend", "SRE", "Architecture", "Degree"],
+  },
+  {
+    id: "exp_grad_policy_stakeholder_hearing",
+    title: "Simulated Legislative Committee Hearing",
+    subtitle: "Defend an environmental policy brief under cross-examination from industrial and municipal stakeholders",
+    stageSuitability: ["final-year-grad"],
+    experienceType: "career_tasting",
+    typeLabel: "Public Hearing Simulation",
+    estimatedMinutes: 50,
+    overview: "Experience the rigorous scrutiny of presenting an urban renewable subsidy proposal to conflicting stakeholder interests.",
+    handsOnDeliverable: "Stakeholder cross-examination defense notes with empirical data citations",
+    whatYouWillDiscover: "Whether public policy, parliamentary research, and advocacy match your temperament.",
+    relatedTrialId: "trial_grad_microgrid_policy",
+    tags: ["Public Policy", "Government", "Advocacy", "Graduate"],
+  },
+];
+

@@ -355,12 +355,11 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     await page.locator('a:has-text("Back to Dashboard")').first().click();
     await page.waitForURL(/\/dashboard\/student$/);
 
-    // 3. Navigate to My Projects
+    // 3. Navigate to My Projects (Flow 7 Live Workspace)
     await sidebar.locator('a:has-text("My Projects")').click();
     await page.waitForURL(/\/dashboard\/student\/projects/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My Projects & Practical Workspaces' })).toBeVisible();
-    await expect(page.locator('a:has-text("Back to Student Home")').first()).toBeVisible();
-    await page.locator('a:has-text("Back to Student Home")').first().click();
+    await expect(page.locator('text=Flow 7 • Build My Next Move').first()).toBeVisible();
+    await page.locator('a:has-text("Back to Dashboard")').first().click();
     await page.waitForURL(/\/dashboard\/student$/);
 
     // 4. Navigate to My Partner
