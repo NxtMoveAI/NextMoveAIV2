@@ -310,7 +310,7 @@ function ParentSignUpContent() {
 
         {/* Submission Feedback */}
         {submissionFeedback && (
-          <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-left space-y-2">
+          <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-left space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
               <ShieldCheck className="w-4 h-4 text-amber-700" />
               <span>Backend Authentication Pending</span>
@@ -318,6 +318,15 @@ function ParentSignUpContent() {
             <p className="text-xs text-amber-900 leading-relaxed">
               {submissionFeedback}
             </p>
+            <div className="pt-1">
+              <Link
+                href="/dashboard/parent"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-200/80 text-amber-950 text-xs font-bold hover:bg-amber-300 transition-colors"
+              >
+                <span>Preview Guardian Observation Hub</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         )}
 
