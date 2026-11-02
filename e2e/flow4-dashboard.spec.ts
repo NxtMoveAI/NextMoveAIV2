@@ -350,9 +350,9 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // 2. Navigate to My Growth
     await sidebar.locator('a:has-text("My Growth")').click();
     await page.waitForURL(/\/dashboard\/student\/growth/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My Growth & Evidence Ledger' })).toBeVisible();
-    await expect(page.locator('text=Scheduled for Flow 6')).toBeVisible();
-    await page.locator('a:has-text("Back to Student Home")').first().click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Validate Fit & Build Practical Evidence' })).toBeVisible();
+    await expect(page.locator("text=Flow 6 • Validate Fit").first()).toBeVisible();
+    await page.locator('a:has-text("Back to Dashboard")').first().click();
     await page.waitForURL(/\/dashboard\/student$/);
 
     // 3. Navigate to My Projects

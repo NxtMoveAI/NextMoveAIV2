@@ -14,6 +14,7 @@ import {
   type StartingPossibility,
 } from "@/features/onboarding/schemas/types";
 import { MICRO_ACTIVITIES_CATALOG } from "@/features/onboarding/data/activities";
+import { activityEvidenceStore } from "@/features/validate-fit/services/evidence-store";
 import {
   type StudentHomeViewModel,
   type NextMoveAction,
@@ -667,9 +668,51 @@ export function transformProfileToHomeViewModel(
   // This first-onboarding baseline records only one in-app micro-activity.
   // Do not count or display practice entries when that activity has no valid record.
   // Future backend history must provide separately attributable task events.
-  const supportedEvidenceItems = recentActivity
+  // Flow 6 Experiential Trials Integration: Check for genuine completed challenges
+  const evidenceScope = profile ? profile.profileId || profile.academicStageId : "anonymous";
+  activityEvidenceStore.setProfileScope(evidenceScope, profile?.academicStageId);
+  const completedTrials = activityEvidenceStore.getCompletedAttempts();
+  const latestTrial = completedTrials[0];
+
+  if (latestTrial && latestTrial.completedAt) {
+    const trialDate = new Date(latestTrial.completedAt);
+    const dateLabel = new Intl.DateTimeFormat("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(trialDate);
+
+    if (!recentActivity || (attempt?.completedAt && new Date(latestTrial.completedAt) > new Date(attempt.completedAt))) {
+      recentActivity = {
+        id: latestTrial.id,
+        activityId: latestTrial.trialId,
+        title: latestTrial.trialTitle,
+        stageId: latestTrial.stageId,
+        completedAt: latestTrial.completedAt,
+        timeAgo: dateLabel,
+        feedbackGiven: latestTrial.reflection?.enjoyed || "Real-world challenge completed",
+        competencyPractised: latestTrial.competencyPractised,
+        wasCorrect: true,
+        isSyntheticFixture: false,
+      };
+    }
+  }
+
+  const trialEvidenceItems: GrowthEvidenceEntry[] = completedTrials.map((t) => ({
+    id: t.id,
+    title: t.trialTitle,
+    category: "Practical Challenge",
+    evidenceStatus: "practised",
+    statusLabel: "Practised",
+    provenance: "practised_in_challenge",
+  }));
+
+  const baseItems = recentActivity
     ? evidenceItems
     : evidenceItems.filter((entry) => entry.evidenceStatus !== "practised");
+
+  const supportedEvidenceItems = [...trialEvidenceItems, ...baseItems];
   const practisedCount = supportedEvidenceItems.filter((entry) => entry.evidenceStatus === "practised").length;
   const selfReportedCount = supportedEvidenceItems.filter((entry) => entry.evidenceStatus === "self_reported").length;
   const hasAttempted = Boolean(recentActivity);

@@ -90,7 +90,7 @@ class StudentProfileStore {
     if (confirmed) {
       return confirmed;
     }
-    return DEMO_PERSONAS[this.activePersonaId]?.profile || DEMO_PERSONAS.persona_c_class12.profile;
+    return DEMO_PERSONAS[this.getActivePersonaId()]?.profile || DEMO_PERSONAS.persona_c_class12.profile;
   }
 
   public isAnonymousMode(): boolean {
@@ -112,12 +112,29 @@ class StudentProfileStore {
   public setActivePersonaId(personaId: PersonaFixtureId): void {
     this.clearConfirmedProfile(); // switching fixture clears in-memory and session handoff
     this.activePersonaId = personaId;
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("active_persona_id", personaId);
+      } catch {
+        // Safe storage fallback
+      }
+    }
     this.selectedAlternativeMoveId = null;
     this.isMovePostponed = false;
     this.notify();
   }
 
   public getActivePersonaId(): PersonaFixtureId {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("active_persona_id") as PersonaFixtureId;
+        if (stored && DEMO_PERSONAS[stored]) {
+          this.activePersonaId = stored;
+        }
+      } catch {
+        // Safe storage fallback
+      }
+    }
     return this.activePersonaId;
   }
 

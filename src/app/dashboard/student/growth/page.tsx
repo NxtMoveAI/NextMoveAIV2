@@ -1,23 +1,29 @@
+/**
+ * NEXT MOVE AI V2 — FLOW 6: VALIDATE FIT PAGE
+ * 
+ * Route: /dashboard/student/growth
+ * Hosts the full experiential discovery feed, interactive trials,
+ * reflection engine, and verifiable evidence ledger.
+ */
+
 "use client";
 
-import React from "react";
-import { TrendingUp } from "lucide-react";
-import { FutureModulePlaceholder } from "@/components/student-layout/FutureModulePlaceholder";
+import React, { Suspense } from "react";
+import { ValidateFitWorkspace } from "@/features/validate-fit/components/ValidateFitWorkspace";
 
-export default function StudentGrowthPage() {
+function ValidateFitLoadingFallback() {
   return (
-    <FutureModulePlaceholder
-      moduleName="My Growth & Evidence Ledger"
-      flowNumber="Flow 6"
-      shortDescription="A continuous, non-judgmental record of what you have explored, practised, built, and reflected upon throughout your learning journey."
-      upcomingCapabilities={[
-        "Truthful categorization: Self-Reported vs Practised vs Demonstrated",
-        "Interactive challenge retry and skill strengthening history",
-        "Longitudinal reflections and evolving certainty tracking",
-        "Verifiable portfolio evidence export for college & internship applications",
-      ]}
-      icon={<TrendingUp className="w-8 h-8" />}
-    />
+    <div className="p-8 sm:p-12 text-center space-y-3">
+      <div className="w-8 h-8 rounded-full border-2 border-[#6757F5] border-t-transparent animate-spin mx-auto" />
+      <p className="text-xs font-semibold text-[#626987]">Loading practical learning trials...</p>
+    </div>
   );
 }
 
+export default function StudentGrowthPage() {
+  return (
+    <Suspense fallback={<ValidateFitLoadingFallback />}>
+      <ValidateFitWorkspace />
+    </Suspense>
+  );
+}

@@ -16,6 +16,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   X,
   Bookmark,
@@ -335,8 +336,19 @@ export function PathwayDetailModal({
                   ))}
                 </ol>
               </div>
-              <div className="text-xs font-semibold text-[#6757F5] pt-1">
-                Deliverable: {pathway.beforeYouCommitTrial.deliverable}
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-[#DDD8FE]/60">
+                <div className="text-xs font-semibold text-[#6757F5]">
+                  Deliverable: {pathway.beforeYouCommitTrial.deliverable}
+                </div>
+                <Link
+                  href="/dashboard/student/growth?tab=discovery"
+                  onClick={onClose}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#6757F5] hover:bg-[#5342E8] text-white text-xs font-bold transition-all shadow-xs shrink-0"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Launch Practical Trial (Flow 6)</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </section>
