@@ -64,12 +64,13 @@ export function OpportunitiesView({
         { id: "scholarship", label: "Scholarships" },
       ];
 
-  const getProvenanceBadge = (provenance: OpportunityProvenance) => {
+  const getProvenanceBadge = (provenance: OpportunityProvenance, verificationDate?: string) => {
     switch (provenance) {
       case "verified_listing":
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]">
             <ShieldCheck className="w-3 h-3 text-[#22C55E]" /> Verified Live Listing
+            {verificationDate ? ` · ${verificationDate}` : ""}
           </span>
         );
       case "curated_educational":
@@ -157,7 +158,7 @@ export function OpportunitiesView({
           const stipendText = opp.stipendOrReward || opp.stipendOrCostDescription;
           const deadlineText = opp.deadline || opp.applicationWindowOrDeadline;
           const sourceText = opp.sourceAttribution || opp.sourceUrlOrInfo;
-          const appUrl = opp.applicationUrl || opp.sourceUrlOrInfo || "";
+          const appUrl = opp.verifiedUrl || opp.applicationUrl || opp.sourceUrlOrInfo || "";
           const isExternal = appUrl.startsWith("http");
 
           return (
@@ -168,7 +169,7 @@ export function OpportunitiesView({
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  {getProvenanceBadge(opp.provenance)}
+                  {getProvenanceBadge(opp.provenance, opp.verificationDate)}
                   <span className="text-[11px] font-semibold text-[#4A4E69] flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#98A2B3]" /> {locationText}
                   </span>
@@ -236,6 +237,13 @@ export function OpportunitiesView({
                   >
                     Apply Externally <ExternalLink className="w-3.5 h-3.5" />
                   </a>
+                ) : opp.provenance === "prototype_example" ? (
+                  <span
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFAEB] text-[#B54708] border border-[#FEDF89] text-xs font-bold"
+                    title="This opportunity is an illustrative prototype entry designed for academic path planning."
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#F79009]" /> Prototype Example
+                  </span>
                 ) : (
                   <button
                     onClick={() => alert(`Details for: ${opp.title}\n\n${opp.description}`)}

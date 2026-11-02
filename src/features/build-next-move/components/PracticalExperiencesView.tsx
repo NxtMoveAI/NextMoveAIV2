@@ -64,7 +64,7 @@ export function PracticalExperiencesView({
           </div>
 
           <Link
-            href="/dashboard/student/validate-fit"
+            href="/dashboard/student/growth"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#E8E6F3] bg-[#F7F7FD] hover:bg-[#F2F1FA] text-[#171A2B] text-xs font-bold transition-all flex-shrink-0"
           >
             <Sparkles className="w-4 h-4 text-[#6757F5]" />
@@ -157,7 +157,7 @@ export function PracticalExperiencesView({
             <div className="pt-3 border-t border-[#F2F1FA] flex items-center justify-between gap-2">
               {exp.relatedTrialId ? (
                 <Link
-                  href={`/dashboard/student/validate-fit?trial=${exp.relatedTrialId}`}
+                  href={`/dashboard/student/growth?trial=${exp.relatedTrialId}`}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#6757F5] hover:bg-[#5645E5] text-white text-xs font-bold transition-all shadow-xs"
                 >
                   <Sparkles className="w-3.5 h-3.5" />

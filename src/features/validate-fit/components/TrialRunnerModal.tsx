@@ -87,6 +87,7 @@ export function TrialRunnerModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="trial-modal-title"
+      data-testid="trial-runner-modal"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="relative w-full max-w-3xl max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-[#E8E6F3] flex flex-col overflow-hidden outline-none">

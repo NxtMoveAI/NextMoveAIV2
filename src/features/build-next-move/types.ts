@@ -261,6 +261,8 @@ export interface OpportunityItem {
   sourceUrlOrInfo: string;
   sourceAttribution?: string;
   applicationUrl?: string;
+  verifiedUrl?: string;
+  verificationDate?: string;
   whatStudentGains: string;
   tags: string[];
 }

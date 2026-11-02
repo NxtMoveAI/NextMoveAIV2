@@ -435,7 +435,7 @@ export const ROADMAP_CATALOG: StudentRoadmap[] = [
             category: "foundational_skill",
             estimatedHours: 1,
             isCompleted: false,
-            relatedTrialId: "trial_grad_microgrid_policy",
+            relatedTrialId: "trial_grad_policy_memo",
           },
         ],
       },

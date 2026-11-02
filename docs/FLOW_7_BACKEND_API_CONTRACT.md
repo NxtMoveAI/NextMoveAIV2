@@ -299,3 +299,32 @@ Returns directory of opportunities filtered by academic stage and age safeguards
 | Set Student Growth Goal | `nextMoveStore.setStudentGoal` | `POST /api/v1/student/goals` | Ready for drop-in wire-up |
 | Age-Gated Opportunities | `useNextMove (filtered)` | `GET /api/v1/student/opportunities` | Ready for drop-in wire-up |
 
+---
+
+## 6. Architectural Assumptions & Alignments for Havyas (Sign-off Checklist)
+
+Before provisioning tables or deploying API handlers, Havyas should confirm and approve the following five architectural assumptions:
+
+### Assumption 6.1: Student Identifier Mapping (`student_id` Foreign Key)
+- **Current Draft Assumption:** Proposed Flow 7 tables (`student_roadmaps`, `student_projects`, `student_growth_goals`) use `student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`.
+- **Alternative Option:** Reference `public.student_profiles(id)` if profile records manage stage lifecycles independently of auth user records.
+- **Action for Havyas:** Confirm whether `student_id` in Flow 7 tables should reference `auth.users(id)` (simplifies Supabase RLS using `auth.uid() = student_id`) or `public.student_profiles(id)`.
+
+### Assumption 6.2: Session Cookie Authentication Discipline
+- **Current Draft Assumption:** In alignment with `docs/HAVYAS_CONTRACT_RECONCILIATION.md`, client requests rely on HTTP-only session cookies (`__Host-nextmove-session`).
+- **Security Rule:** Endpoints should never trust a client-supplied `X-Student-Id` header or URL parameter for authorization. The student identity must be derived server-side from `auth.uid()`.
+- **Action for Havyas:** Sign off on cookie-based session verification for all Flow 7 API routes.
+
+### Assumption 6.3: Artifact Storage (External URLs vs Supabase Storage)
+- **Current Draft Assumption:** The initial release stores authentic external artifact references (`url TEXT`) for GitHub repositories, Figma canvases, Google Spreadsheets, and research memos.
+- **Future Expansion:** If direct binary uploads (e.g. PDFs, project screenshots) are required, Havyas will provision a dedicated Supabase Storage bucket (`student-project-artifacts`) with RLS preventing cross-student access.
+- **Action for Havyas:** Confirm external URL storage is sufficient for V2 MVP baseline.
+
+### Assumption 6.4: Roadmap Customization & Revision History
+- **Current Draft Assumption:** Roadmap adjustments (changing target focus or pacing) update the student's active roadmap record in place (`is_active = true`), preserving milestone completion flags.
+- **Action for Havyas:** Confirm whether in-place updates are acceptable or if an explicit versioned audit log is required.
+
+### Assumption 6.5: Zero Backend Code Execution by Frontend
+- **Frontend Discipline Confirmation:** No database migrations, SQL scripts, or Supabase service changes have been executed by the frontend team. The entire Flow 7 frontend is fully isolated in memory and local session storage until Havyas implements the backend layer.
+
+

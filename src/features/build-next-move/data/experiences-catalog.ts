@@ -19,7 +19,7 @@ export const EXPERIENCES_CATALOG: PracticalExperienceItem[] = [
     overview: "Walk in the shoes of an urban ecologist analyzing how tree cover reduces heat in concrete neighborhoods.",
     handsOnDeliverable: "1-page color-coded neighborhood shade and flora map",
     whatYouWillDiscover: "Whether outdoor field investigation and environmental science feel naturally engaging.",
-    relatedTrialId: "trial_c47_eco_journal",
+    relatedTrialId: "trial_c47_nature_journal",
     tags: ["Nature", "Fieldwork", "Ecology", "Classes 4-7"],
   },
   {
@@ -33,7 +33,7 @@ export const EXPERIENCES_CATALOG: PracticalExperienceItem[] = [
     overview: "Experience the real-time trade-offs of purchasing perishable ingredients when weather turns rainy.",
     handsOnDeliverable: "Dynamic sensitivity spreadsheet showing profit at 50 vs 150 customer footfalls",
     whatYouWillDiscover: "Whether commerce, retail management, and financial risk calculation align with your interests.",
-    relatedTrialId: "trial_c810_finance_breakeven",
+    relatedTrialId: "trial_c810_cash_flow",
     tags: ["Commerce", "Business", "Simulation", "Classes 8-10"],
   },
   {
@@ -90,7 +90,7 @@ export const EXPERIENCES_CATALOG: PracticalExperienceItem[] = [
     overview: "Experience the rigorous scrutiny of presenting an urban renewable subsidy proposal to conflicting stakeholder interests.",
     handsOnDeliverable: "Stakeholder cross-examination defense notes with empirical data citations",
     whatYouWillDiscover: "Whether public policy, parliamentary research, and advocacy match your temperament.",
-    relatedTrialId: "trial_grad_microgrid_policy",
+    relatedTrialId: "trial_grad_policy_memo",
     tags: ["Public Policy", "Government", "Advocacy", "Graduate"],
   },
 ];

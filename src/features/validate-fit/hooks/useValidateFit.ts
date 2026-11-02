@@ -100,6 +100,19 @@ export function useValidateFit() {
     activityEvidenceStore.setProfileScope(scope, profile?.academicStageId);
   }, [profile]);
 
+  // Adjust active trial if URL search params change
+  const [prevTrialParam, setPrevTrialParam] = useState(() => searchParams.get("trial"));
+  const currentTrialParam = searchParams.get("trial");
+  if (currentTrialParam !== prevTrialParam) {
+    setPrevTrialParam(currentTrialParam);
+    if (currentTrialParam) {
+      const found = TRIAL_CATALOG.find((t) => t.id === currentTrialParam);
+      if (found && !(profile?.academicStageId === "classes-4-7" && !found.stageSuitability.includes("classes-4-7"))) {
+        setActiveTrial(found);
+      }
+    }
+  }
+
   // Synchronize profile updates
   useEffect(() => {
     const unsubscribeProfile = studentProfileStore.subscribe(() => {

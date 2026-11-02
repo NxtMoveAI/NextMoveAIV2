@@ -330,4 +330,128 @@ test.describe('Flow 7 — Build My Next Move (/dashboard/student/projects)', () 
     );
     expect(criticalOrSerious.length).toBe(0);
   });
+
+  // ===========================================================================
+  // 11. PRACTICAL EXPERIENCE LINK INTEGRATION WITH FLOW 6
+  // ===========================================================================
+
+  test('F7.11: Practical Experience links navigate to Flow 6 Validate Fit runner and launch modal', async ({ page }) => {
+    await page.goto('/dashboard/student/projects');
+    await page.waitForLoadState('networkidle');
+
+    // Switch to Persona C (Class 12 PCM)
+    await page.locator('button:has-text("Class 12 PCM")').click();
+
+    // Navigate to Practical Experiences tab
+    await page.getByTestId('workspace-tab-experiences').click();
+    await expect(page.getByTestId('practical-experiences-view')).toBeVisible();
+
+    // Find the first "Try in Validate Fit" link
+    const tryBtn = page.getByRole('link', { name: /Try in Validate Fit/i }).first();
+    await expect(tryBtn).toBeVisible();
+
+    // Verify href points to canonical /dashboard/student/growth?trial=...
+    const href = await tryBtn.getAttribute('href');
+    expect(href).toMatch(/^\/dashboard\/student\/growth\?trial=trial_/);
+
+    // Click link and verify navigation to Flow 6
+    await tryBtn.click();
+    await page.waitForURL(/\/dashboard\/student\/growth\?trial=/);
+
+    // Flow 6 Trial Runner Modal should open with the trial
+    await expect(page.getByTestId('trial-runner-modal')).toBeVisible();
+    await expect(page.getByTestId('trial-runner-modal').getByRole('heading', { level: 2 })).toBeVisible();
+  });
+
+  // ===========================================================================
+  // 12. OPPORTUNITIES DIRECTORY PROVENANCE AUDIT
+  // ===========================================================================
+
+  test('F7.12: Opportunities Directory provenance audit validates verified URLs, dates, and prototype disclosures', async ({ page }) => {
+    await page.goto('/dashboard/student/projects');
+    await page.waitForLoadState('networkidle');
+
+    // Switch to Persona G (Eng Senior)
+    await page.locator('button:has-text("Eng Senior")').click();
+
+    // Navigate to Opportunities tab
+    await page.getByTestId('workspace-tab-opportunities').click();
+    await expect(page.getByTestId('opportunities-view')).toBeVisible();
+
+    // 1. Verify GSoC listing has "Verified Live Listing · October 2026"
+    const verifiedBadge = page.locator('text=Verified Live Listing · October 2026').first();
+    await expect(verifiedBadge).toBeVisible();
+
+    // Check external application link has genuine URL
+    const gsocCard = page.getByTestId('opportunity-card-opp_deg_google_summer_code');
+    await expect(gsocCard).toBeVisible();
+    const applyLink = gsocCard.getByRole('link', { name: /Apply Externally/i });
+    await expect(applyLink).toBeVisible();
+    await expect(applyLink).toHaveAttribute('href', 'https://summerofcode.withgoogle.com');
+
+    // 2. Verify prototype example has clear prototype disclosure
+    const protoCard = page.getByTestId('opportunity-card-opp_deg_proto_fintech_sandbox');
+    await expect(protoCard).toBeVisible();
+    await expect(protoCard.locator('text=Illustrative Prototype Example')).toBeVisible();
+    await expect(protoCard.getByText('Prototype Example', { exact: true })).toBeVisible();
+  });
+
+  // ===========================================================================
+  // 13. COMPLETE STUDENT JOURNEY VERIFICATION (FLOWS 1–7)
+  // ===========================================================================
+
+  test('F7.13: Full student journey traversal: Landing -> Entry -> Onboarding -> Dashboard -> Explore -> Growth -> Projects', async ({ page }) => {
+    // 1. Landing Page
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('h1')).toBeVisible();
+
+    // 2. Entry flow (Select student role)
+    await page.goto('/get-started');
+    await page.waitForLoadState('networkidle');
+    await page.locator('div[role="radio"]:has-text("I\'m a Student")').click();
+    await page.locator('button:has-text("Continue")').click();
+
+    // 3. Confirm Stage & Access
+    await page.waitForURL(/\/get-started\/student/);
+    await page.locator('div[role="radio"]:has-text("Classes 11 – 12")').click();
+    await page.locator('button:has-text("Confirm & Continue")').click();
+    await page.waitForURL(/\/get-started\/student\/access/);
+    await page.locator('div[role="radio"]:has-text("13 to 17 Years")').click();
+    await page.locator('button:has-text("Continue to Student Signup")').click();
+    // 4. Student Signup (Synthetic Form Fill)
+    await page.waitForURL(/\/sign-up\/student/);
+    await page.locator('#student-name').fill('Aryan Sharma (Synthetic Test)');
+    await page.locator('#student-email').fill('aryan.synth.test@example.com');
+    await page.locator('#student-password').fill('SyntheticPass123!');
+    await page.locator('#student-confirm-password').fill('SyntheticPass123!');
+    await page.locator('input[type="checkbox"]').check();
+    await page.locator('button[type="submit"]:has-text("Create Student Space")').click();
+
+    // 5. Onboarding Preview Handoff
+    await page.locator('a:has-text("Design Preview: Continue to Flow 3 Onboarding Preview")').click();
+    await page.waitForURL(/\/onboarding/);
+    await expect(page.locator('text=Step 1 of')).toBeVisible();
+
+    // 6. Navigate to Student Dashboard
+    await page.goto('/dashboard/student');
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('#next-move')).toBeVisible();
+
+    // 7. Navigate to Explore Possibilities via Sidebar
+    await page.locator('a[href="/dashboard/student/explore"]').first().click();
+    await page.waitForURL(/\/dashboard\/student\/explore/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Explore Pathways & Possibilities' })).toBeVisible();
+
+    // 8. Navigate to Validate Fit via Sidebar
+    await page.locator('a[href="/dashboard/student/growth"]').first().click();
+    await page.waitForURL(/\/dashboard\/student\/growth/);
+    await expect(page.getByRole('heading', { level: 1, name: /Validate Fit/i })).toBeVisible();
+
+    // 9. Navigate to Build My Next Move (Projects) via Sidebar
+    await page.locator('a[href="/dashboard/student/projects"]').first().click();
+    await page.waitForURL(/\/dashboard\/student\/projects/);
+    await expect(page.getByTestId('next-move-workspace')).toBeVisible();
+    await expect(page.locator('text=Flow 7 • Build My Next Move').first()).toBeVisible();
+  });
 });
