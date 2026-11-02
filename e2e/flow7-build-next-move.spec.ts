@@ -242,7 +242,7 @@ test.describe('Flow 7 — Build My Next Move (/dashboard/student/projects)', () 
     await expect(page.getByTestId('opportunities-view')).toBeVisible();
 
     // Verify provenance badges appear
-    const provenanceBadge = page.locator('text=Verified Live Listing').or(page.locator('text=Curated Educational Info')).or(page.locator('text=Illustrative Prototype Example'));
+    const provenanceBadge = page.locator('text=Verified Program').or(page.locator('text=Verified Live Listing')).or(page.locator('text=Curated Educational Info')).or(page.locator('text=Illustrative Prototype Example'));
     await expect(provenanceBadge.first()).toBeVisible();
 
     // Filter by search keyword
@@ -378,16 +378,20 @@ test.describe('Flow 7 — Build My Next Move (/dashboard/student/projects)', () 
     await page.getByTestId('workspace-tab-opportunities').click();
     await expect(page.getByTestId('opportunities-view')).toBeVisible();
 
-    // 1. Verify GSoC listing has "Verified Live Listing · October 2026"
-    const verifiedBadge = page.locator('text=Verified Live Listing · October 2026').first();
+    // 1. Verify GSoC listing separates Program Authenticity from Application Availability
+    const verifiedBadge = page.locator('text=Verified Program · Verified October 2026').or(page.locator('text=Verified Program')).first();
     await expect(verifiedBadge).toBeVisible();
 
-    // Check external application link has genuine URL
+    // Check GSoC card accurately indicates applications are closed for current cycle
     const gsocCard = page.getByTestId('opportunity-card-opp_deg_google_summer_code');
     await expect(gsocCard).toBeVisible();
-    const applyLink = gsocCard.getByRole('link', { name: /Apply Externally/i });
-    await expect(applyLink).toBeVisible();
-    await expect(applyLink).toHaveAttribute('href', 'https://summerofcode.withgoogle.com');
+    await expect(gsocCard.locator('[data-testid="status-badge-closed"]')).toBeVisible();
+    await expect(gsocCard.locator('text=Applications Closed')).toBeVisible();
+
+    // Check external link points to official program page without falsely advertising open application
+    const officialLink = gsocCard.getByRole('link', { name: /Official Program Page/i });
+    await expect(officialLink).toBeVisible();
+    await expect(officialLink).toHaveAttribute('href', 'https://summerofcode.withgoogle.com');
 
     // 2. Verify prototype example has clear prototype disclosure
     const protoCard = page.getByTestId('opportunity-card-opp_deg_proto_fintech_sandbox');

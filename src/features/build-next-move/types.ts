@@ -232,9 +232,11 @@ export type OpportunityType =
   | "fellowship";
 
 export type OpportunityProvenance =
-  | "verified_listing"       // Independently verified live listing
+  | "verified_listing"       // Independently verified genuine program
   | "curated_educational"   // Sourced educational program / national scheme
   | "prototype_example";     // Illustrative prototype test entry
+
+export type ApplicationStatus = "open" | "closed" | "upcoming" | "unknown";
 
 export interface OpportunityItem {
   id: string;
@@ -256,6 +258,10 @@ export interface OpportunityItem {
     whyIneligibleReason?: string;
   };
   eligibilityNotes?: string;
+  applicationStatus: ApplicationStatus;
+  applicationStatusDetails?: string;
+  officialSourceUrl: string;
+  lastVerifiedDate: string;
   applicationWindowOrDeadline: string;
   deadline?: string;
   sourceUrlOrInfo: string;
