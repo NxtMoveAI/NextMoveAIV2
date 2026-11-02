@@ -163,6 +163,9 @@ test.describe('Flow 6 — Validate Fit (/dashboard/student/growth)', () => {
     await hintsButton.click();
     await expect(modal.locator('text=Binary search cuts the search space in half')).toBeVisible();
 
+    // Select the correct algorithmic fix approach (meaningful participation!)
+    await modal.locator('text=Principle A: Binary search').first().click();
+
     // 4. Click "Reflect on this Experience"
     const finishContentButton = modal.locator('button:has-text("Reflect on this Experience")');
     await expect(finishContentButton).toBeVisible();
@@ -277,8 +280,10 @@ test.describe('Flow 6 — Validate Fit (/dashboard/student/growth)', () => {
     await cardC.locator('button:has-text("Try Experience")').click();
 
     const modal = page.getByRole('dialog');
+    await modal.locator('text=Principle A: Binary search').first().click();
     await modal.locator('button:has-text("Reflect on this Experience")').click();
     const refModal = page.getByRole('dialog');
+    await refModal.locator('#ref-enjoyed').fill('I enjoyed solving the algorithmic search puzzle.');
     await refModal.locator('button:has-text("Record Evidence & View Summary")').click();
     await page.locator('button:has-text("Done")').click();
 
@@ -309,8 +314,10 @@ test.describe('Flow 6 — Validate Fit (/dashboard/student/growth)', () => {
     await card.locator('button:has-text("Try Experience")').click();
 
     const modal = page.getByRole('dialog');
+    await modal.locator('text=Principle A: Binary search').first().click();
     await modal.locator('button:has-text("Reflect on this Experience")').click();
     const refModal = page.getByRole('dialog');
+    await refModal.locator('#ref-enjoyed').fill('Comparing linear search to binary search showed why big O notation matters.');
     await refModal.locator('button:has-text("Record Evidence & View Summary")').click();
     await page.locator('button:has-text("Done")').click();
 
@@ -353,6 +360,103 @@ test.describe('Flow 6 — Validate Fit (/dashboard/student/growth)', () => {
       .analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);
+  });
+
+  // ===========================================================================
+  // 9. ACCEPTANCE AUDIT: MEANINGFUL PARTICIPATION & ANTI-SHORTCUT GATES
+  // ===========================================================================
+
+  test('F6.9: Reflection-only shortcut records Attempted status and never creates Practised evidence', async ({ page }) => {
+    await page.goto('/dashboard/student/growth');
+    await page.waitForLoadState('networkidle');
+
+    // Switch to Persona B (Class 9 Undecided)
+    await page.locator('button:has-text("Class 9 Undecided")').click();
+
+    // Start Python Bug Detective trial
+    const card = page.locator('[data-testid="trial-card-trial_c810_code_logic"]');
+    await card.locator('button:has-text("Try Experience")').click();
+
+    const modal = page.getByRole('dialog');
+    await expect(modal).toBeVisible();
+
+    // Verify guidance tip is visible because no option or note has been entered
+    await expect(modal.locator('text=Make a selection or note your thoughts above to build verified Practised evidence')).toBeVisible();
+
+    // Take reflection-only shortcut (click reflect without interacting with task)
+    await modal.locator('button:has-text("Reflect on this Experience")').click();
+
+    // Fill reflection
+    const refModal = page.getByRole('dialog');
+    await expect(refModal.locator('text=How did that feel?')).toBeVisible();
+    await refModal.locator('#ref-enjoyed').fill('Thinking about loop logic was interesting.');
+    await refModal.locator('button:has-text("Record Evidence & View Summary")').click();
+
+    // Feedback summary must classify as Attempted (Reflection-Only), NOT Practised
+    await expect(page.locator('text=Attempted (Reflection-Only)')).toBeVisible();
+    await expect(page.locator('text=Truth Boundary: Recorded as an Attempted exploration')).toBeVisible();
+
+    // Close feedback
+    await page.locator('button:has-text("Done")').click();
+
+    // Trial card must show "Attempted" badge, NOT "Practised"
+    await expect(card.locator('text=Attempted')).toBeVisible();
+    await expect(card.locator('text=Practised')).not.toBeVisible();
+
+    // Switch to Evidence Ledger tab
+    await page.getByRole('button', { name: /Evidence Ledger/i }).click();
+
+    // Practised in Challenge metric must remain 0
+    await expect(page.locator('[data-testid="metric-practised-count"]')).toHaveText('0');
+
+    // The trial must be listed under Attempted Explorations
+    await expect(page.locator('text=Attempted Explorations (Reflection Only / Incomplete Task)')).toBeVisible();
+    await expect(page.locator('text=Python Algorithm & Bug Detective')).toBeVisible();
+  });
+
+  // ===========================================================================
+  // 10. ACCEPTANCE AUDIT: TAXONOMY, NONTECHNICAL BALANCE & SAFETY NOTICE
+  // ===========================================================================
+
+  test('F6.10: Empty reflection validation blocks submit; nontechnical trials and industrial safety warning are present', async ({ page }) => {
+    await page.goto('/dashboard/student/growth');
+    await page.waitForLoadState('networkidle');
+
+    // 1. Verify Taxonomy Legend on Evidence Ledger tab
+    await page.getByRole('button', { name: /Evidence Ledger/i }).click();
+    await expect(page.locator('text=Evidence Taxonomy Reference Key')).toBeVisible();
+    await expect(page.locator('text=1. Attempted')).toBeVisible();
+    await expect(page.locator('text=2. Practised')).toBeVisible();
+    await expect(page.locator('text=3. Self-Reported')).toBeVisible();
+    await expect(page.locator('text=4. Reviewed')).toBeVisible();
+    await expect(page.locator('text=5. Demonstrated')).toBeVisible();
+
+    // 2. Switch to Discovery tab and test Persona C (Class 12) for nontechnical commerce trial
+    await page.getByRole('button', { name: /Practical Discovery/i }).click();
+    await page.locator('button:has-text("Class 12 PCM")').click();
+    await expect(page.getByRole('heading', { level: 2, name: 'Working Capital & Cash Flow Stress Test' })).toBeVisible();
+
+    // 3. Test Degree / Grad for nontechnical media/humanities trial
+    await page.locator('button:has-text("Humanities Grad")').click();
+    await expect(page.getByRole('heading', { level: 2, name: 'Investigative Media Source Credibility & Fact-Check Audit' })).toBeVisible();
+
+    // 4. Test Diploma for industrial simulation safety notice
+    await page.locator('button:has-text("Diploma Mech")').click();
+    const plcCard = page.locator('[data-testid="trial-card-trial_dip_plc_ladder"]');
+    await plcCard.locator('button:has-text("Try Experience")').click();
+
+    const plcModal = page.getByRole('dialog');
+    await expect(plcModal.locator('text=Virtual Simulation Exercise Only')).toBeVisible();
+    await expect(plcModal.locator('text=Never inspect, wire, or service physical 24V/415V electrical panels')).toBeVisible();
+
+    // 5. Test reflection validation: clicking reflection and submitting empty reflection must be blocked
+    await plcModal.locator('button:has-text("Reflect on this Experience")').click();
+    const refModal = page.getByRole('dialog');
+    await refModal.locator('button:has-text("Record Evidence & View Summary")').click();
+
+    // Validation warning must appear and modal must remain open
+    await expect(page.locator('text=Please share at least one reflection thought on what you enjoyed, learned, or found challenging before submitting')).toBeVisible();
+    await expect(refModal).toBeVisible();
   });
 
 });

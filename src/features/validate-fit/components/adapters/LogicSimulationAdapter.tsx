@@ -103,8 +103,17 @@ export function LogicSimulationAdapter({
             return (
               <div
                 key={fix.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    handlePick(fix.id);
+                  }
+                }}
                 onClick={() => handlePick(fix.id)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl border transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#6757F5] ${
                   isSelected
                     ? "bg-[#F7F6FF] border-[#6757F5] shadow-xs ring-1 ring-[#6757F5]"
                     : "bg-white border-[#E8E6F3] hover:border-[#6757F5]/50"
@@ -175,3 +184,4 @@ export function LogicSimulationAdapter({
     </div>
   );
 }
+

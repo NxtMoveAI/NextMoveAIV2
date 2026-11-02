@@ -36,10 +36,15 @@ export function TrialCard({ trial, attempt, onStart, onRetry }: TrialCardProps) 
           </span>
 
           <div className="flex items-center gap-1.5">
-            {isCompleted && (
+            {isCompleted && attempt?.evidenceStatus === "practised" && (
               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2 py-0.5 rounded-full">
                 <CheckCircle2 className="w-3 h-3" />
                 <span>Practised</span>
+              </span>
+            )}
+            {isCompleted && attempt?.evidenceStatus === "attempted" && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#B45309] bg-[#FFFBEB] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                <span>Attempted</span>
               </span>
             )}
             {isInProgress && (

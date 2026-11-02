@@ -71,6 +71,23 @@ export function useValidateFit() {
 
   const [activeReflectionTrial, setActiveReflectionTrial] = useState<TrialActivity | null>(null);
   const [activeFeedback, setActiveFeedback] = useState<TrialFeedbackSummary | null>(null);
+  const [pendingTrialWork, setPendingTrialWork] = useState<{
+    workNotes: string;
+    selectedOptionIds: string[];
+    hasParticipated: boolean;
+  } | null>(null);
+
+  // Derive active trial, strictly gating adult trials from middle schoolers
+  const effectiveActiveTrial = useMemo(() => {
+    if (
+      profile?.academicStageId === "classes-4-7" &&
+      activeTrial &&
+      !activeTrial.stageSuitability.includes("classes-4-7")
+    ) {
+      return null;
+    }
+    return activeTrial;
+  }, [profile?.academicStageId, activeTrial]);
 
   // 5. Evidence store attempts state
   const [attempts, setAttempts] = useState<TrialAttemptRecord[]>(() =>
@@ -203,19 +220,45 @@ export function useValidateFit() {
     []
   );
 
-  const handleFinishTrialContent = useCallback((trial: TrialActivity) => {
-    setActiveTrial(null);
-    setActiveReflectionTrial(trial);
-  }, []);
+  const handleFinishTrialContent = useCallback(
+    (
+      trial: TrialActivity,
+      interaction?: {
+        workNotes: string;
+        selectedOptionIds: string[];
+        hasParticipated: boolean;
+      }
+    ) => {
+      if (interaction) {
+        setPendingTrialWork(interaction);
+        activityEvidenceStore.saveProgress(trial.id, {
+          submittedWorkText: interaction.workNotes,
+          selectedOptionIds: interaction.selectedOptionIds,
+        });
+      }
+      setActiveTrial(null);
+      setActiveReflectionTrial(trial);
+    },
+    []
+  );
 
   const handleSubmitReflection = useCallback(
-    (trial: TrialActivity, reflection: TrialReflection, submittedWorkText?: string) => {
-      activityEvidenceStore.completeTrial(trial.id, reflection, submittedWorkText);
-      const summary = feedbackGenerator.generateSummary(trial, reflection);
+    (trial: TrialActivity, reflection: TrialReflection) => {
+      const record = activityEvidenceStore.completeTrial(
+        trial.id,
+        reflection,
+        pendingTrialWork?.workNotes
+      );
+      const summary = feedbackGenerator.generateSummary(
+        trial,
+        reflection,
+        record.evidenceStatus
+      );
+      setPendingTrialWork(null);
       setActiveReflectionTrial(null);
       setActiveFeedback(summary);
     },
-    []
+    [pendingTrialWork]
   );
 
   const handleSkipTrial = useCallback((trial: TrialActivity) => {
@@ -252,7 +295,7 @@ export function useValidateFit() {
     setFilters,
     filteredTrials,
     totalCatalogCount: TRIAL_CATALOG.length,
-    activeTrial,
+    activeTrial: effectiveActiveTrial,
     setActiveTrial,
     activeReflectionTrial,
     setActiveReflectionTrial,

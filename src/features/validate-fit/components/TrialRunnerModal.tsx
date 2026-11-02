@@ -11,7 +11,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, Sparkles, Save, ArrowRight, Ban, Lightbulb } from "lucide-react";
 import { type TrialActivity } from "../types";
 import { CreativePromptAdapter } from "./adapters/CreativePromptAdapter";
@@ -23,7 +23,14 @@ import { CaseCritiqueAdapter } from "./adapters/CaseCritiqueAdapter";
 interface TrialRunnerModalProps {
   trial: TrialActivity;
   onClose: () => void;
-  onFinishContent: (trial: TrialActivity) => void;
+  onFinishContent: (
+    trial: TrialActivity,
+    interaction?: {
+      workNotes: string;
+      selectedOptionIds: string[];
+      hasParticipated: boolean;
+    }
+  ) => void;
   onSkip: (trial: TrialActivity) => void;
   onSaveProgress: (trialId: string, updates: { selectedOptionIds?: string[]; submittedWorkText?: string }) => void;
 }
@@ -39,6 +46,10 @@ export function TrialRunnerModal({
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [workNotes, setWorkNotes] = useState<string>("");
   const [saveToast, setSaveToast] = useState(false);
+
+  const hasParticipated = useMemo(() => {
+    return selectedOptionIds.length > 0 || workNotes.trim().length >= 5;
+  }, [selectedOptionIds, workNotes]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -244,15 +255,26 @@ export function TrialRunnerModal({
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
             {saveToast && (
               <span className="text-xs text-[#059669] font-bold animate-in fade-in">
                 Progress saved!
               </span>
             )}
+            {!hasParticipated && (
+              <span className="text-[11px] text-[#92400E] bg-[#FFFBEB] border border-[#FDE68A] px-2.5 py-1 rounded-xl">
+                💡 Tip: Make a selection or note your thoughts above to build verified Practised evidence.
+              </span>
+            )}
             <button
               type="button"
-              onClick={() => onFinishContent(trial)}
+              onClick={() =>
+                onFinishContent(trial, {
+                  workNotes,
+                  selectedOptionIds,
+                  hasParticipated,
+                })
+              }
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] hover:bg-[#5342E8] text-white text-xs font-bold shadow-sm transition-all"
             >
               <span>Reflect on this Experience</span>

@@ -77,27 +77,51 @@ export function FeedbackSummaryModal({ summary, onClose, onRetry }: FeedbackSumm
           </div>
 
           {/* Genuine Evidence Added */}
-          <div className="p-4 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-2 text-xs">
-            <div className="flex items-center gap-1.5 font-bold text-[#065F46]">
-              <ShieldCheck className="w-4 h-4 text-[#059669]" />
-              <span>Evidence Ledger Addition</span>
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[#047857] font-semibold">Classification:</span>
-                <span className="bg-white text-[#059669] font-bold px-2 py-0.5 rounded-full text-[10px] border border-[#A7F3D0]">
-                  Practised in Challenge
-                </span>
+          {summary.evidenceGenerated.status === "practised" ? (
+            <div className="p-4 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-2 text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-[#065F46]">
+                <ShieldCheck className="w-4 h-4 text-[#059669]" />
+                <span>Evidence Ledger Addition</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#047857] font-semibold">Practised Competency:</span>
-                <span className="text-[#065F46] font-bold text-right">{summary.evidenceGenerated.competency}</span>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#047857] font-semibold">Classification:</span>
+                  <span className="bg-white text-[#059669] font-bold px-2 py-0.5 rounded-full text-[10px] border border-[#A7F3D0]">
+                    Practised in Challenge
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#047857] font-semibold">Practised Competency:</span>
+                  <span className="text-[#065F46] font-bold text-right">{summary.evidenceGenerated.competency}</span>
+                </div>
               </div>
+              <p className="text-[10px] italic text-[#047857] pt-1 border-t border-[#A7F3D0]/50 leading-relaxed">
+                Truth Boundary: {summary.evidenceGenerated.truthBoundary}
+              </p>
             </div>
-            <p className="text-[10px] italic text-[#047857] pt-1 border-t border-[#A7F3D0]/50 leading-relaxed">
-              Truth Boundary: {summary.evidenceGenerated.truthBoundary}
-            </p>
-          </div>
+          ) : (
+            <div className="p-4 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] space-y-2 text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-[#92400E]">
+                <ShieldCheck className="w-4 h-4 text-[#D97706]" />
+                <span>Evidence Ledger Addition</span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#B45309] font-semibold">Classification:</span>
+                  <span className="bg-white text-[#B45309] font-bold px-2 py-0.5 rounded-full text-[10px] border border-[#FDE68A]">
+                    Attempted (Reflection-Only)
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#B45309] font-semibold">Explored Topic:</span>
+                  <span className="text-[#92400E] font-bold text-right">{summary.evidenceGenerated.competency}</span>
+                </div>
+              </div>
+              <p className="text-[10px] italic text-[#B45309] pt-1 border-t border-[#FDE68A]/60 leading-relaxed">
+                Truth Boundary: {summary.evidenceGenerated.truthBoundary}
+              </p>
+            </div>
+          )}
 
           {/* Synthesized Reflection Insights */}
           {summary.reflectionInsights.length > 0 && (

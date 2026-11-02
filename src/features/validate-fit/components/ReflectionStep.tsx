@@ -23,15 +23,34 @@ export function ReflectionStep({ trial, onSubmit, onCancel }: ReflectionStepProp
   const [learned, setLearned] = useState("");
   const [wouldExploreAgain, setWouldExploreAgain] = useState<"yes" | "maybe" | "not_for_me">("yes");
   const [whatTryDifferently, setWhatTryDifferently] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const trimmedEnjoyed = enjoyed.trim();
+    const trimmedChallenged = challenged.trim();
+    const trimmedLearned = learned.trim();
+    const trimmedDifferently = whatTryDifferently.trim();
+
+    const hasSubstantiveThought = Boolean(
+      trimmedEnjoyed.length >= 3 ||
+      trimmedChallenged.length >= 3 ||
+      trimmedLearned.length >= 3 ||
+      trimmedDifferently.length >= 3
+    );
+
+    if (!hasSubstantiveThought) {
+      setValidationError("Please share at least one reflection thought on what you enjoyed, learned, or found challenging before submitting.");
+      return;
+    }
+
+    setValidationError(null);
     onSubmit({
-      enjoyed: enjoyed.trim() || "Engaging with the real-world scenario",
-      challenged: challenged.trim() || "Analyzing constraints and trade-offs",
-      learned: learned.trim() || trial.learningObjective,
+      enjoyed: trimmedEnjoyed,
+      challenged: trimmedChallenged,
+      learned: trimmedLearned,
       wouldExploreAgain,
-      whatTryDifferently: whatTryDifferently.trim() || "Investigate deeper background examples",
+      whatTryDifferently: trimmedDifferently,
     });
   }
 
@@ -51,7 +70,7 @@ export function ReflectionStep({ trial, onSubmit, onCancel }: ReflectionStepProp
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#6757F5]">
-                Experiential Reflection
+                Experiential Reflection · {trial.title}
               </span>
               <h1
                 id="reflection-modal-title"
@@ -197,6 +216,16 @@ export function ReflectionStep({ trial, onSubmit, onCancel }: ReflectionStepProp
             />
           </div>
 
+          {/* Validation Notice */}
+          {validationError && (
+            <div
+              role="alert"
+              className="p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-xs text-[#DC2626] font-semibold animate-in fade-in"
+            >
+              ⚠️ {validationError}
+            </div>
+          )}
+
           {/* Footer Submit */}
           <div className="pt-3 border-t border-[#E8E6F3] flex items-center justify-end gap-2">
             <button
@@ -219,3 +248,4 @@ export function ReflectionStep({ trial, onSubmit, onCancel }: ReflectionStepProp
     </div>
   );
 }
+

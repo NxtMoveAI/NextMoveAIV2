@@ -41,6 +41,17 @@ export function AppliedTroubleshootAdapter({
 
   return (
     <div className="space-y-6">
+      {/* Simulation Safety Warning Notice */}
+      <div className="p-3.5 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-[#92400E] flex items-start gap-2.5 text-xs">
+        <AlertTriangle className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <span className="font-bold block text-[#B45309]">Virtual Simulation Exercise Only</span>
+          <p className="text-[11px] leading-relaxed">
+            This activity is a conceptual software simulation for educational learning. Never inspect, wire, or service physical 24V/415V electrical panels or industrial machinery without certified Lockout/Tagout (LOTO) credentials, appropriate PPE, and direct qualified supervision.
+          </p>
+        </div>
+      </div>
+
       {/* System Description */}
       <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-[#F0EEF8] space-y-2 text-xs">
         <span className="font-bold text-[#6757F5] uppercase tracking-wider text-[10px] block">
@@ -81,8 +92,17 @@ export function AppliedTroubleshootAdapter({
             return (
               <div
                 key={fault.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    handlePick(fault.id);
+                  }
+                }}
                 onClick={() => handlePick(fault.id)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl border transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#6757F5] ${
                   isSelected
                     ? "bg-[#F7F6FF] border-[#6757F5] shadow-xs ring-1 ring-[#6757F5]"
                     : "bg-white border-[#E8E6F3] hover:border-[#6757F5]/50"
@@ -154,3 +174,4 @@ export function AppliedTroubleshootAdapter({
     </div>
   );
 }
+

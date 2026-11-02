@@ -8,12 +8,13 @@
  * - Affirming curiosity and factual completion while acknowledging remaining questions.
  */
 
-import { type TrialActivity, type TrialReflection, type TrialFeedbackSummary } from "../types";
+import { type TrialActivity, type TrialReflection, type TrialFeedbackSummary, type EvidenceStatus } from "../types";
 
 export class FeedbackGenerator {
   public generateSummary(
     trial: TrialActivity,
-    reflection: TrialReflection
+    reflection: TrialReflection,
+    evidenceStatus: EvidenceStatus = "practised"
   ): TrialFeedbackSummary {
     const insights: string[] = [];
 
@@ -74,14 +75,19 @@ export class FeedbackGenerator {
       });
     }
 
+    const isPractised = evidenceStatus === "practised";
+
     return {
       trialTitle: trial.title,
-      completionPraise: `Well done on completing this hands-on trial! You invested genuine focus in experiencing what this field feels like in practice.`,
+      completionPraise: isPractised
+        ? `Well done on completing this hands-on trial! You invested genuine focus in experiencing what this field feels like in practice.`
+        : `You recorded your self-reflection, but haven't yet submitted practical task work or selected an analytical solution.`,
       evidenceGenerated: {
-        status: "practised",
+        status: evidenceStatus,
         competency: trial.competencyPractised,
-        truthBoundary:
-          "Recorded as 'Practised in Platform Challenge'. Demonstrates introductory real-world engagement; does not constitute a certified professional credential.",
+        truthBoundary: isPractised
+          ? "Recorded as 'Practised in Platform Challenge'. Demonstrates introductory real-world engagement; does not constitute a certified professional credential."
+          : "Recorded as an Attempted exploration. Hands-on Practised status requires actively engaging with the simulation or diagnostic task.",
       },
       reflectionInsights: insights,
       recommendedNextActions: nextActions,
@@ -90,3 +96,4 @@ export class FeedbackGenerator {
 }
 
 export const feedbackGenerator = new FeedbackGenerator();
+

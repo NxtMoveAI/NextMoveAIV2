@@ -10,7 +10,7 @@
  * - Reactive state updates for UI components and Student Home integration.
  */
 
-import { type TrialActivity, type TrialAttemptRecord, type TrialReflection } from "../types";
+import { type TrialActivity, type TrialAttemptRecord, type TrialReflection, type EvidenceStatus } from "../types";
 
 type StoreListener = () => void;
 
@@ -157,6 +157,16 @@ class ActivityEvidenceStore {
     if (!this.isHydrated) this.hydrateFromStorage();
     const current = this.attempts.get(trialId);
 
+    const effectiveWorkText = submittedWorkText ?? current?.submittedWorkText;
+    const hasSelectedOption = Boolean(current?.selectedOptionIds && current.selectedOptionIds.length > 0);
+    const hasWorkText = Boolean(effectiveWorkText && effectiveWorkText.trim().length >= 5);
+    const hasMeaningfulTaskWork = hasSelectedOption || hasWorkText;
+
+    // Epistemic Integrity: Only award "practised" evidence status if the student
+    // meaningfully interacted with the activity (selected a solution/trade-off or documented work notes).
+    // Reflection-only shortcuts or empty submissions record "attempted" evidence.
+    const evidenceStatus: EvidenceStatus = hasMeaningfulTaskWork ? "practised" : "attempted";
+
     const completedRecord: TrialAttemptRecord = {
       id: current?.id || `rec_${trialId}_${Date.now()}`,
       trialId,
@@ -165,11 +175,11 @@ class ActivityEvidenceStore {
       stageId: current?.stageId || "classes-11-12",
       format: current?.format || "scenario_tradeoff",
       status: "completed",
-      evidenceStatus: "practised", // Verified completion of an introductory simulation
+      evidenceStatus,
       startedAt: current?.startedAt || new Date().toISOString(),
       completedAt: new Date().toISOString(),
       selectedOptionIds: current?.selectedOptionIds,
-      submittedWorkText: submittedWorkText ?? current?.submittedWorkText,
+      submittedWorkText: effectiveWorkText,
       reflection,
       competencyPractised: current?.competencyPractised || "Hands-on Problem Solving",
       isSyntheticFixture: false,
@@ -244,10 +254,20 @@ class ActivityEvidenceStore {
     return this.getCompletedAttempts().length;
   }
 
+  public getPractisedCount(): number {
+    return this.getCompletedAttempts().filter((a) => a.evidenceStatus === "practised").length;
+  }
+
+  public getAttemptedCount(): number {
+    return this.getAllAttempts().filter((a) => a.evidenceStatus === "attempted").length;
+  }
+
   public getPractisedCompetencies(): string[] {
     const set = new Set<string>();
     this.getCompletedAttempts().forEach((a) => {
-      if (a.competencyPractised) set.add(a.competencyPractised);
+      if (a.evidenceStatus === "practised" && a.competencyPractised) {
+        set.add(a.competencyPractised);
+      }
     });
     return Array.from(set);
   }

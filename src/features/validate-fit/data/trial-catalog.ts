@@ -787,4 +787,180 @@ export const TRIAL_CATALOG: TrialActivity[] = [
     whatThisClarifies: "Whether you thrive in startup operations, bootstrapped entrepreneurship, and venture building.",
     tags: ["SaaS", "Startups", "Unit Economics", "Entrepreneurship", "Graduate"],
   },
+
+  // ===========================================================================
+  // NON-TECHNICAL ADDITIONS (COMMERCE, HUMANITIES, SUPPLY CHAIN)
+  // Ensures balanced domain representation across 11-12, Diploma, Degree & Grad
+  // ===========================================================================
+
+  {
+    id: "trial_c1112_working_capital",
+    title: "Working Capital & Cash Flow Stress Test",
+    subtitle: "Navigate invoice payment delays, inventory holding costs, and emergency supplier credit trade-offs",
+    stageSuitability: ["classes-11-12"],
+    categoryId: "business_entrepreneurship",
+    categoryLabel: "Commerce, Finance & Business",
+    relatedPathwayId: "pw_bcom_finance",
+    relatedPathwayTitle: "Commerce, Accounting & Financial Analysis",
+    format: "scenario_tradeoff",
+    suggestedMinutes: 15,
+    learningObjective: "Distinguish operational cash flow from accounting profit, and evaluate how invoice credit terms affect commercial business survival.",
+    scenarioBackground: "An artisanal retail brand recorded ₹12,00,000 in invoiced sales this month. However, ₹9,00,000 is tied up in wholesale client receivables with a 60-day credit period. Meanwhile, raw fabric suppliers and workshop wages totaling ₹6,50,000 are due in 10 days. The bank balance is ₹2,00,000.",
+    instructions: [
+      "Analyze why having a profitable paper margin does not prevent immediate liquidity insolvency.",
+      "Compare 3 strategic options to bridge the ₹4.5L cash shortfall without damaging supplier goodwill or taking predatory loans.",
+      "Select the most resilient commercial trade-off.",
+    ],
+    optionalHints: [
+      "Revenue on an accrual invoice is not cash in the bank until the client pays.",
+      "Early-payment cash discounts (e.g. 3% discount for 48-hour wire transfer) are often cheaper than high-interest uncollateralized credit lines.",
+    ],
+    content: {
+      format: "scenario_tradeoff",
+      payload: {
+        situation: "An artisanal brand faces a ₹4.5L working capital deficit with wholesale invoices due in 60 days but staff wages and fabric suppliers due in 10 days.",
+        contextSummary: "Commercial viability depends on cash flow velocity, not just book profit. A business with positive margins can still fail if cash is trapped in receivables.",
+        discussionPrompt: "Which commercial trade-off best preserves solvency while safeguarding vendor trust and profitability?",
+        options: [
+          {
+            id: "opt_cash_discount",
+            label: "Offer 3.5% Prompt-Payment Discount on Wholesale Invoices",
+            description: "Contact top wholesale clients and offer an immediate 3.5% discount if invoices are cleared within 48 hours.",
+            tradeoffsGained: "Secures ₹4,50,000+ immediate cash within 48 hours to pay workshop wages on time with zero bank debt.",
+            tradeoffsSacrificed: "Sacrifices ~₹31,500 in gross margin on the discounted receivables.",
+          },
+          {
+            id: "opt_bank_overdraft",
+            label: "Draw Down Emergency Bank Overdraft Line at 15.5% APR",
+            description: "Borrow ₹4,50,000 on a short-term bank credit facility until wholesale clients clear their 60-day dues.",
+            tradeoffsGained: "Retains full invoice value without giving any margin discount to clients.",
+            tradeoffsSacrificed: "Incurs interest charges and uses up emergency borrowing lines, increasing balance sheet leverage.",
+          },
+          {
+            id: "opt_delay_suppliers",
+            label: "Delay Raw Fabric Supplier Payments by 30 Days",
+            description: "Pay staff wages now with existing ₹2,00,000 cash and push supplier dues past their 30-day term.",
+            tradeoffsGained: "Zero financial cost and no margin sacrificed.",
+            tradeoffsSacrificed: "Damages vendor trust; fabric suppliers may withhold future deliveries right before festive peak season.",
+          },
+        ],
+      },
+    },
+    competencyPractised: "Working Capital Cash Flow Management",
+    whatThisClarifies: "Whether you enjoy commercial problem-solving, financial accounting, and managerial business decision-making.",
+    tags: ["Commerce", "Accounting", "Cash Flow", "Business Management", "Classes 11-12"],
+  },
+
+  {
+    id: "trial_dip_cold_chain_dispatch",
+    title: "Cold-Chain Logistics & Temperature Breach Triage",
+    subtitle: "Manage freight transport routing, temperature data loggers, and depot triage",
+    stageSuitability: ["diploma", "degree-engineering"],
+    categoryId: "business_entrepreneurship",
+    categoryLabel: "Supply Chain & Operations",
+    relatedPathwayId: "pw_dip_logistics",
+    relatedPathwayTitle: "Supply Chain & Logistics Operations",
+    format: "scenario_tradeoff",
+    suggestedMinutes: 15,
+    learningObjective: "Evaluate supply chain trade-offs between spoilage risk, detour transit times, and temperature compliance in pharmaceutical freight dispatch.",
+    scenarioBackground: "A refrigerated truck carrying temperature-sensitive pediatric vaccines is 3 hours from its destination depot when a highway landslide forces an 8-hour detour. The onboard temperature data logger shows internal cabin temperature has risen from 3.5°C to 7.1°C (critical spoilage threshold is 8.0°C).",
+    instructions: [
+      "Analyze the risk of vaccine denaturation if the secondary cooling unit battery depletes during the 8-hour detour.",
+      "Compare 3 triage protocols: diverting to an intermediate regional cold-storage warehouse vs requesting dry ice replenishment roadside.",
+      "Choose the protocol that safeguards biological cargo integrity while minimizing supply chain disruption.",
+    ],
+    optionalHints: [
+      "Temperature breaches above 8°C permanently invalidate the cold-chain certificate and require destroying the shipment.",
+      "Intermediate authorized cold rooms can verify vial integrity and re-chill the cargo before proceeding.",
+    ],
+    content: {
+      format: "scenario_tradeoff",
+      payload: {
+        situation: "Refrigerated freight truck encounters road closure with temperature rising toward 8.0°C critical spoilage limit.",
+        contextSummary: "Operational logistics requires fast risk mitigation under physical constraints: maintaining product integrity while adhering to stringent compliance standards.",
+        discussionPrompt: "Which dispatch triage protocol best safeguards cargo integrity without catastrophic freight delay?",
+        options: [
+          {
+            id: "opt_divert_cold_hub",
+            label: "Divert 45 km to Authorized Regional Cold-Storage Depot",
+            description: "Reroute immediately to a certified secondary distribution warehouse to transfer vaccines into stationary chilling units.",
+            tradeoffsGained: "Guarantees temperature remains below 5°C, preventing ₹40L in vaccine inventory loss.",
+            tradeoffsSacrificed: "Adds 12 hours of total delay and requires warehouse docking and restacking fees.",
+          },
+          {
+            id: "opt_push_through",
+            label: "Engage Auxiliary Diesel Chiller and Take Detour Highway",
+            description: "Switch cooling system to backup diesel motor and attempt the 8-hour detour without stopping.",
+            tradeoffsGained: "Maintains direct route toward destination hospital.",
+            tradeoffsSacrificed: "High risk: if diesel fuel clogs or traffic jams occur, temperature will exceed 8°C, ruining all vaccines.",
+          },
+          {
+            id: "opt_roadside_dry_ice",
+            label: "Dispatch Emergency Roadside Dry Ice Replenishment",
+            description: "Meet a local industrial gas courier along the detour to pack supplementary dry ice into pallet insulation.",
+            tradeoffsGained: "Lowers cabin temperature without full warehouse unloading.",
+            tradeoffsSacrificed: "Uneven freezing risks: direct dry ice contact can freeze vials below 2°C, causing frost cracking.",
+          },
+        ],
+      },
+    },
+    competencyPractised: "Cold-Chain Freight Route & Spoilage Triage",
+    whatThisClarifies: "Whether you enjoy supply chain logistics, operations management, and industrial distribution systems.",
+    tags: ["Logistics", "Supply Chain", "Operations", "Cold Chain", "Diploma"],
+  },
+
+  {
+    id: "trial_deg_editorial_bias",
+    title: "Investigative Media Source Credibility & Fact-Check Audit",
+    subtitle: "Cross-reference anonymous whistleblower claims against municipal public filings and identify framing bias",
+    stageSuitability: ["degree-engineering", "final-year-grad"],
+    categoryId: "social_impact",
+    categoryLabel: "Humanities & Media Ethics",
+    relatedPathwayId: "pw_media_comm",
+    relatedPathwayTitle: "Journalism, Media Communications & Public Discourse",
+    format: "case_critique",
+    suggestedMinutes: 20,
+    learningObjective: "Audit factual claims for rhetorical framing bias, corroborate primary documentation, and uphold journalistic verification standards.",
+    scenarioBackground: "An independent newsroom receives an anonymous tip claiming an urban riverfront revitalization project diverted public water allocations to a luxury commercial golf resort. The lead reporter drafts a breaking exposé based solely on the anonymous leaked email.",
+    instructions: [
+      "Evaluate the risk of publishing a breaking investigative piece based solely on a single unverified digital document.",
+      "Cross-reference the claim with Right to Information (RTI) municipal water filings and satellite hydrology data.",
+      "Identify 2 loaded rhetorical phrases in the draft that prejudge guilt before obtaining the irrigation department's official response.",
+    ],
+    optionalHints: [
+      "A leaked email could be authentic, fabricated, or selectively truncated to omit contextual addendums.",
+      "Responsible investigative journalism requires giving named subjects a minimum 24-hour window to answer specific written queries before publishing allegations.",
+    ],
+    content: {
+      format: "case_critique",
+      payload: {
+        contextSummary: "Investigative reporting balances public interest with strict evidentiary standards: separating verified documentation from rhetoric and speculation.",
+        briefText: "Draft Article: 'CORRUPT WATER THEFT: How Municipal Authorities Starved Local Farmers to Greenlight Billionaire Golf Greens.' Evidence cited: 1 scanned PDF labeled 'Confidential Water Allocation Memo 2024'. Unverified sender, no digital signatures.",
+        stakeholders: [
+          "Anonymous Whistleblower: Claims to be an irrigation junior engineer; identity unverified.",
+          "Lead Reporter: Eager for an exclusive front-page viral scoop ahead of regional elections.",
+          "Editorial Fact-Checker: Responsible for verifying primary documentation, avoiding defamation lawsuits, and ensuring balanced right of reply.",
+        ],
+        keyQuestions: [
+          "Why is relying solely on an unauthenticated leaked PDF an unacceptable editorial risk?",
+          "How can the newsroom corroborate whether water was actually diverted using public satellite imagery or municipal meter records?",
+          "What standard protocol must be followed regarding right-of-reply before publishing damaging allegations against public servants?",
+        ],
+        guidingRubric: [
+          {
+            criterion: "Evidentiary Rigor",
+            considerations: "Identifies that digital documents must be corroborated via independent secondary sources or official filings.",
+          },
+          {
+            criterion: "Journalistic Ethics & Tone",
+            considerations: "Replaces inflammatory assertions with factual reporting and insists on documented right-of-reply.",
+          },
+        ],
+      },
+    },
+    competencyPractised: "Investigative Source Verification & Bias Critique",
+    whatThisClarifies: "Whether you thrive in journalism, media law, public discourse, and investigative communications.",
+    tags: ["Journalism", "Media", "Fact-Checking", "Humanities", "Ethics", "Degree", "Graduate"],
+  },
 ];
+

@@ -26,7 +26,8 @@ export function EvidenceLedgerView({
   onRetryTrial,
   onExploreMore,
 }: EvidenceLedgerViewProps) {
-  const completedAttempts = attempts.filter((a) => a.status === "completed");
+  const completedAttempts = attempts.filter((a) => a.status === "completed" && a.evidenceStatus === "practised");
+  const attemptedOnly = attempts.filter((a) => a.evidenceStatus === "attempted");
   const selfReportedSkills = profile?.startingSkills || [];
 
   return (
@@ -37,7 +38,7 @@ export function EvidenceLedgerView({
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#059669]">
             Practised in Challenge
           </span>
-          <p className="text-2xl sm:text-3xl font-black text-[#065F46]">
+          <p data-testid="metric-practised-count" className="text-2xl sm:text-3xl font-black text-[#065F46]">
             {completedAttempts.length}
           </p>
           <p className="text-xs text-[#047857]">Real-world interactive challenges completed</p>
@@ -70,8 +71,63 @@ export function EvidenceLedgerView({
         <div className="space-y-1">
           <span className="font-bold text-[#6757F5] block">Next Move AI Evidence Integrity Guarantee</span>
           <p className="text-[#474D66] text-[11px] leading-relaxed">
-            Completing an exploratory trial demonstrates hands-on familiarity and problem-solving practice—it is never automatically labeled as a certified mastery credential. Genuine competence requires formal assessment rubrics or portfolio verification.
+            Completing an exploratory trial demonstrates hands-on familiarity and problem-solving practice—it is never automatically labeled as a certified mastery credential. Unreviewed prototype activities are exploratory tools, not accredited mastery verifications.
           </p>
+        </div>
+      </div>
+
+      {/* Evidence Taxonomy Reference Key */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-white border border-[#E8E6F3] space-y-3">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-[#6757F5]" />
+          <h3 className="text-xs font-black uppercase tracking-wider text-[#171A2B]">
+            Evidence Taxonomy Reference Key
+          </h3>
+        </div>
+        <p className="text-xs text-[#626987] leading-relaxed">
+          Next Move AI enforces strict epistemic honesty. We clearly distinguish self-reported interests, introductory trial practice, and formally demonstrated competence:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-1 text-xs">
+          <div className="p-3 rounded-2xl bg-[#FAF9F6] border border-[#E8E6F3] space-y-1">
+            <span className="text-[10px] font-bold text-[#8C93AD] bg-[#F4F3F8] px-2 py-0.5 rounded-full block w-fit">
+              1. Attempted
+            </span>
+            <p className="text-[11px] text-[#474D66] leading-tight">
+              Started or reflected on an activity without submitting practical challenge task work.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-1">
+            <span className="text-[10px] font-bold text-[#059669] bg-white px-2 py-0.5 rounded-full border border-[#A7F3D0] block w-fit">
+              2. Practised
+            </span>
+            <p className="text-[11px] text-[#065F46] leading-tight">
+              Actively engaged with an introductory simulation and completed reflective synthesis.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] space-y-1">
+            <span className="text-[10px] font-bold text-[#1D4ED8] bg-white px-2 py-0.5 rounded-full border border-[#BFDBFE] block w-fit">
+              3. Self-Reported
+            </span>
+            <p className="text-[11px] text-[#1E40AF] leading-tight">
+              Stated familiarity or interests during onboarding baseline without formal rubrics.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] space-y-1">
+            <span className="text-[10px] font-bold text-[#6757F5] bg-white px-2 py-0.5 rounded-full border border-[#DDD8FE] block w-fit">
+              4. Reviewed
+            </span>
+            <p className="text-[11px] text-[#4338CA] leading-tight">
+              Evaluated against an authentic assessment rubric with structured educator/mentor feedback.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-[#FAF5FF] border border-[#E9D5FF] space-y-1">
+            <span className="text-[10px] font-bold text-[#7E22CE] bg-white px-2 py-0.5 rounded-full border border-[#E9D5FF] block w-fit">
+              5. Demonstrated
+            </span>
+            <p className="text-[11px] text-[#581C87] leading-tight">
+              Verified through real-world portfolio artifacts, production code, or accredited credentials.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -186,6 +242,51 @@ export function EvidenceLedgerView({
           </div>
         )}
       </div>
+
+      {/* Attempted Explorations Section */}
+      {attemptedOnly.length > 0 && (
+        <div className="space-y-3 pt-2 border-t border-[#E8E6F3]">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-[#171A2B] uppercase tracking-wider flex items-center gap-2">
+              <RotateCcw className="w-4 h-4 text-[#D97706]" />
+              <span>Attempted Explorations (Reflection Only / Incomplete Task)</span>
+            </h2>
+            <span className="text-xs text-[#626987]">{attemptedOnly.length} recorded</span>
+          </div>
+          <div className="space-y-3">
+            {attemptedOnly.map((attempt) => (
+              <div
+                key={attempt.id}
+                className="p-4 rounded-3xl bg-[#FFFBEB]/40 border border-[#FDE68A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                    <h3 className="text-xs font-bold text-[#171A2B]">{attempt.trialTitle}</h3>
+                  </div>
+                  <p className="text-[11px] text-[#626987] pl-4">
+                    Explored: {attempt.competencyPractised} · Recorded as Attempt (retry to earn Practised)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 pl-4 sm:pl-0">
+                  <span className="text-[10px] font-bold text-[#B45309] bg-white border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                    Attempted
+                  </span>
+                  {onRetryTrial && (
+                    <button
+                      type="button"
+                      onClick={() => onRetryTrial(attempt.trialId)}
+                      className="text-xs font-bold text-[#6757F5] hover:underline px-2 py-1"
+                    >
+                      Retry Challenge
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Starting Stated Familiarity Items */}
       {selfReportedSkills.length > 0 && (

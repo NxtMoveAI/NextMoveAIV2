@@ -699,14 +699,16 @@ export function transformProfileToHomeViewModel(
     }
   }
 
-  const trialEvidenceItems: GrowthEvidenceEntry[] = completedTrials.map((t) => ({
-    id: t.id,
-    title: t.trialTitle,
-    category: "Practical Challenge",
-    evidenceStatus: "practised",
-    statusLabel: "Practised",
-    provenance: "practised_in_challenge",
-  }));
+  const trialEvidenceItems: GrowthEvidenceEntry[] = completedTrials
+    .filter((t) => t.evidenceStatus === "practised")
+    .map((t) => ({
+      id: t.id,
+      title: t.trialTitle,
+      category: "Practical Challenge",
+      evidenceStatus: "practised",
+      statusLabel: "Practised",
+      provenance: "practised_in_challenge",
+    }));
 
   const baseItems = recentActivity
     ? evidenceItems
