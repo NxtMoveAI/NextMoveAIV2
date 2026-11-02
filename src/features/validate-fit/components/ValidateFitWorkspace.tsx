@@ -49,7 +49,7 @@ export function ValidateFitWorkspace() {
   const isMiddleSchool = studentStageId === "classes-4-7";
 
   return (
-    <div className="space-y-6 pb-12">
+    <div data-testid="validate-fit-workspace" className="space-y-6 pb-12">
       {/* Dev Persona Switcher Bar */}
       <PersonaSwitcherExploreBar />
 

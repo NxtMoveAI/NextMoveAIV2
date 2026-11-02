@@ -179,6 +179,32 @@ class NextMoveStore {
     this.notify();
   }
 
+  public addMilestoneToActiveRoadmap(milestone: {
+    title: string;
+    description?: string;
+    estimatedHours?: number;
+    category?: "foundational_skill" | "practical_project" | "educational_route" | "reflection";
+  }): boolean {
+    if (!this.isHydrated) this.hydrateFromStorage();
+    if (!this.state.activeRoadmap || this.state.activeRoadmap.phases.length === 0) return false;
+
+    const targetPhase = this.state.activeRoadmap.phases.find((p) => p.isCurrent) || this.state.activeRoadmap.phases[0];
+    const newMilestone = {
+      id: `ms_partner_${Date.now()}`,
+      title: milestone.title,
+      description: milestone.description || "Action recommended by My Partner AI companion.",
+      category: milestone.category || "practical_project",
+      estimatedHours: milestone.estimatedHours || 2,
+      isCompleted: false,
+    };
+
+    targetPhase.milestones.push(newMilestone);
+    this.state.activeRoadmap.updatedAt = new Date().toISOString();
+    this.persistToStorage();
+    this.notify();
+    return true;
+  }
+
   public switchRoadmapTrack(newRoadmapId: string): StudentRoadmap | null {
     if (!this.isHydrated) this.hydrateFromStorage();
     const found = ROADMAP_CATALOG.find((r) => r.id === newRoadmapId);

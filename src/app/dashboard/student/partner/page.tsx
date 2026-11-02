@@ -1,23 +1,15 @@
+/**
+ * NEXT MOVE AI V2 — FLOW 8: MY PARTNER PAGE ROUTE
+ * 
+ * Route: /dashboard/student/partner
+ * Mounts the personalized AI companion workspace.
+ */
+
 "use client";
 
 import React from "react";
-import { Sparkles } from "lucide-react";
-import { FutureModulePlaceholder } from "@/components/student-layout/FutureModulePlaceholder";
+import { PartnerWorkspace } from "@/features/partner/components/PartnerWorkspace";
 
 export default function StudentPartnerPage() {
-  return (
-    <FutureModulePlaceholder
-      moduleName="My Partner • Personal AI Guide"
-      flowNumber="Flow 8"
-      shortDescription="An empathetic, memory-anchored learning partner that understands your starting baseline and helps you think through daily decisions."
-      upcomingCapabilities={[
-        "Context-grounded guidance grounded exclusively in your verified profile",
-        "Deterministic structured advice: Exploration Directions + Trade-Offs + Next Step",
-        "No hallucinated career guarantees or fake confidence scores",
-        "Integration with Havyas's backend retrieval & secure student intelligence engine",
-      ]}
-      icon={<Sparkles className="w-8 h-8" />}
-    />
-  );
+  return <PartnerWorkspace />;
 }
-

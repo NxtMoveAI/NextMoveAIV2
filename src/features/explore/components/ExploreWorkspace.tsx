@@ -56,7 +56,7 @@ export function ExploreWorkspace() {
   } = useExploreWorkspace();
 
   return (
-    <div className="space-y-6">
+    <div data-testid="explore-workspace" className="space-y-6">
       {/* Dev Persona Switcher (Hidden in production and anonymous sessions) */}
       <PersonaSwitcherExploreBar />
 
