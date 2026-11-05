@@ -3,7 +3,7 @@ import path from "path";
 
 const SCREENSHOT_DIR = "C:/Users/ravit/.gemini/antigravity/brain/dbe4277a-7bf2-48c4-a3c8-b02cbc825b13/screenshots";
 
-test.describe("Hero Redesign — Verification & Multi-Viewport Screen Captures", () => {
+test.describe("Hero Visual Refinement 1.2 — Verification & Storytelling Screen Captures", () => {
   test("Verify Hero Section Content, Copy, and No Version Labels", async ({ page }) => {
     await page.goto("http://localhost:3000/");
 
@@ -49,131 +49,191 @@ test.describe("Hero Redesign — Verification & Multi-Viewport Screen Captures",
     expect(heroText).not.toMatch(/\bMVP\b/);
   });
 
-  test("Interactive Showcase — Mode toggle, Scene navigation, and Play/Pause", async ({ page }) => {
+  test("Visual Storytelling Showcase — Inviting Header, Compact 4 Steps, Pure Story", async ({ page }) => {
     await page.goto("http://localhost:3000/");
 
     const showcase = page.locator('[aria-label="Student Journey Interactive Showcase"]');
     await expect(showcase).toBeVisible();
 
-    // Pause autoplay for steady testing
+    // 1. Verify new inviting heading
+    await expect(showcase).toContainText("See how your journey unfolds");
+
+    // 2. Verify 4 compact steps
+    const stepTabs = showcase.locator('button[role="tab"]');
+    await expect(stepTabs).toHaveCount(4);
+    await expect(stepTabs.nth(0)).toContainText("Discover");
+    await expect(stepTabs.nth(1)).toContainText("Explore");
+    await expect(stepTabs.nth(2)).toContainText("Try");
+    await expect(stepTabs.nth(3)).toContainText("Grow");
+
+    // 3. Pause autoplay for deterministic inspection
     const pauseBtn = showcase.locator('button[aria-label="Pause autoplay"]');
     if (await pauseBtn.isVisible()) {
       await pauseBtn.click();
     }
 
-    // Default Scene 1 (School Mode)
+    // 4. Default Scene 1 (School Mode)
     await expect(showcase).toContainText("What makes you curious?");
-    await expect(showcase).toContainText("Robotics & AI");
+    await expect(showcase).toContainText("Start by exploring what genuinely excites you");
 
-    // Switch to College Mode
+    // 5. Switch to College Mode
     const collegeBtn = showcase.locator('button:has-text("College & Career")');
     await collegeBtn.click();
-    await expect(showcase).toContainText("Where do your strengths lie?");
-    await expect(showcase).toContainText("Cloud Systems");
+    await expect(showcase).toContainText("Discover where your natural strengths lie");
 
     // Switch back to School Mode
     const schoolBtn = showcase.locator('button:has-text("School (4–12)")');
     await schoolBtn.click();
-    await expect(showcase).toContainText("What makes you curious?");
 
-    // Switch to Scene 2 (Explore Possibilities)
-    const scene2Tab = showcase.locator('#journey-tab-1');
-    await scene2Tab.click();
-    await expect(showcase).toContainText("Discover a world of possibilities.");
+    // 6. Switch to Scene 2 (Explore)
+    await stepTabs.nth(1).click();
+    await expect(showcase).toContainText("There's so much to discover.");
+    await expect(showcase).toContainText("Step into vibrant worlds of learning");
 
-    // Switch to Scene 3 (Give It a Try)
-    const scene3Tab = showcase.locator('#journey-tab-2');
-    await scene3Tab.click();
-    await expect(showcase).toContainText("Learn by trying something new.");
-    await expect(showcase).toContainText("Solar Rover Tracker");
+    // 7. Switch to Scene 3 (Try)
+    await stepTabs.nth(2).click();
+    await expect(showcase).toContainText("Try something new!");
+    await expect(showcase).toContainText("Build a fun mini-project");
 
-    // Switch to Scene 4 (Make Your Next Move)
-    const scene4Tab = showcase.locator('#journey-tab-3');
-    await scene4Tab.click();
-    await expect(showcase).toContainText("Take your next step, your way.");
-    await expect(showcase).toContainText("Shortlist 3 Subject Combinations");
+    // 8. Switch to Scene 4 (Grow)
+    await stepTabs.nth(3).click();
+    await expect(showcase).toContainText("Every small step helps you grow.");
+    await expect(showcase).toContainText("Move at your own pace");
+
+    // 9. Verify technical dashboard jargon and truncated labels are gone
+    const fullText = await showcase.innerText();
+    expect(fullText).not.toContain("Step 2 — Horizons");
+    expect(fullText).not.toContain("Verified career horizons");
+    expect(fullText).not.toContain("All paths transparently mapped");
+    expect(fullText).not.toContain("Prerequisites · Calendars · Realities");
+    expect(fullText).not.toContain("Curiosity Radar");
+    expect(fullText).not.toContain("Evidence recorded in your growth log");
+    expect(fullText).not.toMatch(/Make Your Next Mo/);
   });
 
-  test("Capture AFTER screenshots across viewports", async ({ page }) => {
-    // 1440px Desktop
+  test("Capture AFTER screenshots across viewports for all 4 scenes and College mode", async ({ page }) => {
+    // ============================================
+    // 1440px Desktop Captures
+    // ============================================
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("http://localhost:3000/");
     await page.waitForTimeout(600);
+    const showcase = page.locator('[aria-label="Student Journey Interactive Showcase"]');
+    const pauseBtn = showcase.locator('button[aria-label="Pause autoplay"]');
+    if (await pauseBtn.isVisible()) {
+      await pauseBtn.click();
+    }
+
+    // Desktop Scene 1 (School)
+    await showcase.locator('#journey-tab-0').click();
+    await page.waitForTimeout(300);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-after-1440px.png"),
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-scene1-discover.png"),
       fullPage: false,
     });
 
-    // 390px Mobile
+    // Desktop Scene 2 (School)
+    await showcase.locator('#journey-tab-1').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-scene2-explore.png"),
+      fullPage: false,
+    });
+
+    // Desktop Scene 3 (School)
+    await showcase.locator('#journey-tab-2').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-scene3-try.png"),
+      fullPage: false,
+    });
+
+    // Desktop Scene 4 (School)
+    await showcase.locator('#journey-tab-3').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-scene4-grow.png"),
+      fullPage: false,
+    });
+
+    // Desktop College Mode (Scene 1)
+    await showcase.locator('button:has-text("College & Career")').click();
+    await showcase.locator('#journey-tab-0').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-college-mode.png"),
+      fullPage: false,
+    });
+
+    // ============================================
+    // 390px Mobile Viewport Captures
+    // ============================================
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("http://localhost:3000/");
     await page.waitForTimeout(600);
+    const mobileShowcase = page.locator('[aria-label="Student Journey Interactive Showcase"]');
+    const mobilePause = mobileShowcase.locator('button[aria-label="Pause autoplay"]');
+    if (await mobilePause.isVisible()) {
+      await mobilePause.click();
+    }
+
+    // Mobile Scene 1 (School)
+    await mobileShowcase.locator('#journey-tab-0').click();
+    await page.waitForTimeout(300);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-after-390px.png"),
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene1-discover.png"),
       fullPage: false,
     });
 
-    // 360px Compact Mobile
-    await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto("http://localhost:3000/");
-    await page.waitForTimeout(600);
+    // Mobile Scene 2 (School)
+    await mobileShowcase.locator('#journey-tab-1').click();
+    await page.waitForTimeout(300);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-after-360px.png"),
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene2-explore.png"),
       fullPage: false,
     });
 
-    // 768px Tablet
+    // Mobile Scene 3 (School)
+    await mobileShowcase.locator('#journey-tab-2').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene3-try.png"),
+      fullPage: false,
+    });
+
+    // Mobile Scene 4 (School)
+    await mobileShowcase.locator('#journey-tab-3').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene4-grow.png"),
+      fullPage: false,
+    });
+
+    // Mobile College Mode
+    await mobileShowcase.locator('button:has-text("College & Career")').click();
+    await mobileShowcase.locator('#journey-tab-0').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-college-mode.png"),
+      fullPage: false,
+    });
+
+    // ============================================
+    // 768px Tablet & 1024px Small Desktop Captures
+    // ============================================
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto("http://localhost:3000/");
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(500);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-after-768px.png"),
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-768px.png"),
       fullPage: false,
     });
 
-    // 1024px Small Desktop
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("http://localhost:3000/");
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(500);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-after-1024px.png"),
-      fullPage: false,
-    });
-
-    // Capture Scene 2 on Desktop
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("http://localhost:3000/");
-    await page.waitForTimeout(400);
-    const showcase = page.locator('[aria-label="Student Journey Interactive Showcase"]');
-    await showcase.locator('#journey-tab-1').click();
-    await page.waitForTimeout(400);
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-scene2-explore.png"),
-      fullPage: false,
-    });
-
-    // Capture Scene 3 on Desktop
-    await showcase.locator('#journey-tab-2').click();
-    await page.waitForTimeout(400);
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-scene3-trial.png"),
-      fullPage: false,
-    });
-
-    // Capture Scene 4 on Desktop
-    await showcase.locator('#journey-tab-3').click();
-    await page.waitForTimeout(400);
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-scene4-nextmove.png"),
-      fullPage: false,
-    });
-
-    // Capture College Mode on Desktop
-    await showcase.locator('button:has-text("College & Career")').click();
-    await showcase.locator('#journey-tab-0').click();
-    await page.waitForTimeout(400);
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, "hero-redesign-college-mode.png"),
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1024px.png"),
       fullPage: false,
     });
   });
