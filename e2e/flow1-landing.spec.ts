@@ -10,7 +10,7 @@ test.describe('Flow 1 — Intelligent Landing Page', () => {
     const brand = page.locator('header a[href="/"]').first();
     await expect(brand).toBeVisible();
     await expect(brand).toContainText('Next Move AI');
-    await expect(brand).toContainText('V2');
+    await expect(brand).not.toContainText('V2');
 
     // Desktop nav links exist
     const navLinks = ['How It Works', 'Explore', 'Experience', 'My Partner', 'For Parents', 'FAQ'];

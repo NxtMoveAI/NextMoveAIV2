@@ -78,9 +78,6 @@ export function Header() {
               <span className="font-bold text-xl tracking-tight text-[#171A2B]">
                 Next Move <span className="text-[#6757F5]">AI</span>
               </span>
-              <span className="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-full bg-[#EDEAFF] text-[#6757F5] border border-[#DDD8FE]">
-                V2
-              </span>
             </div>
             <span className="text-[11px] text-[#626987] font-medium hidden sm:inline-block">
               Student Intelligence & Decision Platform
