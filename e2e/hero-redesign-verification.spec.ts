@@ -97,8 +97,8 @@ test.describe("Hero Visual Refinement 1.2 — Verification & Storytelling Screen
 
     // 8. Switch to Scene 4 (Grow)
     await stepTabs.nth(3).click();
-    await expect(showcase).toContainText("Every small step helps you grow.");
-    await expect(showcase).toContainText("Move at your own pace");
+    await expect(showcase).toContainText("Your journey keeps growing.");
+    await expect(showcase).toContainText("Every new experience opens more possibilities.");
 
     // 9. Verify technical dashboard jargon and truncated labels are gone
     const fullText = await showcase.innerText();
@@ -109,6 +109,7 @@ test.describe("Hero Visual Refinement 1.2 — Verification & Storytelling Screen
     expect(fullText).not.toContain("Curiosity Radar");
     expect(fullText).not.toContain("Evidence recorded in your growth log");
     expect(fullText).not.toMatch(/Make Your Next Mo/);
+    expect(fullText).not.toContain("Every small step helps you grow");
   });
 
   test("Capture AFTER screenshots across viewports for all 4 scenes and College mode", async ({ page }) => {
@@ -165,6 +166,14 @@ test.describe("Hero Visual Refinement 1.2 — Verification & Storytelling Screen
       fullPage: false,
     });
 
+    // Desktop College Mode (Scene 4: Grow)
+    await showcase.locator('#journey-tab-3').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-1440px-college-grow.png"),
+      fullPage: false,
+    });
+
     // ============================================
     // 390px Mobile Viewport Captures
     // ============================================
@@ -204,17 +213,28 @@ test.describe("Hero Visual Refinement 1.2 — Verification & Storytelling Screen
     // Mobile Scene 4 (School)
     await mobileShowcase.locator('#journey-tab-3').click();
     await page.waitForTimeout(300);
+    await mobileShowcase.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene4-element.png"),
+    });
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-scene4-grow.png"),
       fullPage: false,
     });
 
-    // Mobile College Mode
+    // Mobile College Mode (Scene 1)
     await mobileShowcase.locator('button:has-text("College & Career")').click();
     await mobileShowcase.locator('#journey-tab-0').click();
     await page.waitForTimeout(300);
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-college-mode.png"),
+      fullPage: false,
+    });
+
+    // Mobile College Mode (Scene 4: Grow)
+    await mobileShowcase.locator('#journey-tab-3').click();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOT_DIR, "hero-refinement-390px-college-grow.png"),
       fullPage: false,
     });
 

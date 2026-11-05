@@ -83,12 +83,12 @@ const SCENES: SceneConfig[] = [
     label: "Grow",
     stepNumber: "04",
     school: {
-      headline: "Every small step helps you grow.",
-      subtext: "Move at your own pace with small, fun milestones that build confidence every day.",
+      headline: "Your journey keeps growing.",
+      subtext: "Every new experience opens more possibilities. Keep learning, creating, and exploring at your own pace.",
     },
     college: {
-      headline: "Every small step helps you grow.",
-      subtext: "Chart your personal roadmap with inspiring projects and skills you are proud of.",
+      headline: "Your journey keeps growing.",
+      subtext: "Every new experience opens more possibilities. Keep learning, creating, and exploring at your own pace.",
     },
     component: GrowScene,
   },
@@ -307,13 +307,28 @@ export function StudentJourneyShowcase() {
               ) : (
                 <>
                   <Play className="w-3.5 h-3.5 text-[#6757F5]" />
-                  <span className="text-[11px]">Play</span>
+                  <span className="text-[11px]">Resume</span>
                 </>
               )}
             </button>
-            <span className="text-[11px] text-[#626987] hidden sm:inline">
-              {isPlaying ? (isHovered ? "Paused on hover" : "Auto-advancing") : "Paused"}
-            </span>
+            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#626987]">
+              {!isPlaying ? (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8E95AF]" />
+                  <span>Playback paused</span>
+                </>
+              ) : isHovered ? (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                  <span>Paused on hover</span>
+                </>
+              ) : (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                  <span>Auto-advancing</span>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Stepper buttons */}

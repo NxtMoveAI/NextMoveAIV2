@@ -788,8 +788,10 @@ export function TryScene({ mode }: IllustrationProps) {
 }
 
 /**
- * SCENE 4: GROW — "Every small step helps you grow."
- * Student on a winding path of colorful stepping stones ascending toward sunrise
+ * SCENE 4: GROW — "Your journey keeps growing."
+ * Student at the center with an open creative journal, surrounded by three emerging
+ * organic learning possibilities: Create, Explore, and Experience.
+ * Zero summit, zero finish flag, zero linear milestone locks.
  */
 export function GrowScene({ mode }: IllustrationProps) {
   const isSchool = mode === "school";
@@ -800,163 +802,311 @@ export function GrowScene({ mode }: IllustrationProps) {
       className="w-full h-auto max-h-[290px] sm:max-h-[310px] select-none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Student walking up a gentle stepping stone path of growth toward a bright horizon"
+      aria-label="Student at the center of an expanding world of learning possibilities: Create, Explore, and Experience"
     >
       <style>{`
-        @keyframes sun-glow-local {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.08); opacity: 1; }
+        @keyframes float-create-local {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-7px) rotate(2deg); }
         }
-        @keyframes flag-wave-local {
-          0%, 100% { transform: skewY(0deg); }
-          50% { transform: skewY(5deg); }
+        @keyframes float-explore-local {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-8px) rotate(-2deg); }
         }
-        @keyframes stone-pulse-local {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-3px); }
+        @keyframes float-experience-local {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-6px) rotate(1.5deg); }
         }
-        .anim-sun { animation: sun-glow-local 6s ease-in-out infinite; transform-origin: 0 0; }
-        .anim-flag { animation: flag-wave-local 3s ease-in-out infinite; transform-origin: 0 0; }
-        .anim-stone-1 { animation: stone-pulse-local 4s ease-in-out infinite 0s; }
-        .anim-stone-2 { animation: stone-pulse-local 4s ease-in-out infinite 0.6s; }
-        .anim-stone-3 { animation: stone-pulse-local 4s ease-in-out infinite 1.2s; }
+        @keyframes journal-glow-pulse {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.06); }
+        }
+        @keyframes ribbon-travel {
+          0% { stroke-dashoffset: 0; }
+          100% { stroke-dashoffset: -36; }
+        }
+        @keyframes gear-spin-soft {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .anim-grow-create { animation: float-create-local 4.8s ease-in-out infinite; }
+        .anim-grow-explore { animation: float-explore-local 5.4s ease-in-out infinite 0.6s; }
+        .anim-grow-experience { animation: float-experience-local 4.4s ease-in-out infinite 1.2s; }
+        .anim-journal-glow { animation: journal-glow-pulse 4s ease-in-out infinite; transform-origin: 258px 235px; }
+        .anim-ribbon { animation: ribbon-travel 8s linear infinite; }
+        .anim-gear-grow { animation: gear-spin-soft 14s linear infinite; transform-origin: 0 0; }
         @media (prefers-reduced-motion: reduce) {
-          .anim-sun, .anim-flag, .anim-stone-1, .anim-stone-2, .anim-stone-3 {
+          .anim-grow-create, .anim-grow-explore, .anim-grow-experience, .anim-journal-glow, .anim-ribbon, .anim-gear-grow {
             animation: none !important;
           }
         }
       `}</style>
       <SvgFilters />
 
-      {/* Backdrop */}
+      {/* Backdrop Ambient Light */}
       <rect width="520" height="300" rx="20" fill="url(#stage-glow)" />
 
-      {/* Warm Golden Sunrise on Hilltop */}
-      <g transform="translate(450, 75)">
-        <g className="anim-sun">
-          <circle cx="0" cy="0" r="45" fill="url(#amber-clay)" opacity="0.3" filter="url(#soft-glow)" />
-          <circle cx="0" cy="0" r="28" fill="#FFFBEB" />
-          <circle cx="0" cy="0" r="22" fill="#FFE082" />
-        </g>
-      </g>
-
-      {/* Gentle Rolling Hills */}
+      {/* Soft Floating Cloud / Ambient Hill Base */}
       <path
-        d="M -20 280 Q 150 200, 320 220 T 540 180 L 540 320 L -20 320 Z"
+        d="M -20 295 Q 120 255, 260 260 T 540 265 L 540 320 L -20 320 Z"
         fill="#EDE8FA"
+        opacity="0.75"
       />
       <path
-        d="M 50 290 Q 250 170, 440 130 T 540 120 L 540 320 L 50 320 Z"
-        fill="#E2DAF7"
-        opacity="0.8"
+        d="M 30 305 Q 180 245, 360 255 T 540 260 L 540 320 L 30 320 Z"
+        fill="#E4DEF5"
+        opacity="0.45"
       />
-      <path
-        d="M 180 300 Q 340 160, 480 110 T 540 100 L 540 320 L 180 320 Z"
-        fill="#D6CBF4"
-        opacity="0.6"
-      />
+
+      {/* Ambient Twinkling Discovery Sparks */}
+      <g transform="translate(240, 40)">
+        <polygon points="0,-5 1.5,-1.5 5,0 1.5,1.5 0,5 -1.5,1.5 -5,0 -1.5,-1.5" fill="#FFE082" />
+      </g>
+      <g transform="translate(485, 130)">
+        <polygon points="0,-4 1.2,-1.2 4,0 1.2,1.2 0,4 -1.2,1.2 -4,0 -1.2,-1.2" fill="#35B8C5" />
+      </g>
+      <g transform="translate(65, 170)">
+        <polygon points="0,-4 1.2,-1.2 4,0 1.2,1.2 0,4 -1.2,1.2 -4,0 -1.2,-1.2" fill="#FF7A59" />
+      </g>
 
       {/* ========================================================
-          WINDING STEPPING STONES PATH
+          FLOWING RIBBONS OF LIGHT (Emerging from central notebook)
          ======================================================== */}
-      {/* Stone 1: Discover (Bottom-Left) */}
-      <g transform="translate(75, 230)">
-        <g className="anim-stone-1">
-          <ellipse cx="0" cy="10" rx="36" ry="14" fill="url(#coral-clay)" filter="url(#clay-shadow)" />
-          <ellipse cx="0" cy="7" rx="30" ry="10" fill="#FFA48B" />
-          {/* Spark Icon */}
-          <polygon points="0,4 2,6 6,7 2,8 0,10 -2,8 -6,7 -2,6" fill="#FFFFFF" />
-          <text x="0" y="2" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FFFFFF">
-            {isSchool ? "Curiosity" : "Explore"}
-          </text>
-        </g>
-      </g>
-
-      {/* Connecting Dotted Trail Segment 1 */}
-      <path d="M 105 235 Q 150 215, 175 195" stroke="#6757F5" strokeWidth="2.5" strokeDasharray="4 4" fill="none" opacity="0.5" />
-
-      {/* Stone 2: Try / Practice (Center-Left) */}
-      <g transform="translate(200, 185)">
-        <g className="anim-stone-2">
-          <ellipse cx="0" cy="10" rx="38" ry="14" fill="url(#cyan-clay)" filter="url(#clay-shadow)" />
-          <ellipse cx="0" cy="7" rx="32" ry="10" fill="#65E0EC" />
-          <text x="0" y="2" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FFFFFF">
-            {isSchool ? "Try It" : "Projects"}
-          </text>
-        </g>
-      </g>
-
-      {/* Connecting Dotted Trail Segment 2 */}
-      <path d="M 235 185 Q 280 165, 315 145" stroke="#6757F5" strokeWidth="2.5" strokeDasharray="4 4" fill="none" opacity="0.5" />
-
-      {/* Stone 3: Learn & Connect (Center-Right) */}
-      <g transform="translate(340, 140)">
-        <g className="anim-stone-3">
-          <ellipse cx="0" cy="10" rx="38" ry="14" fill="url(#emerald-clay)" filter="url(#clay-shadow)" />
-          <ellipse cx="0" cy="7" rx="32" ry="10" fill="#6EE7B7" />
-          <text x="0" y="2" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FFFFFF">
-            {isSchool ? "Learn" : "Skills"}
-          </text>
-        </g>
-      </g>
-
-      {/* Connecting Dotted Trail Segment 3 to Summit */}
-      <path d="M 375 140 Q 420 120, 455 100" stroke="#6757F5" strokeWidth="2.5" strokeDasharray="4 4" fill="none" opacity="0.5" />
-
-      {/* Summit Waypoint: Next Move Flag & Beacon */}
-      <g transform="translate(455, 95)">
-        <ellipse cx="0" cy="12" rx="34" ry="12" fill="url(#iris-clay)" filter="url(#clay-shadow)" />
-        <ellipse cx="0" cy="9" rx="28" ry="8" fill="#8777FF" />
-        {/* Flag Pole */}
-        <line x1="12" y1="9" x2="12" y2="-32" stroke="#171A2B" strokeWidth="3" strokeLinecap="round" />
-        {/* Waving Summit Flag */}
+      <g fill="none" strokeWidth="2.5" strokeLinecap="round" className="anim-ribbon">
+        {/* Ribbon to Create (Top-Left) */}
         <path
-          className="anim-flag"
-          d="M 12 -32 L 38 -24 L 12 -16 Z"
-          fill="url(#amber-clay)"
+          d="M 235 220 C 180 185, 140 145, 120 115"
+          stroke="#FFA48B"
+          strokeDasharray="5 5"
+          opacity="0.7"
         />
-        <text x="0" y="5" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FFFFFF">
-          Next Move
-        </text>
+        {/* Ribbon to Explore (Top-Right) */}
+        <path
+          d="M 285 220 C 335 180, 375 140, 400 110"
+          stroke="#65E0EC"
+          strokeDasharray="5 5"
+          opacity="0.7"
+        />
+        {/* Ribbon to Experience (Bottom-Right) */}
+        <path
+          d="M 295 235 C 330 230, 365 220, 395 215"
+          stroke="#8777FF"
+          strokeDasharray="5 5"
+          opacity="0.7"
+        />
       </g>
 
       {/* ========================================================
-          STUDENT WALKING CONFIDENTLY (Between Stone 2 & 3)
+          CENTRAL STUDENT CHARACTER WITH OPEN JOURNAL
          ======================================================== */}
-      <g transform="translate(230, 85)">
-        {/* Backpack */}
-        <rect x="18" y="55" width="16" height="26" rx="6" fill="url(#amber-clay)" />
+      <g transform="translate(190, 65)">
+        {/* Ground Shadow */}
+        <ellipse cx="68" cy="210" rx="52" ry="12" fill="#171A2B" opacity="0.08" />
 
-        {/* Torso */}
+        {/* Soft Radial Glow radiating from the open journal */}
+        <circle cx="68" cy="170" r="48" fill="url(#amber-clay)" opacity="0.25" filter="url(#soft-glow)" className="anim-journal-glow" />
+
+        {/* Student Torso */}
         <path
-          d="M 28 62 C 28 48, 38 42, 52 42 C 66 42, 74 48, 74 62 L 78 98 C 78 102, 70 105, 52 105 C 34 105, 26 102, 26 98 Z"
+          d="M 30 145 C 30 115, 45 105, 68 105 C 91 105, 106 115, 106 145 L 112 200 C 112 205, 100 208, 68 208 C 36 208, 24 205, 24 200 Z"
           fill="url(#iris-clay)"
           filter="url(#clay-shadow)"
         />
 
-        {/* Legs mid-stride */}
-        <line x1="42" y1="102" x2="34" y2="126" stroke="#171A2B" strokeWidth="6" strokeLinecap="round" />
-        <circle cx="33" cy="128" r="4" fill="#6757F5" />
-        <line x1="62" y1="102" x2="74" y2="122" stroke="#171A2B" strokeWidth="6" strokeLinecap="round" />
-        <circle cx="76" cy="124" r="4" fill="#6757F5" />
+        {/* Hoodie Collar */}
+        <path
+          d="M 52 105 Q 68 120, 84 105 Q 78 128, 68 128 Q 58 128, 52 105 Z"
+          fill={isSchool ? "#FAF9F6" : "#E0F7FA"}
+        />
+
+        {/* Neck */}
+        <rect x="59" y="85" width="18" height="25" rx="9" fill="url(#skin-tone)" />
 
         {/* Head */}
-        <ellipse cx="52" cy="24" rx="16" ry="17" fill="url(#skin-tone)" />
+        <ellipse cx="68" cy="68" rx="26" ry="28" fill="url(#skin-tone)" filter="url(#clay-shadow)" />
+
+        {/* Ears */}
+        <ellipse cx="42" cy="70" rx="5" ry="7" fill="url(#skin-tone)" />
+        <ellipse cx="94" cy="70" rx="5" ry="7" fill="url(#skin-tone)" />
+
         {/* Hair */}
-        <path d="M 36 22 C 34 8, 44 2, 54 2 C 64 2, 70 8, 68 22 C 66 10, 60 6, 52 6 C 44 6, 38 10, 36 22 Z" fill="url(#hair-tone)" />
+        <path
+          d="M 40 65 C 38 40, 50 28, 68 28 C 86 28, 98 40, 96 65 C 94 48, 86 42, 68 42 C 50 42, 42 48, 40 65 Z"
+          fill="url(#hair-tone)"
+        />
+        <path
+          d="M 44 48 C 55 34, 75 32, 92 42 C 84 38, 70 36, 56 42 Z"
+          fill="#3E3659"
+          opacity="0.6"
+        />
 
-        {/* Confident Smile toward Summit */}
-        <circle cx="58" cy="22" r="2" fill="#171A2B" />
-        <circle cx="59" cy="21" r="0.8" fill="#FFFFFF" />
-        <path d="M 54 28 Q 58 32, 62 28" stroke="#8A4822" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+        {/* Expressive Eyes Looking Up with Wonder */}
+        <ellipse cx="60" cy="64" rx="3.5" ry="4.5" fill="#171A2B" />
+        <ellipse cx="78" cy="64" rx="3.5" ry="4.5" fill="#171A2B" />
+        <circle cx="62" cy="62" r="1.3" fill="#FFFFFF" />
+        <circle cx="80" cy="62" r="1.3" fill="#FFFFFF" />
+
+        {/* Soft Eyebrows */}
+        <path d="M 54 56 Q 61 52, 66 56" stroke="#171A2B" strokeWidth="2" strokeLinecap="round" fill="none" />
+        <path d="M 72 56 Q 77 52, 84 56" stroke="#171A2B" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+        {/* Warm Inspired Smile */}
+        <path d="M 61 76 Q 69 83, 77 76" stroke="#8A4822" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+
+        {/* Rosy Cheeks */}
+        <circle cx="51" cy="72" r="4.5" fill="#FF7A59" opacity="0.3" />
+        <circle cx="85" cy="72" r="4.5" fill="#FF7A59" opacity="0.3" />
+
+        {/* Arms holding the open learning journal */}
+        <path
+          d="M 32 145 C 32 170, 50 178, 62 175"
+          stroke="url(#iris-clay)"
+          strokeWidth="15"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M 104 145 C 104 170, 86 178, 74 175"
+          stroke="url(#iris-clay)"
+          strokeWidth="15"
+          strokeLinecap="round"
+          fill="none"
+        />
+
+        {/* Hands */}
+        <circle cx="48" cy="172" r="8" fill="url(#skin-tone)" />
+        <circle cx="88" cy="172" r="8" fill="url(#skin-tone)" />
+
+        {/* ========================================================
+            OPEN ILLUSTRATED JOURNAL / SKETCHBOOK
+           ======================================================== */}
+        <g transform="translate(68, 172)">
+          {/* Book Spine Shadow */}
+          <rect x="-34" y="-14" width="68" height="28" rx="8" fill="#FFFFFF" filter="url(#clay-shadow)" />
+
+          {/* Left Page */}
+          <path
+            d="M -30 -10 Q -15 -14, 0 -8 L 0 10 Q -15 6, -30 10 Z"
+            fill="#FFFBF2"
+            stroke="#FFE082"
+            strokeWidth="1.2"
+          />
+          {/* Right Page */}
+          <path
+            d="M 30 -10 Q 15 -14, 0 -8 L 0 10 Q 15 6, 30 10 Z"
+            fill="#FFFBF2"
+            stroke="#FFE082"
+            strokeWidth="1.2"
+          />
+
+          {/* Little drawings in the notebook */}
+          {/* Left page: spark / star */}
+          <polygon points="-16,-2 -14,1 -11,2 -13,4 -13,7 -16,5 -19,7 -19,4 -21,2 -18,1" fill="#FF7A59" />
+          {/* Right page: mini sprout */}
+          <path d="M 15 6 L 15 0 M 15 2 Q 10 0, 12 -4 Q 16 -2, 15 2 M 15 1 Q 20 -1, 18 -5 Q 14 -3, 15 1" stroke="#10B981" strokeWidth="1.2" fill="none" />
+
+          {/* Center glow bookmark */}
+          <line x1="0" y1="-8" x2="0" y2="12" stroke="#6757F5" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="0" cy="-14" r="3" fill="#F59E0B" />
+        </g>
       </g>
 
-      {/* Floating leaves in the breeze */}
-      <g transform="translate(150, 130)">
-        <path d="M 0 0 Q 6 -4, 10 0 Q 6 4, 0 0" fill="#34D399" opacity="0.7" />
+      {/* ========================================================
+          POSSIBILITY 1: CREATE (Top-Left)
+          Art, design, storytelling, or personal creative projects
+         ======================================================== */}
+      <g transform="translate(115, 80)">
+        <g className="anim-grow-create">
+          {/* White Clay Card Base */}
+          <rect x="-38" y="-35" width="76" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
+
+          {/* Creative Canvas / Palette */}
+          <circle cx="0" cy="-6" r="24" fill="url(#coral-clay)" />
+          <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
+
+          {/* Artist's Palette & Splash */}
+          <path
+            d="M -10 -2 C -10 -10, 10 -10, 10 -2 C 10 4, 5 6, 0 3 C -4 6, -10 4, -10 -2 Z"
+            fill="#FFFFFF"
+          />
+          <circle cx="-3" cy="-4" r="2" fill="#FF7A59" />
+          <circle cx="3" cy="-4" r="2" fill="#FFE082" />
+
+          {/* Floating Origami Bird / Story Quill */}
+          <g transform="translate(18, -20)">
+            <polygon points="0,0 8,-6 10,0 4,2" fill="#FFA48B" />
+          </g>
+
+          {/* Label Pill: "Create" */}
+          <rect x="-30" y="24" width="60" height="18" rx="9" fill="#FFF2EE" stroke="#FFD8CC" strokeWidth="1" />
+          <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#DE512E">
+            Create
+          </text>
+        </g>
       </g>
-      <g transform="translate(390, 80)">
-        <path d="M 0 0 Q 5 -3, 8 0 Q 5 3, 0 0" fill="#F59E0B" opacity="0.6" />
+
+      {/* ========================================================
+          POSSIBILITY 2: EXPLORE (Top-Right)
+          Nature, science, research, or discovering the unfamiliar
+         ======================================================== */}
+      <g transform="translate(405, 75)">
+        <g className="anim-grow-explore">
+          {/* White Clay Card Base */}
+          <rect x="-38" y="-35" width="76" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
+
+          {/* Science & Nature Sphere */}
+          <circle cx="0" cy="-6" r="24" fill="url(#cyan-clay)" />
+          <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
+
+          {/* Discovery Ring & Mini Planet */}
+          <ellipse cx="0" cy="-6" rx="28" ry="8" fill="none" stroke="url(#amber-clay)" strokeWidth="2.8" transform="rotate(-15)" />
+          {/* Sprout & Planet symbol */}
+          <path d="M 0 4 L 0 -8 M 0 -4 Q -6 -8, -4 -13 Q 0 -10, 0 -4 M 0 -6 Q 6 -10, 4 -15 Q 0 -12, 0 -6" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+
+          {/* Sparkle */}
+          <polygon points="18,-18 20,-15 23,-15 21,-13 22,-10 18,-12 15,-10 16,-13 14,-15 17,-15" fill="#FFE082" />
+
+          {/* Label Pill: "Explore" */}
+          <rect x="-30" y="24" width="60" height="18" rx="9" fill="#E8F9FA" stroke="#C5F2F6" strokeWidth="1" />
+          <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#00838F">
+            Explore
+          </text>
+        </g>
+      </g>
+
+      {/* ========================================================
+          POSSIBILITY 3: EXPERIENCE (Bottom-Right)
+          Hands-on learning, collaborative projects, real-world impact
+         ======================================================== */}
+      <g transform="translate(405, 210)">
+        <g className="anim-grow-experience">
+          {/* White Clay Card Base */}
+          <rect x="-42" y="-35" width="84" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
+
+          {/* Project & Community Sphere */}
+          <circle cx="0" cy="-6" r="24" fill="url(#iris-clay)" />
+          <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
+
+          {/* Interlocking Gears & Collaborative Sparks */}
+          <g transform="translate(0, -6)">
+            <g className="anim-gear-grow">
+              <circle cx="0" cy="0" r="10" fill="#FFFFFF" opacity="0.9" />
+              <circle cx="0" cy="0" r="4" fill="#6757F5" />
+              <rect x="-2" y="-12" width="4" height="24" rx="1.5" fill="#FFFFFF" />
+              <rect x="-12" y="-2" width="24" height="4" rx="1.5" fill="#FFFFFF" />
+            </g>
+          </g>
+
+          {/* Cheerful Connection Dot */}
+          <circle cx="16" cy="6" r="3.5" fill="#10B981" />
+          <circle cx="-16" cy="6" r="2.5" fill="#F59E0B" />
+
+          {/* Label Pill: "Experience" */}
+          <rect x="-38" y="24" width="76" height="18" rx="9" fill="#F0EDFF" stroke="#DDD8FE" strokeWidth="1" />
+          <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6757F5">
+            Experience
+          </text>
+        </g>
       </g>
     </svg>
   );

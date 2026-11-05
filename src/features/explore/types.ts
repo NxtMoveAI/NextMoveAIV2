@@ -96,12 +96,12 @@ export interface Pathway {
 
 export interface ProvenanceSignal {
   type:
-    | "academic_stage_context"
-    | "self_reported_interest"
-    | "practised_activity_evidence"
-    | "demonstrated_competency"
-    | "undecided_exploratory_mode"
-    | "outside_interest_discovery";
+  | "academic_stage_context"
+  | "self_reported_interest"
+  | "practised_activity_evidence"
+  | "demonstrated_competency"
+  | "undecided_exploratory_mode"
+  | "outside_interest_discovery";
   label: string;
   description: string;
   truthBoundary: string;
