@@ -2,10 +2,12 @@
 
 import React from "react";
 
+export type CuriositySpark = "all" | "create" | "discover" | "solve" | "impact";
 export type StudentMode = "school" | "college";
 
-interface IllustrationProps {
-  mode: StudentMode;
+export interface IllustrationProps {
+  spark?: CuriositySpark;
+  mode?: StudentMode;
 }
 
 /**
@@ -15,7 +17,7 @@ function SvgFilters() {
   return (
     <defs>
       {/* Soft clay drop-shadow */}
-      <filter id="clay-shadow" x="-20%" y="-20%" width="150%" height="150%">
+      <filter id="clay-shadow" x="-25%" y="-25%" width="160%" height="160%">
         <feDropShadow
           dx="0"
           dy="6"
@@ -33,8 +35,14 @@ function SvgFilters() {
       </filter>
 
       {/* Floating element soft glow */}
-      <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur stdDeviation="6" result="blur" />
+      <filter id="soft-glow" x="-35%" y="-35%" width="170%" height="170%">
+        <feGaussianBlur stdDeviation="7" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+
+      {/* Radiant Spark Highlight Glow */}
+      <filter id="spark-halo" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="blur" />
         <feComposite in="SourceGraphic" in2="blur" operator="over" />
       </filter>
 
@@ -106,10 +114,13 @@ function SvgFilters() {
 
 /**
  * SCENE 1: DISCOVER — "What makes you curious?"
- * Student with magnifying glass looking at gentle, floating curiosity objects
+ * Student with magnifying glass looking at gentle curiosity objects, adapting to the selected Spark.
  */
-export function DiscoverScene({ mode }: IllustrationProps) {
-  const isSchool = mode === "school";
+export function DiscoverScene({ spark = "all" }: IllustrationProps) {
+  const isCreate = spark === "create";
+  const isDiscover = spark === "discover";
+  const isSolve = spark === "solve";
+  const isImpact = spark === "impact";
 
   return (
     <svg
@@ -189,14 +200,14 @@ export function DiscoverScene({ mode }: IllustrationProps) {
         {/* Body / Torso (Hoodie / Casual Jacket) */}
         <path
           d="M 30 145 C 30 115, 45 105, 68 105 C 90 105, 105 115, 105 145 L 112 200 C 112 205, 100 208, 68 208 C 36 208, 24 205, 24 200 Z"
-          fill={isSchool ? "url(#iris-clay)" : "url(#iris-clay)"}
+          fill="url(#iris-clay)"
           filter="url(#clay-shadow)"
         />
 
         {/* Hoodie collar / T-shirt neck */}
         <path
           d="M 52 105 Q 68 120, 84 105 Q 78 128, 68 128 Q 58 128, 52 105 Z"
-          fill={isSchool ? "#FAF9F6" : "#E0F7FA"}
+          fill="#FAF9F6"
         />
 
         {/* Neck */}
@@ -307,6 +318,35 @@ export function DiscoverScene({ mode }: IllustrationProps) {
             opacity="0.85"
           />
 
+          {/* Spark-specific preview inside lens */}
+          {isCreate && (
+            <g transform="translate(-10, -10)">
+              <circle cx="10" cy="10" r="12" fill="#FFA48B" opacity="0.35" />
+              {/* Mini Paintbrush */}
+              <line x1="2" y1="18" x2="16" y2="4" stroke="#FF7A59" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="18" cy="2" r="3" fill="#DE512E" />
+            </g>
+          )}
+          {isDiscover && (
+            <g transform="translate(0, 0)">
+              <circle cx="0" cy="0" r="12" fill="#65E0EC" opacity="0.35" />
+              <polygon points="0,-8 2,-2 8,0 2,2 0,8 -2,2 -8,0 -2,-2" fill="#35B8C5" />
+              <circle cx="8" cy="-6" r="2.5" fill="#FFE082" />
+            </g>
+          )}
+          {isSolve && (
+            <g transform="translate(0, 0)">
+              <rect x="-10" y="-10" width="20" height="20" rx="5" fill="#8777FF" opacity="0.35" />
+              <path d="M -5 -3 L -8 0 L -5 3 M 5 -3 L 8 0 L 5 3" stroke="#6757F5" strokeWidth="2" strokeLinecap="round" fill="none" />
+            </g>
+          )}
+          {isImpact && (
+            <g transform="translate(0, 0)">
+              <circle cx="0" cy="0" r="12" fill="#6EE7B7" opacity="0.35" />
+              <path d="M 0 8 L 0 -2 M 0 2 Q -6 -2, -4 -6 Q 2 -4, 0 2" stroke="#10B981" strokeWidth="2" strokeLinecap="round" fill="none" />
+            </g>
+          )}
+
           {/* Glass reflections */}
           <path
             d="M -26 -16 A 32 32 0 0 1 18 -28"
@@ -329,14 +369,24 @@ export function DiscoverScene({ mode }: IllustrationProps) {
 
       {/* ========================================================
           FLOATING CURIOSITY DISCOVERY OBJECTS (Right Side)
-          Note: Nested <g> preserves static (X,Y) translation!
+          Nested <g> preserves static (X,Y) translation!
          ======================================================== */}
 
       {/* 1. CREATIVE WORLD: Paint Palette & Open Storybook */}
       <g transform="translate(325, 45)">
         <g className="anim-float-a">
-          {/* Card / Bubble Backing */}
-          <rect x="-35" y="-30" width="70" height="60" rx="18" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          {/* Card / Bubble Backing with subtle active halo if selected */}
+          <rect
+            x="-36"
+            y="-30"
+            width="72"
+            height="60"
+            rx="18"
+            fill="#FFFFFF"
+            filter={isCreate ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isCreate ? "#FFA48B" : "#F0EEF8"}
+            strokeWidth={isCreate ? "2" : "1"}
+          />
           {/* Open Storybook */}
           <path
             d="M -22 -6 Q -12 -12, 0 -6 Q 12 -12, 22 -6 L 22 14 Q 12 8, 0 14 Q -12 8, -22 14 Z"
@@ -355,7 +405,15 @@ export function DiscoverScene({ mode }: IllustrationProps) {
       {/* 2. SCIENCE & SPACE: Ringed Planet */}
       <g transform="translate(440, 65)">
         <g className="anim-float-b">
-          <circle cx="0" cy="0" r="32" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r="32"
+            fill="#FFFFFF"
+            filter={isDiscover ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isDiscover ? "#65E0EC" : "#F0EEF8"}
+            strokeWidth={isDiscover ? "2" : "1"}
+          />
           {/* Planet Body */}
           <circle cx="0" cy="0" r="22" fill="url(#cyan-clay)" />
           {/* Planet Surface Arc */}
@@ -378,7 +436,15 @@ export function DiscoverScene({ mode }: IllustrationProps) {
       {/* 3. NATURE & LIFE: Crystal Sprout Globe */}
       <g transform="translate(325, 175)">
         <g className="anim-float-c">
-          <circle cx="0" cy="0" r="34" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r="34"
+            fill="#FFFFFF"
+            filter={isImpact ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isImpact ? "#6EE7B7" : "#F0EEF8"}
+            strokeWidth={isImpact ? "2" : "1"}
+          />
           <circle cx="0" cy="0" r="28" fill="#E8F9F0" />
           {/* Sprout Stem */}
           <path
@@ -394,43 +460,35 @@ export function DiscoverScene({ mode }: IllustrationProps) {
         </g>
       </g>
 
-      {/* 4. STORY & TECH: Friendly Companion / Creative Device */}
+      {/* 4. STORY & TECH: Logic Cube / Creative Device */}
       <g transform="translate(440, 185)">
         <g className="anim-float-a" style={{ animationDelay: "0.5s" }}>
-          {isSchool ? (
-            // Friendly Robot Companion for School
-            <g>
-              <rect x="-26" y="-24" width="52" height="48" rx="16" fill="#FFFFFF" filter="url(#clay-shadow)" />
-              <rect x="-20" y="-18" width="40" height="36" rx="12" fill="url(#iris-clay)" />
-              {/* Antenna */}
-              <line x1="0" y1="-18" x2="0" y2="-26" stroke="#8777FF" strokeWidth="2.5" strokeLinecap="round" />
-              <circle cx="0" cy="-26" r="3" fill="#35B8C5" />
-              {/* Cheerful Eyes */}
-              <circle cx="-8" cy="-3" r="2.5" fill="#FFFFFF" />
-              <circle cx="8" cy="-3" r="2.5" fill="#FFFFFF" />
-              <path d="M -5 5 Q 0 8, 5 5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-            </g>
-          ) : (
-            // Modern Design/Tech Cube for College
-            <g>
-              <rect x="-26" y="-26" width="52" height="52" rx="16" fill="#FFFFFF" filter="url(#clay-shadow)" />
-              <rect x="-20" y="-20" width="40" height="40" rx="12" fill="url(#iris-clay)" />
-              {/* Code brackets */}
-              <path
-                d="M -10 -6 L -15 0 L -10 6 M 10 -6 L 15 0 L 10 6 M 4 -8 L -4 8"
-                stroke="#FFFFFF"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </g>
-          )}
+          <rect
+            x="-26"
+            y="-26"
+            width="52"
+            height="52"
+            rx="16"
+            fill="#FFFFFF"
+            filter={isSolve ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isSolve ? "#8777FF" : "#F0EEF8"}
+            strokeWidth={isSolve ? "2" : "1"}
+          />
+          <rect x="-20" y="-20" width="40" height="40" rx="12" fill="url(#iris-clay)" />
+          {/* Code / Logic Bracket */}
+          <path
+            d="M -10 -6 L -15 0 L -10 6 M 10 -6 L 15 0 L 10 6 M 4 -8 L -4 8"
+            stroke="#FFFFFF"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
         </g>
       </g>
 
       {/* Connecting wonder trails */}
-      <g stroke="#6757F5" strokeWidth="1.5" strokeDasharray="3 4" opacity="0.3">
+      <g stroke="#6757F5" strokeWidth="1.5" strokeDasharray="3 4" opacity="0.35">
         <path d="M 235 160 Q 280 100, 310 65" fill="none" />
         <path d="M 240 175 Q 310 160, 310 175" fill="none" />
         <path d="M 240 185 Q 330 200, 420 195" fill="none" />
@@ -441,10 +499,14 @@ export function DiscoverScene({ mode }: IllustrationProps) {
 
 /**
  * SCENE 2: EXPLORE — "There's so much to discover."
- * 5 Welcoming Interest Worlds connected by gentle glowing constellation bridges
+ * 4 Connected Interest Worlds representing arts, science, nature, and technology,
+ * with luminous constellation pathways and focus adaptation to the chosen Spark.
  */
-export function ExploreScene({ mode }: IllustrationProps) {
-  const isSchool = mode === "school";
+export function ExploreScene({ spark = "all" }: IllustrationProps) {
+  const isCreate = spark === "create";
+  const isDiscover = spark === "discover";
+  const isSolve = spark === "solve";
+  const isImpact = spark === "impact";
 
   return (
     <svg
@@ -477,13 +539,13 @@ export function ExploreScene({ mode }: IllustrationProps) {
          ======================================================== */}
       <g fill="none" strokeWidth="2.5" strokeLinecap="round" className="anim-orbit">
         {/* Pathway Creativity to Center */}
-        <path d="M 125 90 Q 190 110, 260 145" stroke="#FFA48B" strokeDasharray="5 5" opacity="0.75" />
+        <path d="M 125 90 Q 190 110, 260 145" stroke="#FFA48B" strokeDasharray="5 5" opacity={isCreate ? 0.95 : 0.65} strokeWidth={isCreate ? 3.5 : 2.5} />
         {/* Pathway Science to Center */}
-        <path d="M 395 85 Q 330 110, 260 145" stroke="#65E0EC" strokeDasharray="5 5" opacity="0.75" />
+        <path d="M 395 85 Q 330 110, 260 145" stroke="#65E0EC" strokeDasharray="5 5" opacity={isDiscover ? 0.95 : 0.65} strokeWidth={isDiscover ? 3.5 : 2.5} />
         {/* Pathway Nature to Center */}
-        <path d="M 125 215 Q 190 190, 260 155" stroke="#6EE7B7" strokeDasharray="5 5" opacity="0.75" />
+        <path d="M 125 215 Q 190 190, 260 155" stroke="#6EE7B7" strokeDasharray="5 5" opacity={isImpact ? 0.95 : 0.65} strokeWidth={isImpact ? 3.5 : 2.5} />
         {/* Pathway Tech to Center */}
-        <path d="M 395 215 Q 330 190, 260 155" stroke="#8777FF" strokeDasharray="5 5" opacity="0.75" />
+        <path d="M 395 215 Q 330 190, 260 155" stroke="#8777FF" strokeDasharray="5 5" opacity={isSolve ? 0.95 : 0.65} strokeWidth={isSolve ? 3.5 : 2.5} />
         {/* Outer Ring Bridge */}
         <path d="M 125 90 Q 260 30, 395 85" stroke="#DDD8FE" strokeDasharray="6 6" opacity="0.5" />
         <path d="M 125 215 Q 260 270, 395 215" stroke="#DDD8FE" strokeDasharray="6 6" opacity="0.5" />
@@ -517,7 +579,13 @@ export function ExploreScene({ mode }: IllustrationProps) {
       <g transform="translate(125, 90)">
         <g className="anim-w1">
           {/* Planet Sphere */}
-          <circle cx="0" cy="0" r="36" fill="url(#coral-clay)" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r={isCreate ? 40 : 36}
+            fill="url(#coral-clay)"
+            filter={isCreate ? "url(#spark-halo)" : "url(#clay-shadow)"}
+          />
           <circle cx="-10" cy="-10" r="6" fill="#FFFFFF" opacity="0.3" />
           {/* Art Palette */}
           <path
@@ -527,9 +595,9 @@ export function ExploreScene({ mode }: IllustrationProps) {
           <circle cx="-5" cy="4" r="2.5" fill="#FF7A59" />
           <circle cx="3" cy="4" r="2.5" fill="#FFE082" />
           {/* Label Pill */}
-          <rect x="-38" y="44" width="76" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <rect x="-40" y="44" width="80" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
           <text x="0" y="58" textAnchor="middle" fontSize="10" fontWeight="700" fill="#DE512E">
-            {isSchool ? "Creative Arts" : "Design & Media"}
+            Creative Arts
           </text>
         </g>
       </g>
@@ -540,45 +608,63 @@ export function ExploreScene({ mode }: IllustrationProps) {
       <g transform="translate(395, 85)">
         <g className="anim-w2">
           {/* Planet Sphere */}
-          <circle cx="0" cy="0" r="36" fill="url(#cyan-clay)" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r={isDiscover ? 40 : 36}
+            fill="url(#cyan-clay)"
+            filter={isDiscover ? "url(#spark-halo)" : "url(#clay-shadow)"}
+          />
           <circle cx="-10" cy="-10" r="6" fill="#FFFFFF" opacity="0.3" />
           {/* Telescope & Star */}
           <line x1="-12" y1="12" x2="12" y2="-12" stroke="#FFFFFF" strokeWidth="4.5" strokeLinecap="round" />
           <polygon points="12,-16 14,-10 18,-12" fill="#FFE082" />
           <circle cx="16" cy="12" r="3" fill="#FFFFFF" opacity="0.8" />
           {/* Label Pill */}
-          <rect x="-42" y="44" width="84" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <rect x="-46" y="44" width="92" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
           <text x="0" y="58" textAnchor="middle" fontSize="10" fontWeight="700" fill="#00838F">
-            {isSchool ? "Science & Space" : "Sciences & Research"}
+            Science & Research
           </text>
         </g>
       </g>
 
       {/* ========================================================
-          WORLD 3 (Bottom-Left): NATURE & LIFE
+          WORLD 3 (Bottom-Left): NATURE & COMMUNITY IMPACT
          ======================================================== */}
       <g transform="translate(125, 215)">
         <g className="anim-w3">
           {/* Planet Sphere */}
-          <circle cx="0" cy="0" r="36" fill="url(#emerald-clay)" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r={isImpact ? 40 : 36}
+            fill="url(#emerald-clay)"
+            filter={isImpact ? "url(#spark-halo)" : "url(#clay-shadow)"}
+          />
           <circle cx="-10" cy="-10" r="6" fill="#FFFFFF" opacity="0.3" />
           {/* Sprout & Leaf */}
           <path d="M 0 12 L 0 -4 M 0 2 Q -10 -4, -6 -12 Q 2 -8, 0 2 M 0 0 Q 10 -6, 8 -14 Q 0 -10, 0 0" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
           {/* Label Pill */}
-          <rect x="-38" y="44" width="76" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <rect x="-44" y="44" width="88" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
           <text x="0" y="58" textAnchor="middle" fontSize="10" fontWeight="700" fill="#047857">
-            {isSchool ? "Nature & Earth" : "Ecology & Bio"}
+            {isImpact ? "Impact & Society" : "Nature & Earth"}
           </text>
         </g>
       </g>
 
       {/* ========================================================
-          WORLD 4 (Bottom-Right): TECH & BUILDING
+          WORLD 4 (Bottom-Right): TECH & PROBLEM SOLVING
          ======================================================== */}
       <g transform="translate(395, 215)">
         <g className="anim-w1">
           {/* Planet Sphere */}
-          <circle cx="0" cy="0" r="36" fill="url(#iris-clay)" filter="url(#clay-shadow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r={isSolve ? 40 : 36}
+            fill="url(#iris-clay)"
+            filter={isSolve ? "url(#spark-halo)" : "url(#clay-shadow)"}
+          />
           <circle cx="-10" cy="-10" r="6" fill="#FFFFFF" opacity="0.3" />
           {/* Code / Logic Bracket */}
           <path
@@ -590,9 +676,9 @@ export function ExploreScene({ mode }: IllustrationProps) {
             fill="none"
           />
           {/* Label Pill */}
-          <rect x="-42" y="44" width="84" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          <rect x="-44" y="44" width="88" height="20" rx="10" fill="#FFFFFF" filter="url(#clay-shadow)" />
           <text x="0" y="58" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4A3AC9">
-            {isSchool ? "Tech & Coding" : "AI & Technology"}
+            {isSolve ? "Logic & Problem-Solving" : "Tech & Coding"}
           </text>
         </g>
       </g>
@@ -602,10 +688,13 @@ export function ExploreScene({ mode }: IllustrationProps) {
 
 /**
  * SCENE 3: TRY — "Try something new!"
- * Student actively building, experimenting, and bringing a project to life
+ * Student actively experimenting at a maker workbench, adapting to the chosen Spark.
  */
-export function TryScene({ mode }: IllustrationProps) {
-  const isSchool = mode === "school";
+export function TryScene({ spark = "all" }: IllustrationProps) {
+  const isCreate = spark === "create";
+  const isDiscover = spark === "discover";
+  const isSolve = spark === "solve";
+  const isImpact = spark === "impact";
 
   return (
     <svg
@@ -624,15 +713,15 @@ export function TryScene({ mode }: IllustrationProps) {
           0%, 100% { opacity: 0.35; }
           50% { opacity: 0.85; }
         }
-        @keyframes rover-assemble-local {
+        @keyframes project-assemble-local {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
         }
         .anim-gear { animation: gear-spin-local 12s linear infinite; transform-origin: 0 0; }
         .anim-beam { animation: beam-pulse-local 2.5s ease-in-out infinite; }
-        .anim-rover { animation: rover-assemble-local 3.2s ease-in-out infinite; }
+        .anim-project { animation: project-assemble-local 3.2s ease-in-out infinite; }
         @media (prefers-reduced-motion: reduce) {
-          .anim-gear, .anim-beam, .anim-rover { animation: none !important; }
+          .anim-gear, .anim-beam, .anim-project { animation: none !important; }
         }
       `}</style>
       <SvgFilters />
@@ -693,12 +782,84 @@ export function TryScene({ mode }: IllustrationProps) {
 
       {/* ========================================================
           HANDS-ON PROJECT BENCH (Center-Right)
-          Nested <g> ensures translation is preserved!
+          Adapts cleanly based on selected Spark!
          ======================================================== */}
       <g transform="translate(230, 90)">
-        <g className="anim-rover">
-          {isSchool ? (
-            // School: Friendly Solar Explorer Rover
+        <g className="anim-project">
+          {isCreate ? (
+            // CREATE SPARK: Artist Easel, Canvas, and Palette
+            <g>
+              {/* Wooden Studio Easel Frame */}
+              <line x1="40" y1="35" x2="20" y2="135" stroke="#D97706" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="120" y1="35" x2="140" y2="135" stroke="#D97706" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="80" y1="20" x2="80" y2="135" stroke="#B45309" strokeWidth="4" strokeLinecap="round" />
+              <rect x="22" y="115" width="116" height="8" rx="3" fill="#F59E0B" />
+
+              {/* Painted Canvas with Sunset Art */}
+              <rect x="30" y="42" width="100" height="74" rx="8" fill="#FFF6ED" filter="url(#clay-shadow)" stroke="#FFA48B" strokeWidth="1.5" />
+              {/* Sun & Hills painting */}
+              <circle cx="80" cy="72" r="14" fill="#F59E0B" opacity="0.8" />
+              <path d="M 32 108 Q 60 82, 85 96 T 128 108 Z" fill="url(#coral-clay)" />
+              <path d="M 55 110 Q 80 92, 115 110 Z" fill="#8777FF" opacity="0.6" />
+
+              {/* Artist Palette on the shelf */}
+              <ellipse cx="145" cy="100" rx="16" ry="12" fill="#FFFFFF" filter="url(#clay-shadow)" />
+              <circle cx="140" cy="98" r="2.5" fill="#FF7A59" />
+              <circle cx="146" cy="95" r="2.5" fill="#35B8C5" />
+              <circle cx="150" cy="101" r="2.5" fill="#F59E0B" />
+            </g>
+          ) : isDiscover ? (
+            // DISCOVER SPARK: Science Observation Lab Bench
+            <g>
+              {/* Scientific Microscope */}
+              <g transform="translate(75, 45)">
+                {/* Microscope Body Tube */}
+                <rect x="-8" y="15" width="16" height="42" rx="6" fill="#171A2B" filter="url(#clay-shadow)" />
+                <rect x="-6" y="8" width="12" height="10" rx="3" fill="url(#cyan-clay)" />
+                {/* Turret & Objective Lens */}
+                <circle cx="0" cy="58" r="9" fill="url(#amber-clay)" />
+                <rect x="-4" y="66" width="8" height="12" rx="2" fill="#35B8C5" />
+                {/* Stage Plate */}
+                <rect x="-24" y="76" width="48" height="7" rx="3" fill="#2E2842" />
+                {/* Specimen Slide with Glowing Sample */}
+                <rect x="-14" y="73" width="28" height="3" rx="1" fill="#FFFFFF" />
+                <circle cx="0" cy="74.5" r="2" fill="#10B981" />
+                {/* Microscope Base */}
+                <path d="M 0 55 C 24 55, 24 95, 18 100 L -22 100 C -22 88, -12 85, 0 85" fill="none" stroke="#171A2B" strokeWidth="8" strokeLinecap="round" />
+                <rect x="-24" y="98" width="48" height="8" rx="4" fill="#171A2B" />
+              </g>
+
+              {/* Botanical Specimen Flask */}
+              <g transform="translate(140, 85)">
+                <path d="M 0 0 L 0 14 L -12 36 L 12 36 L 0 14 Z" fill="#E8F9FA" stroke="#65E0EC" strokeWidth="2" filter="url(#clay-shadow)" />
+                <circle cx="0" cy="28" r="7" fill="#6EE7B7" opacity="0.6" />
+                {/* Little Sprout rising */}
+                <path d="M 0 28 L 0 16 M 0 20 Q -4 16, -2 12" stroke="#10B981" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              </g>
+            </g>
+          ) : isImpact ? (
+            // IMPACT SPARK: Community & Environmental Clean-Tech Bench
+            <g>
+              {/* Solar Eco-Water Cleaner / Terrarium Model */}
+              <rect x="35" y="60" width="105" height="58" rx="16" fill="#E8F9F0" stroke="#6EE7B7" strokeWidth="2" filter="url(#clay-shadow)" />
+              {/* Living seedling inside clean capsule */}
+              <path d="M 60 102 L 60 76 M 60 84 Q 48 80, 52 72 Q 62 76, 60 84 M 60 80 Q 72 74, 68 68 Q 58 72, 60 80" stroke="url(#emerald-clay)" strokeWidth="3" strokeLinecap="round" fill="none" />
+
+              {/* Clean Energy Solar Vane */}
+              <rect x="96" y="44" width="40" height="22" rx="4" fill="url(#cyan-clay)" transform="rotate(-15, 96, 44)" filter="url(#clay-shadow)" />
+              <line x1="108" y1="40" x2="108" y2="62" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.8" />
+              <line x1="120" y1="36" x2="120" y2="58" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.8" />
+
+              {/* Clean Energy Pulse Stream */}
+              <polygon points="148,8 112,42 144,38" fill="#10B981" opacity="0.3" className="anim-beam" />
+
+              {/* Community Collaboration Badge */}
+              <circle cx="50" cy="120" r="12" fill="#FFFFFF" filter="url(#clay-shadow)" />
+              <path d="M 46 120 C 46 116, 54 116, 54 120" stroke="#047857" strokeWidth="2" fill="none" />
+              <circle cx="50" cy="116" r="2.5" fill="#047857" />
+            </g>
+          ) : (
+            // ALL / SOLVE SPARK: Solar Explorer Rover & Logic Workbench
             <g>
               {/* Chassis Body */}
               <rect x="30" y="65" width="110" height="48" rx="16" fill="url(#cyan-clay)" filter="url(#clay-shadow)" />
@@ -708,6 +869,14 @@ export function TryScene({ mode }: IllustrationProps) {
               {/* Happy Eyes on screen */}
               <path d="M 50 88 Q 55 83, 60 88" stroke="#35B8C5" strokeWidth="2" strokeLinecap="round" fill="none" />
               <path d="M 68 88 Q 73 83, 78 88" stroke="#35B8C5" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+              {/* Solve Spark interactive logic badge */}
+              {isSolve && (
+                <g transform="translate(18, 58)">
+                  <rect x="0" y="0" width="22" height="15" rx="4" fill="#171A2B" stroke="#8777FF" strokeWidth="1.2" />
+                  <path d="M 5 7 L 8 10 L 11 5" stroke="#10B981" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                </g>
+              )}
 
               {/* Solar Wing */}
               <rect
@@ -720,7 +889,6 @@ export function TryScene({ mode }: IllustrationProps) {
                 transform="rotate(-12, 96, 50)"
                 filter="url(#clay-shadow)"
               />
-              {/* Solar panel grid lines */}
               <line x1="114" y1="46" x2="114" y2="70" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
               <line x1="132" y1="42" x2="132" y2="66" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
 
@@ -738,33 +906,9 @@ export function TryScene({ mode }: IllustrationProps) {
               <circle cx="120" cy="118" r="16" fill="#171A2B" filter="url(#clay-shadow)" />
               <circle cx="120" cy="118" r="7" fill="#6757F5" />
             </g>
-          ) : (
-            // College: Interactive Prototype Studio & Display
-            <g>
-              {/* Laptop / Studio Tablet */}
-              <rect x="25" y="45" width="130" height="85" rx="12" fill="#171A2B" filter="url(#clay-shadow)" />
-              <rect x="33" y="53" width="114" height="69" rx="6" fill="#202538" />
-
-              {/* Live Interactive Prototype UI on Screen */}
-              <rect x="42" y="62" width="46" height="20" rx="4" fill="url(#iris-clay)" />
-              <circle cx="52" cy="72" r="4" fill="#FFFFFF" />
-              <rect x="62" y="69" width="20" height="6" rx="3" fill="#FFFFFF" />
-
-              {/* Waveform / Growth curve on screen */}
-              <path
-                d="M 42 105 Q 60 90, 80 100 T 120 75 T 140 85"
-                stroke="#35B8C5"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                fill="none"
-              />
-
-              {/* Stand Base */}
-              <path d="M 15 130 L 165 130 C 170 130, 165 135, 155 136 L 25 136 Z" fill="#626987" />
-            </g>
           )}
 
-          {/* Rotating Mechanical Gear on side */}
+          {/* Rotating Mechanical Gear on workbench */}
           <g transform="translate(185, 75)">
             <g className="anim-gear">
               <circle cx="0" cy="0" r="16" fill="url(#amber-clay)" />
@@ -791,10 +935,15 @@ export function TryScene({ mode }: IllustrationProps) {
  * SCENE 4: GROW — "Your journey keeps growing."
  * Student at the center with an open creative journal, surrounded by three emerging
  * organic learning possibilities: Create, Explore, and Experience.
- * Zero summit, zero finish flag, zero linear milestone locks.
+ *
+ * Refined 1.4: Possibilities look like parts of an organic growing imaginative world
+ * rather than static cards, with recognizable illustrated objects and ambient motion.
  */
-export function GrowScene({ mode }: IllustrationProps) {
-  const isSchool = mode === "school";
+export function GrowScene({ spark = "all" }: IllustrationProps) {
+  const isCreate = spark === "create";
+  const isDiscover = spark === "discover";
+  const isSolve = spark === "solve";
+  const isImpact = spark === "impact";
 
   return (
     <svg
@@ -878,21 +1027,24 @@ export function GrowScene({ mode }: IllustrationProps) {
           d="M 235 220 C 180 185, 140 145, 120 115"
           stroke="#FFA48B"
           strokeDasharray="5 5"
-          opacity="0.7"
+          opacity={isCreate ? 0.95 : 0.7}
+          strokeWidth={isCreate ? 3.5 : 2.5}
         />
         {/* Ribbon to Explore (Top-Right) */}
         <path
           d="M 285 220 C 335 180, 375 140, 400 110"
           stroke="#65E0EC"
           strokeDasharray="5 5"
-          opacity="0.7"
+          opacity={isDiscover ? 0.95 : 0.7}
+          strokeWidth={isDiscover ? 3.5 : 2.5}
         />
         {/* Ribbon to Experience (Bottom-Right) */}
         <path
           d="M 295 235 C 330 230, 365 220, 395 215"
           stroke="#8777FF"
           strokeDasharray="5 5"
-          opacity="0.7"
+          opacity={isSolve || isImpact ? 0.95 : 0.7}
+          strokeWidth={isSolve || isImpact ? 3.5 : 2.5}
         />
       </g>
 
@@ -916,7 +1068,7 @@ export function GrowScene({ mode }: IllustrationProps) {
         {/* Hoodie Collar */}
         <path
           d="M 52 105 Q 68 120, 84 105 Q 78 128, 68 128 Q 58 128, 52 105 Z"
-          fill={isSchool ? "#FAF9F6" : "#E0F7FA"}
+          fill="#FAF9F6"
         />
 
         {/* Neck */}
@@ -999,11 +1151,44 @@ export function GrowScene({ mode }: IllustrationProps) {
             strokeWidth="1.2"
           />
 
-          {/* Little drawings in the notebook */}
-          {/* Left page: spark / star */}
-          <polygon points="-16,-2 -14,1 -11,2 -13,4 -13,7 -16,5 -19,7 -19,4 -21,2 -18,1" fill="#FF7A59" />
-          {/* Right page: mini sprout */}
-          <path d="M 15 6 L 15 0 M 15 2 Q 10 0, 12 -4 Q 16 -2, 15 2 M 15 1 Q 20 -1, 18 -5 Q 14 -3, 15 1" stroke="#10B981" strokeWidth="1.2" fill="none" />
+          {/* Spark-specific notebook drawings */}
+          {isCreate ? (
+            <>
+              {/* Color splash & paint dots */}
+              <circle cx="-16" cy="1" r="3" fill="#FF7A59" />
+              <circle cx="-10" cy="-2" r="2" fill="#FFE082" />
+              {/* Quill drawing */}
+              <line x1="12" y1="-4" x2="20" y2="4" stroke="#DE512E" strokeWidth="1.5" strokeLinecap="round" />
+            </>
+          ) : isDiscover ? (
+            <>
+              {/* Microscope cell circle */}
+              <circle cx="-15" cy="0" r="4" fill="none" stroke="#00838F" strokeWidth="1.2" />
+              <circle cx="-15" cy="0" r="1.5" fill="#35B8C5" />
+              {/* Star spiral */}
+              <polygon points="16,-3 17,0 20,1 17,2 16,5 15,2 12,1 15,0" fill="#F59E0B" />
+            </>
+          ) : isSolve ? (
+            <>
+              {/* Logic brackets */}
+              <path d="M -18 -3 L -21 0 L -18 3 M -12 -3 L -9 0 L -12 3" stroke="#6757F5" strokeWidth="1.2" fill="none" />
+              {/* Mini gear teeth */}
+              <circle cx="16" cy="1" r="3.5" fill="none" stroke="#D97706" strokeWidth="1.2" />
+            </>
+          ) : isImpact ? (
+            <>
+              {/* Growing seedling */}
+              <path d="M -15 5 L -15 -1 M -15 1 Q -19 -2, -17 -5 Q -13 -3, -15 1" stroke="#10B981" strokeWidth="1.2" fill="none" />
+              {/* Friendly connection circle */}
+              <circle cx="16" cy="1" r="3.5" fill="#35B8C5" opacity="0.6" />
+            </>
+          ) : (
+            <>
+              {/* Default: star & sprout */}
+              <polygon points="-16,-2 -14,1 -11,2 -13,4 -13,7 -16,5 -19,7 -19,4 -21,2 -18,1" fill="#FF7A59" />
+              <path d="M 15 6 L 15 0 M 15 2 Q 10 0, 12 -4 Q 16 -2, 15 2 M 15 1 Q 20 -1, 18 -5 Q 14 -3, 15 1" stroke="#10B981" strokeWidth="1.2" fill="none" />
+            </>
+          )}
 
           {/* Center glow bookmark */}
           <line x1="0" y1="-8" x2="0" y2="12" stroke="#6757F5" strokeWidth="2" strokeLinecap="round" />
@@ -1013,31 +1198,50 @@ export function GrowScene({ mode }: IllustrationProps) {
 
       {/* ========================================================
           POSSIBILITY 1: CREATE (Top-Left)
-          Art, design, storytelling, or personal creative projects
+          Organic floating creative world: Painter's easel, palette,
+          folded origami swan, and story scrolls
          ======================================================== */}
       <g transform="translate(115, 80)">
         <g className="anim-grow-create">
-          {/* White Clay Card Base */}
-          <rect x="-38" y="-35" width="76" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
-
-          {/* Creative Canvas / Palette */}
-          <circle cx="0" cy="-6" r="24" fill="url(#coral-clay)" />
-          <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
-
-          {/* Artist's Palette & Splash */}
-          <path
-            d="M -10 -2 C -10 -10, 10 -10, 10 -2 C 10 4, 5 6, 0 3 C -4 6, -10 4, -10 -2 Z"
+          {/* Organic Floating Aura Island */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="42"
+            ry="36"
             fill="#FFFFFF"
+            filter={isCreate ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isCreate ? "#FFA48B" : "#F8F7FD"}
+            strokeWidth={isCreate ? "2" : "1"}
           />
-          <circle cx="-3" cy="-4" r="2" fill="#FF7A59" />
-          <circle cx="3" cy="-4" r="2" fill="#FFE082" />
+          <ellipse cx="0" cy="0" r="32" fill="#FFF5F2" opacity="0.6" />
 
-          {/* Floating Origami Bird / Story Quill */}
-          <g transform="translate(18, -20)">
-            <polygon points="0,0 8,-6 10,0 4,2" fill="#FFA48B" />
+          {/* Wooden Painter's Easel & Canvas */}
+          <g transform="translate(-14, -18)">
+            {/* Easel legs */}
+            <line x1="4" y1="2" x2="-2" y2="28" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="20" y1="2" x2="26" y2="28" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="12" y1="0" x2="12" y2="28" stroke="#B45309" strokeWidth="2" strokeLinecap="round" />
+            {/* Canvas */}
+            <rect x="0" y="4" width="24" height="18" rx="3" fill="url(#coral-clay)" />
+            <circle cx="8" cy="11" r="3" fill="#FFE082" />
+            <path d="M 2 18 Q 8 13, 14 16 T 22 18 Z" fill="#FFFFFF" opacity="0.5" />
           </g>
 
-          {/* Label Pill: "Create" */}
+          {/* Artist's Palette */}
+          <g transform="translate(14, 4)">
+            <ellipse cx="0" cy="0" rx="14" ry="11" fill="#FFFFFF" filter="url(#clay-shadow)" stroke="#FFA48B" strokeWidth="1" />
+            <circle cx="-5" cy="-3" r="2" fill="#FF7A59" />
+            <circle cx="2" cy="-4" r="2" fill="#FFE082" />
+            <circle cx="5" cy="2" r="2" fill="#35B8C5" />
+          </g>
+
+          {/* Floating Origami Swan */}
+          <g transform="translate(18, -20)">
+            <polygon points="0,0 9,-8 11,0 4,3" fill="#FFA48B" filter="url(#clay-shadow)" />
+          </g>
+
+          {/* Soft Label Pill: "Create" */}
           <rect x="-30" y="24" width="60" height="18" rx="9" fill="#FFF2EE" stroke="#FFD8CC" strokeWidth="1" />
           <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#DE512E">
             Create
@@ -1047,26 +1251,42 @@ export function GrowScene({ mode }: IllustrationProps) {
 
       {/* ========================================================
           POSSIBILITY 2: EXPLORE (Top-Right)
-          Nature, science, research, or discovering the unfamiliar
+          Organic floating discovery world: Golden telescope, multi-ringed planet,
+          unfurling fern sprout, and cosmic stars
          ======================================================== */}
       <g transform="translate(405, 75)">
         <g className="anim-grow-explore">
-          {/* White Clay Card Base */}
-          <rect x="-38" y="-35" width="76" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          {/* Organic Floating Aura Island */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="42"
+            ry="36"
+            fill="#FFFFFF"
+            filter={isDiscover ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isDiscover ? "#65E0EC" : "#F8F7FD"}
+            strokeWidth={isDiscover ? "2" : "1"}
+          />
+          <ellipse cx="0" cy="0" r="32" fill="#F0FAFB" opacity="0.6" />
 
           {/* Science & Nature Sphere */}
-          <circle cx="0" cy="-6" r="24" fill="url(#cyan-clay)" />
+          <circle cx="0" cy="-6" r="22" fill="url(#cyan-clay)" />
           <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
 
-          {/* Discovery Ring & Mini Planet */}
-          <ellipse cx="0" cy="-6" rx="28" ry="8" fill="none" stroke="url(#amber-clay)" strokeWidth="2.8" transform="rotate(-15)" />
-          {/* Sprout & Planet symbol */}
-          <path d="M 0 4 L 0 -8 M 0 -4 Q -6 -8, -4 -13 Q 0 -10, 0 -4 M 0 -6 Q 6 -10, 4 -15 Q 0 -12, 0 -6" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+          {/* Golden Telescope angled into the sky */}
+          <g transform="translate(-16, -16)">
+            <line x1="-4" y1="18" x2="16" y2="-4" stroke="url(#amber-clay)" strokeWidth="4.5" strokeLinecap="round" />
+            <line x1="12" y1="-1" x2="18" y2="-7" stroke="#FFE082" strokeWidth="6" strokeLinecap="round" />
+          </g>
 
-          {/* Sparkle */}
+          {/* Multi-Ringed Planet & Sprout */}
+          <ellipse cx="6" cy="-6" rx="26" ry="7" fill="none" stroke="url(#amber-clay)" strokeWidth="2.5" transform="rotate(-15)" />
+          <path d="M 6 4 L 6 -6 M 6 -2 Q 2 -6, 4 -9 Q 8 -7, 6 -2" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+          {/* Twinkling Star Spark */}
           <polygon points="18,-18 20,-15 23,-15 21,-13 22,-10 18,-12 15,-10 16,-13 14,-15 17,-15" fill="#FFE082" />
 
-          {/* Label Pill: "Explore" */}
+          {/* Soft Label Pill: "Explore" */}
           <rect x="-30" y="24" width="60" height="18" rx="9" fill="#E8F9FA" stroke="#C5F2F6" strokeWidth="1" />
           <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#00838F">
             Explore
@@ -1076,32 +1296,49 @@ export function GrowScene({ mode }: IllustrationProps) {
 
       {/* ========================================================
           POSSIBILITY 3: EXPERIENCE (Bottom-Right)
-          Hands-on learning, collaborative projects, real-world impact
+          Organic floating hands-on world: Rotating interlocking gears,
+          interactive prototype tablet with live waves, and collaborative nodes
          ======================================================== */}
       <g transform="translate(405, 210)">
         <g className="anim-grow-experience">
-          {/* White Clay Card Base */}
-          <rect x="-42" y="-35" width="84" height="70" rx="20" fill="#FFFFFF" filter="url(#clay-shadow)" />
+          {/* Organic Floating Aura Island */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="46"
+            ry="36"
+            fill="#FFFFFF"
+            filter={isSolve || isImpact ? "url(#spark-halo)" : "url(#clay-shadow)"}
+            stroke={isSolve || isImpact ? "#8777FF" : "#F8F7FD"}
+            strokeWidth={isSolve || isImpact ? "2" : "1"}
+          />
+          <ellipse cx="0" cy="0" r="34" fill="#F4F2FF" opacity="0.6" />
 
           {/* Project & Community Sphere */}
-          <circle cx="0" cy="-6" r="24" fill="url(#iris-clay)" />
+          <circle cx="0" cy="-6" r="22" fill="url(#iris-clay)" />
           <circle cx="-6" cy="-12" r="4" fill="#FFFFFF" opacity="0.3" />
 
           {/* Interlocking Gears & Collaborative Sparks */}
-          <g transform="translate(0, -6)">
+          <g transform="translate(-10, -8)">
             <g className="anim-gear-grow">
-              <circle cx="0" cy="0" r="10" fill="#FFFFFF" opacity="0.9" />
-              <circle cx="0" cy="0" r="4" fill="#6757F5" />
-              <rect x="-2" y="-12" width="4" height="24" rx="1.5" fill="#FFFFFF" />
-              <rect x="-12" y="-2" width="24" height="4" rx="1.5" fill="#FFFFFF" />
+              <circle cx="0" cy="0" r="9" fill="#FFFFFF" opacity="0.9" />
+              <circle cx="0" cy="0" r="3.5" fill="#6757F5" />
+              <rect x="-2" y="-11" width="4" height="22" rx="1.5" fill="#FFFFFF" />
+              <rect x="-11" y="-2" width="22" height="4" rx="1.5" fill="#FFFFFF" />
             </g>
           </g>
 
-          {/* Cheerful Connection Dot */}
+          {/* Miniature Interactive Prototype Screen */}
+          <g transform="translate(10, -10)">
+            <rect x="0" y="0" width="18" height="13" rx="3" fill="#171A2B" />
+            <path d="M 2 8 Q 6 4, 10 7 T 16 5" stroke="#35B8C5" strokeWidth="1.2" fill="none" />
+          </g>
+
+          {/* Cheerful Collaborative Connection Dots */}
           <circle cx="16" cy="6" r="3.5" fill="#10B981" />
           <circle cx="-16" cy="6" r="2.5" fill="#F59E0B" />
 
-          {/* Label Pill: "Experience" */}
+          {/* Soft Label Pill: "Experience" */}
           <rect x="-38" y="24" width="76" height="18" rx="9" fill="#F0EDFF" stroke="#DDD8FE" strokeWidth="1" />
           <text x="0" y="36.5" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6757F5">
             Experience
