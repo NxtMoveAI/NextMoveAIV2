@@ -117,18 +117,22 @@ test.describe('Flow 1 — Intelligent Landing Page', () => {
     const activityTab = explorer.locator('#tab-activity');
     await activityTab.click();
 
-    // In the Binary Search Data Router, target is 58 (node index 5: Node 6)
-    const node6 = explorer.locator('button:has-text("Node 6")');
-    await expect(node6).toBeVisible();
-    await node6.click();
+    // Verify refined 2.2 identity
+    await expect(explorer).toContainText('Try a Mini Activity');
+    await expect(explorer).toContainText('Smart Campus Route Delivery');
 
-    // Feedback should report finding target #58
-    await expect(explorer).toContainText('Target #58 found');
+    // Select Pedestrian Safety route priority
+    const safetyBtn = explorer.locator('button:has-text("Pedestrian Safety")');
+    await expect(safetyBtn).toBeVisible();
+    await safetyBtn.click();
+
+    // Feedback confirms cause-and-effect reasoning
+    await expect(explorer).toContainText('Autonomous systems balance multiple constraints');
 
     // Reset challenge
     const resetBtn = explorer.locator('button[aria-label="Reset Challenge"]');
     await resetBtn.click();
-    await expect(explorer).toContainText('Target #58 active');
+    await expect(explorer).toContainText('Select the route priority to deliver lab equipment');
   });
 
   test('L1.7: Student Explorer CTA handoff to Flow 2 preserves stage', async ({ page }) => {
