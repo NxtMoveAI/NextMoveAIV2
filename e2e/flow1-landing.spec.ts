@@ -63,8 +63,13 @@ test.describe('Flow 1 — Intelligent Landing Page', () => {
     const explorer = page.locator('#explorer');
     await expect(explorer).toBeVisible();
 
-    // Class 12 default state check
+    // Default neutral welcome state check
     const class12Radio = explorer.locator('button[role="radio"]:has-text("Classes 11 – 12")');
+    await expect(class12Radio).toHaveAttribute('aria-checked', 'false');
+    await expect(explorer).toContainText('Ready to explore your possibilities?');
+
+    // Click Classes 11 - 12 to activate
+    await class12Radio.click();
     await expect(class12Radio).toHaveAttribute('aria-checked', 'true');
 
     // Switch to Middle School (Classes 4 - 7)
