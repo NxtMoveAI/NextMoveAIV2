@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Sparkles,
-  User,
   ArrowRight,
-  CheckCircle2,
+  Info,
 } from "lucide-react";
 
 interface PartnerConversation {
@@ -17,53 +16,117 @@ interface PartnerConversation {
   partnerResponse: string;
   actionText: string;
   actionHref: string;
-  relatedTips: string[];
+  takeawayTip: string;
 }
 
 const CONVERSATIONS: PartnerConversation[] = [
   {
     id: "curiosity",
-    category: "Curiosity & Combining Interests",
+    category: "Combining Interests",
     chipLabel: "🎨 Drawing + Science",
-    studentMessage: "I like drawing and science. Can I explore both?",
+    studentMessage: "I like drawing and biology. Can I explore both together?",
     partnerResponse:
-      "Of course! You don't have to choose just one interest. Many exciting creative fields combine both—like scientific illustration, nature game design, and biomimicry! Would you like to try a small creative activity or see 3 pathways that connect art and science?",
-    actionText: "Explore an Activity",
+      "Yes, absolutely! You don't have to pick just one. Creative fields like medical animation, science comic design, and nature game art blend both beautifully. Would you like to try a 15-minute creative activity or see 3 real career pathways?",
+    actionText: "Try a Creative Activity",
     actionHref: "#explorer",
-    relatedTips: [
-      "No need to pick a narrow track early",
-      "Creativity and technology strengthen each other",
-    ],
+    takeawayTip: "You never have to force yourself into a single narrow box.",
   },
   {
     id: "uncertainty",
-    category: "Uncertainty & Low Pressure",
+    category: "Starting Out",
     chipLabel: "🧭 Not Sure What to Learn",
-    studentMessage: "I'm not sure what I want to learn next.",
+    studentMessage: "I'm not sure what I want to learn next. Is that okay?",
     partnerResponse:
-      "That's completely normal—most great discoveries start with not being sure! You don't have to pick a career right now. Let's start with what made you smile recently: did you enjoy building things, reading a story, or being outdoors?",
-    actionText: "Try a Discovery Activity",
+      "That is completely normal! Every great explorer begins without knowing the whole map. You don't need a life plan today—let's just pick one small question that makes you curious and build something fun.",
+    actionText: "Explore Discovery Sparks",
     actionHref: "#explorer",
-    relatedTips: [
-      "Every explorer starts without knowing the whole map",
-      "One small trial gives more clarity than overthinking",
-    ],
+    takeawayTip: "Trying one small activity gives more clarity than overthinking.",
   },
   {
     id: "growth",
-    category: "Starting Small Projects",
+    category: "Small Projects",
     chipLabel: "🚀 Start a Small Project",
-    studentMessage: "Can you help me start a small project?",
+    studentMessage: "Can you help me start a small project this weekend?",
     partnerResponse:
-      "I'd love to! A great first project takes under 30 minutes: pick a question you find intriguing, build a quick prototype, and note what you enjoyed doing. Ready to see some project sparks?",
+      "I'd love to! A great first project takes under 30 minutes: pick an idea you enjoy, build a quick prototype, and note what you liked doing. Ready to choose a project spark?",
     actionText: "Pick a Project Spark",
     actionHref: "#explorer",
-    relatedTips: [
-      "15–30 minutes is plenty for a first step",
-      "Hands-on doing makes learning memorable",
-    ],
+    takeawayTip: "Small hands-on projects create lasting confidence.",
   },
 ];
+
+// Consistent Friendly Companion Character Avatar (SVG)
+function CompanionAvatar({ size = 44 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0 select-none"
+      aria-label="My Partner Assistant Avatar"
+    >
+      <defs>
+        <linearGradient id="mp-avatar-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#8B7FF8" />
+          <stop offset="100%" stopColor="#5342E8" />
+        </linearGradient>
+        <filter id="mp-glow" x="-15%" y="-15%" width="130%" height="130%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#6757F5" floodOpacity="0.25" />
+        </filter>
+      </defs>
+
+      {/* Companion Head/Body Orb */}
+      <circle cx="32" cy="35" r="23" fill="url(#mp-avatar-grad)" filter="url(#mp-glow)" />
+
+      {/* Gentle Antenna Spark */}
+      <line x1="32" y1="12" x2="32" y2="4" stroke="#8B7FF8" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="32" cy="4" r="3.5" fill="#FBBF24" />
+
+      {/* Soft Inner Face Area */}
+      <ellipse cx="32" cy="36" rx="17" ry="15" fill="#FAF9F6" />
+
+      {/* Expressive Friendly Eyes */}
+      <circle cx="26" cy="34" r="2.8" fill="#171A2B" />
+      <circle cx="27" cy="33" r="1" fill="#FFFFFF" />
+      <circle cx="38" cy="34" r="2.8" fill="#171A2B" />
+      <circle cx="39" cy="33" r="1" fill="#FFFFFF" />
+
+      {/* Warm Rosy Cheeks */}
+      <circle cx="22" cy="39" r="2.5" fill="#F4A896" fillOpacity="0.7" />
+      <circle cx="42" cy="39" r="2.5" fill="#F4A896" fillOpacity="0.7" />
+
+      {/* Happy Smile */}
+      <path d="M28 40 Q 32 44 36 40" stroke="#171A2B" strokeWidth="2" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+// Student Character Avatar (SVG)
+function StudentAvatar({ size = 44 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0 select-none"
+      aria-label="Student Avatar"
+    >
+      <circle cx="32" cy="32" r="28" fill="#FAF9F6" stroke="#DDD8FE" strokeWidth="2" />
+      <ellipse cx="32" cy="30" rx="15" ry="16" fill="#C58C65" />
+      {/* Hair */}
+      <path d="M19 28 C 19 16, 26 14, 32 14 C 38 14, 45 16, 45 28 C 43 25, 40 24, 37 24 C 33 24, 32 26, 30 26 C 27 26, 24 24, 21 25 Z" fill="#2D2327" />
+      <circle cx="27" cy="30" r="1.8" fill="#1E171A" />
+      <circle cx="37" cy="30" r="1.8" fill="#1E171A" />
+      <path d="M29 36 Q 32 39 35 36" stroke="#1E171A" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      {/* Shirt */}
+      <path d="M16 56 C 16 46, 22 42, 32 42 C 42 42, 48 46, 48 56 Z" fill="#6757F5" />
+    </svg>
+  );
+}
 
 export function MyPartnerPreview() {
   const [selectedId, setSelectedId] = useState<string>("curiosity");
@@ -77,7 +140,7 @@ export function MyPartnerPreview() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-4 border border-[#DDD8FE] shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#6757F5]" />
             <span>Meet My Partner</span>
@@ -122,86 +185,71 @@ export function MyPartnerPreview() {
           </div>
         </div>
 
-        {/* Interactive Chat Canvas Container */}
-        <div className="max-w-3xl mx-auto rounded-3xl bg-white border-2 border-[#DDD8FE] shadow-xl overflow-hidden">
-          {/* Chat Window Top Bar */}
-          <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171A2B] to-[#2B3150] text-white flex items-center justify-between">
+        {/* Conversational Window Container */}
+        <div className="max-w-3xl mx-auto rounded-3xl bg-white border-2 border-[#DDD8FE] p-6 sm:p-8 lg:p-10 shadow-lg shadow-[#6757F5]/5">
+          {/* Header Bar of Chat Window */}
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#F0EEF8]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#6757F5] flex items-center justify-center text-white shadow-sm text-lg">
-                🤖
-              </div>
+              <CompanionAvatar size={42} />
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm sm:text-base text-white">
-                    My Partner
-                  </h3>
-                  <span className="text-[10px] bg-[#35B8C5]/20 text-[#35B8C5] px-2 py-0.5 rounded-full font-semibold border border-[#35B8C5]/30">
-                    Friendly Thinking Companion
-                  </span>
-                </div>
-                <p className="text-[11px] text-white/70">
-                  Non-judgmental guidance for every learner
+                <h3 className="text-sm sm:text-base font-extrabold text-[#171A2B] flex items-center gap-1.5">
+                  <span>My Partner</span>
+                  <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                </h3>
+                <p className="text-[11px] text-[#626987]">
+                  Friendly AI Learning Companion · Always encouraging
                 </p>
               </div>
             </div>
 
-            <span className="text-[11px] bg-white/10 px-2.5 py-1 rounded-full text-white/80 hidden sm:inline">
-              Example conversation
+            <span className="text-[11px] font-semibold text-[#6757F5] bg-[#EDEAFF] px-2.5 py-1 rounded-full border border-[#DDD8FE]">
+              {conversation.category}
             </span>
           </div>
 
-          {/* Conversation Bubbles Canvas */}
-          <div className="p-6 sm:p-8 space-y-6 bg-[#FAF9F6]/50 min-h-[300px] flex flex-col justify-between">
-            <div className="space-y-4">
-              {/* Student Message Bubble (Right aligned) */}
-              <div className="flex items-start justify-end gap-3 animate-fadeIn">
-                <div className="p-4 rounded-2xl rounded-tr-xs bg-[#6757F5] text-white text-xs sm:text-sm font-medium shadow-sm max-w-md leading-relaxed">
-                  {conversation.studentMessage}
-                </div>
-                <div className="w-8 h-8 rounded-full bg-[#EDEAFF] text-[#6757F5] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                  <User className="w-4 h-4" />
-                </div>
+          {/* Interactive Chat Dialogue Stream */}
+          <div className="space-y-5 mb-6">
+            {/* Student Message */}
+            <div className="flex items-start justify-end gap-3">
+              <div className="max-w-md bg-[#6757F5] text-white rounded-2xl rounded-tr-xs p-4 sm:p-5 shadow-sm text-sm sm:text-base leading-relaxed">
+                <p>{conversation.studentMessage}</p>
               </div>
+              <StudentAvatar size={38} />
+            </div>
 
-              {/* Partner Response Bubble (Left aligned) */}
-              <div className="flex items-start gap-3 animate-fadeIn">
-                <div className="w-8 h-8 rounded-full bg-[#6757F5] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-xs">
-                  ✨
+            {/* My Partner Response */}
+            <div className="flex items-start gap-3">
+              <CompanionAvatar size={38} />
+              <div className="max-w-lg bg-[#FAF9F6] border border-[#DDD8FE] text-[#171A2B] rounded-2xl rounded-tl-xs p-4 sm:p-5 shadow-xs text-sm sm:text-base leading-relaxed space-y-3">
+                <p>{conversation.partnerResponse}</p>
+
+                {/* Helpful Takeaway Tag */}
+                <div className="p-3 rounded-xl bg-white border border-[#E8E6F3] text-xs text-[#626987]">
+                  <strong className="text-[#6757F5] block mb-0.5">Friendly Reflection:</strong>
+                  <span>{conversation.takeawayTip}</span>
                 </div>
-                <div className="space-y-3 max-w-lg">
-                  <div className="p-5 rounded-2xl rounded-tl-xs bg-white border border-[#DDD8FE] text-xs sm:text-sm text-[#171A2B] font-normal leading-relaxed shadow-xs">
-                    {conversation.partnerResponse}
-                  </div>
 
-                  {/* Supportive Quick Principles */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {conversation.relatedTips.map((tip) => (
-                      <span
-                        key={tip}
-                        className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg bg-white border border-[#E8E6F3] text-[#626987]"
-                      >
-                        <CheckCircle2 className="w-3 h-3 text-[#35B8C5]" />
-                        <span>{tip}</span>
-                      </span>
-                    ))}
-                  </div>
+                {/* Single Clear Next-Action Button */}
+                <div className="pt-2">
+                  <Link
+                    href={conversation.actionHref}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs sm:text-sm font-bold hover:bg-[#5342E8] shadow-sm transition-all"
+                  >
+                    <span>{conversation.actionText}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Chat Action Prompt Footer */}
-            <div className="pt-4 border-t border-[#E8E6F3] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="text-xs text-[#626987]">
-                Try the action My Partner suggested:
+          {/* Prominent Example Disclosure */}
+          <div className="pt-4 border-t border-[#F0EEF8] flex items-center justify-between text-xs text-[#626987]">
+            <div className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-[#6757F5]" />
+              <span>
+                Illustrative sample conversation · Not connected to live student accounts or active AI chat
               </span>
-
-              <Link
-                href={conversation.actionHref}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] hover:bg-[#5342E8] text-white text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-[0.98]"
-              >
-                <span>{conversation.actionText}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
             </div>
           </div>
         </div>

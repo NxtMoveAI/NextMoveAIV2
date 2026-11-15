@@ -10,8 +10,9 @@ import {
 
 interface TrustPrinciple {
   id: string;
-  number: string;
-  icon: string;
+  badge: string;
+  iconBg: string;
+  iconSvg: React.ReactNode;
   title: string;
   sentence: string;
   coreHighlight: string;
@@ -22,8 +23,14 @@ interface TrustPrinciple {
 const PRINCIPLES: TrustPrinciple[] = [
   {
     id: "control",
-    number: "01",
-    icon: "🧭",
+    badge: "Student Agency",
+    iconBg: "bg-[#EDEAFF] text-[#6757F5]",
+    iconSvg: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#6757F5" fillOpacity="0.2" />
+      </svg>
+    ),
     title: "You're in Control",
     sentence: "Explore different possibilities and choose what feels meaningful to you.",
     coreHighlight: "The Student Remains in Control",
@@ -33,11 +40,18 @@ const PRINCIPLES: TrustPrinciple[] = [
   },
   {
     id: "honest",
-    number: "02",
-    icon: "🔍",
+    badge: "Objective Realities",
+    iconBg: "bg-[#E0F7FA] text-[#00838F]",
+    iconSvg: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3v18M3 9l9-6 9 6M3 9l3 8h6l-3-8M21 9l-3 8h-6l3-8" />
+        <circle cx="6" cy="17" r="1.5" fill="#00838F" />
+        <circle cx="18" cy="17" r="1.5" fill="#00838F" />
+      </svg>
+    ),
     title: "Honest Guidance",
     sentence:
-      "We explain what information comes from you, your activities, and educational sources.",
+      "We explain what information comes from you, your activities, and verified educational sources.",
     coreHighlight: "Why We Reject Artificial “Fit” Percentages",
     details:
       "No algorithm can predict a young human's future with an arbitrary percentage. We provide transparent educational realities, verifiable pathways, and real project practice—not automated scorecards or sponsored rankings.",
@@ -45,13 +59,19 @@ const PRINCIPLES: TrustPrinciple[] = [
   },
   {
     id: "privacy",
-    number: "03",
-    icon: "🛡️",
+    badge: "Safe Harbor",
+    iconBg: "bg-[#ECFDF5] text-[#047857]",
+    iconSvg: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#047857" fillOpacity="0.15" />
+        <path d="M9 12l2 2 4-4" />
+      </svg>
+    ),
     title: "Privacy Matters",
-    sentence: "Student information deserves careful protection and appropriate controls.",
+    sentence: "Student information deserves careful protection and clear, documented controls.",
     coreHighlight: "Private Curiosity by Default",
     details:
-      "Your early questions, drafts, and reflections are private. Sharing with parents or mentors occurs only with explicit student understanding, giving you a safe harbor to discover who you are.",
+      "Early questions, drafts, and reflections are personal exploration. In our documented platform architecture, sharing updates with parents or mentors occurs only with explicit student understanding.",
     evidenceNote: "Student-owned data with verified family permissions",
   },
 ];
@@ -70,10 +90,10 @@ export function TrustSection() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-4 border border-[#DDD8FE] shadow-xs">
             <Shield className="w-3.5 h-3.5 text-[#6757F5]" />
-            <span>Trust & Transparency</span>
+            <span>Trust &amp; Transparency</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#171A2B] tracking-tight">
@@ -88,7 +108,7 @@ export function TrustSection() {
           </p>
         </div>
 
-        {/* 3 Simple Principles Cards */}
+        {/* 3 Principles Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {PRINCIPLES.map((item) => {
             const isExpanded = expandedId === item.id;
@@ -103,9 +123,11 @@ export function TrustSection() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl">{item.icon}</span>
-                    <span className="text-xs font-mono font-bold text-[#6757F5] bg-[#EDEAFF] px-2.5 py-0.5 rounded-md">
-                      Principle {item.number}
+                    <div className={`w-11 h-11 rounded-2xl ${item.iconBg} flex items-center justify-center shadow-xs`}>
+                      {item.iconSvg}
+                    </div>
+                    <span className="text-xs font-bold text-[#6757F5] bg-[#EDEAFF] px-2.5 py-1 rounded-md border border-[#DDD8FE]">
+                      {item.badge}
                     </span>
                   </div>
 
@@ -138,7 +160,7 @@ export function TrustSection() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(item.id)}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] hover:text-[#5342E8] transition-colors"
+                    className="text-xs font-bold text-[#6757F5] hover:text-[#5342E8] flex items-center gap-1 focus:outline-none"
                   >
                     <span>{isExpanded ? "Hide Details" : "Learn More"}</span>
                     {isExpanded ? (
@@ -148,8 +170,8 @@ export function TrustSection() {
                     )}
                   </button>
 
-                  <span className="text-[11px] text-[#626987]">
-                    Governing commitment
+                  <span className="text-[11px] text-[#626987] font-medium">
+                    Verified principle
                   </span>
                 </div>
               </div>
