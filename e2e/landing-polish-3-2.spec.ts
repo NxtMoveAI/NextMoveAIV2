@@ -33,9 +33,9 @@ test.describe("Landing Page Final Visual Polish 3.2 — Verification Suite", () 
 
     // Click Stage 3 (Try)
     await section.locator('button:has-text("Try")').click();
-    await expect(section).toContainText("Test the work with a 15-minute trial.");
+    await expect(section).toContainText("Test the work with a quick hands-on trial.");
     await expect(section).toContainText("Hands-on Micro-Trial");
-    await expect(section.locator('svg[aria-label*="15-minute hands-on"]')).toBeVisible();
+    await expect(section.locator('svg[aria-label*="hands-on"]')).toBeVisible();
 
     // Click Stage 4 (Grow)
     await section.locator('button:has-text("Grow")').click();
@@ -69,7 +69,7 @@ test.describe("Landing Page Final Visual Polish 3.2 — Verification Suite", () 
 
     // Tab 2: Try Something New
     await tryTab.click();
-    await expect(section).toContainText("Try a 15-minute hands-on mini activity");
+    await expect(section).toContainText("Try a quick hands-on mini activity");
     await expect(section).toContainText("Activity Challenge: Arrange the Sequence");
     await section.locator('button:has-text("Seedling Observation")').click();
     await expect(section).toContainText("Experiment Challenge: Match the Variable");

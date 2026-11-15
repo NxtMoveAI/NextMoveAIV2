@@ -33,7 +33,7 @@ export function ExperiencePreviews() {
     },
     {
       id: "task-2",
-      title: "Try a 15-minute hands-on trial",
+      title: "Try a quick hands-on trial",
       desc: "Sketched 3 character facial expressions and colored one with digital palette.",
       done: true,
     },
@@ -393,7 +393,7 @@ export function ExperiencePreviews() {
                     Preview 2 · Hands-on Micro-Trial
                   </span>
                   <h3 className="text-xl sm:text-2xl font-extrabold text-[#171A2B]">
-                    Try a 15-minute hands-on mini activity
+                    Try a quick hands-on mini activity
                   </h3>
                 </div>
                 <span className="text-xs text-[#047857] bg-[#ECFDF5] px-3 py-1 rounded-full border border-[#A7F3D0] self-start sm:self-auto font-medium">
@@ -404,9 +404,9 @@ export function ExperiencePreviews() {
               {/* 3 Activity Selectors */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { id: "storyboard", label: "🎬 Quick Storyboard", time: "10 mins", tag: "Design" },
-                  { id: "sprout", label: "🌱 Seedling Observation", time: "15 mins", tag: "Science" },
-                  { id: "robot", label: "🤖 Bot Delivery Route", time: "15 mins", tag: "Robotics" },
+                  { id: "storyboard", label: "🎬 Quick Storyboard", time: "Flexible", tag: "Design" },
+                  { id: "sprout", label: "🌱 Seedling Observation", time: "Flexible", tag: "Science" },
+                  { id: "robot", label: "🤖 Bot Delivery Route", time: "Flexible", tag: "Robotics" },
                 ].map((act) => {
                   const isSelected = selectedTryActivity === act.id;
                   return (
@@ -604,6 +604,9 @@ export function ExperiencePreviews() {
                   </h4>
                   <p className="text-[11px] text-[#626987]">
                     Save your personal notebook and access curated paths when you sign up.
+                  </p>
+                  <p className="text-[10px] text-[#626987] mt-1.5 opacity-80">
+                    *Sample interactive preview · Not linked to live student accounts or active progress stores.
                   </p>
                 </div>
 

@@ -66,13 +66,13 @@ const STAGES: HowItWorksStage[] = [
     step: "03",
     title: "Try",
     badgeLabel: "Step 03 · Try",
-    question: "Test the work with a 15-minute trial.",
+    question: "Test the work with a quick hands-on trial.",
     shortDesc:
       "Try short, pressure-free mini activities to see what the work actually feels like. No grades, no exams—just direct hands-on experience.",
     realWorldExample: {
       title: "Hands-on Micro-Trial",
       description:
-        "In 15 minutes, arrange the code logic for a school delivery bot or tune the visual typography of an environmental festival poster.",
+        "In a short starter activity, arrange the code logic for a school delivery bot or tune the visual typography of an environmental festival poster.",
       tag: "Hands-on doing",
     },
     actionText: "Try a Mini Activity",
@@ -311,7 +311,7 @@ function StageIllustration({ stageIndex }: { stageIndex: number }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-auto max-h-[300px] select-none"
-        aria-label="Student trying a 15-minute hands-on mini activity"
+        aria-label="Student trying a hands-on mini activity"
       >
         <defs>
           <linearGradient id="hiw-bg-03" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -349,12 +349,12 @@ function StageIllustration({ stageIndex }: { stageIndex: number }) {
           <path d="M80 80 Q 95 90 105 85" stroke="#35B8C5" strokeWidth="3" strokeLinecap="round" fill="none" />
         </g>
 
-        {/* 15-Minute Trial Badge */}
-        <g transform="translate(195, 45)">
-          <rect width="130" height="34" rx="17" fill="#FFFFFF" stroke="#FDE68A" strokeWidth="1.8" />
+        {/* Quick Trial Badge */}
+        <g transform="translate(185, 45)">
+          <rect width="145" height="34" rx="17" fill="#FFFFFF" stroke="#FDE68A" strokeWidth="1.8" />
           <circle cx="20" cy="17" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
           <polyline points="20 13, 20 17, 23 17" stroke="#B45309" strokeWidth="1.5" strokeLinecap="round" />
-          <text x="35" y="21" fill="#B45309" fontSize="11" fontWeight="800">15-Min Trial</text>
+          <text x="35" y="21" fill="#B45309" fontSize="11" fontWeight="800">Quick Trial</text>
         </g>
 
         {/* Student hands-on assembling the project */}

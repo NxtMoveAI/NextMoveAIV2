@@ -26,7 +26,7 @@ const CONVERSATIONS: PartnerConversation[] = [
     chipLabel: "🎨 Drawing + Science",
     studentMessage: "I like drawing and biology. Can I explore both together?",
     partnerResponse:
-      "Yes, absolutely! You don't have to pick just one. Creative fields like medical animation, science comic design, and nature game art blend both beautifully. Would you like to try a 15-minute creative activity or see 3 real career pathways?",
+      "Yes, absolutely! You don't have to pick just one. Creative fields like medical animation, science comic design, and nature game art blend both beautifully. Would you like to try a quick creative activity or see 3 real career pathways?",
     actionText: "Try a Creative Activity",
     actionHref: "#explorer",
     takeawayTip: "You never have to force yourself into a single narrow box.",

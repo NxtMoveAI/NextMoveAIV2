@@ -35,7 +35,7 @@ const GROWTH_STAGES: GrowthStage[] = [
     stageBadge: "Stage 02 · Try",
     headline: "You build a project and test the work with your hands.",
     story:
-      "Instead of stressing over exams or distant career titles, you spend 15 minutes assembling a real project prototype. You experience what doing the work actually feels like.",
+      "Instead of stressing over exams or distant career titles, you spend a short starter session assembling a real project prototype. You experience what doing the work actually feels like.",
     takeaway: "One hands-on experiment gives more clarity than weeks of guessing.",
   },
   {

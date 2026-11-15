@@ -323,7 +323,7 @@ export function ParentSection() {
               {/* Scope Note Clarification */}
               <div className="pt-3 border-t border-[#F0EEF8] text-[11px] text-[#626987]">
                 <span>
-                  *Guardian-student collaboration features to be linked upon account activation.
+                  *Guardian-student collaboration features to be linked upon account activation. No live guardian linking is operational on the public preview.
                 </span>
               </div>
             </div>
