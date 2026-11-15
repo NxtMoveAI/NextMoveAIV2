@@ -9,6 +9,7 @@ import {
   Lock,
   Loader2,
   HeartHandshake,
+  Sparkles,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -122,6 +123,26 @@ function ParentSignUpContent() {
           <p className="text-xs text-[#31364F] leading-relaxed">
             You will receive calm milestone digests and structured discussion frameworks. Student-parent linkage requires mutual authorization—no child&apos;s private details are requested during initial parent signup.
           </p>
+        </div>
+
+        {/* Direct Exploration Option */}
+        <div className="mb-6 p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#6757F5] uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Explore Guardian Portal Preview</span>
+            </div>
+            <p className="text-xs text-[#474D66]">
+              View the parent observation hub and discussion agendas without creating credentials.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/parent"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-xs transition-colors"
+          >
+            <span>Explore Portal</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         {/* Parent Signup Form */}

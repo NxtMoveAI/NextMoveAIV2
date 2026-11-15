@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Loader2,
   Sliders,
+  Sparkles,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -102,6 +103,50 @@ function SignInContent() {
           </p>
         </div>
 
+        {/* Quick Demo Access - Direct Access to Signed-In Pages */}
+        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-[#F7F6FF] to-[#FAF8FF] border border-[#DDD8FE] text-left space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-[#6757F5] uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Explore Signed-In Workspace (Demo)</span>
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-[#6757F5] border border-[#DDD8FE]">
+              Instant Access
+            </span>
+          </div>
+          <p className="text-xs text-[#474D66] leading-relaxed">
+            Directly open the interactive student workspace or guardian portal to explore all post-signin pages:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <Link
+              href="/dashboard/student"
+              className="inline-flex items-center justify-between p-3 rounded-xl bg-white border border-[#DDD8FE] hover:border-[#6757F5] hover:shadow-xs transition-all text-left group"
+            >
+              <div>
+                <span className="text-xs font-bold text-[#171A2B] group-hover:text-[#6757F5] block">
+                  Student Workspace &rarr;
+                </span>
+                <span className="text-[10px] text-[#626987]">
+                  Home, Explore, Fit, Projects, Partner
+                </span>
+              </div>
+            </Link>
+            <Link
+              href="/dashboard/parent"
+              className="inline-flex items-center justify-between p-3 rounded-xl bg-white border border-[#DDD8FE] hover:border-[#6757F5] hover:shadow-xs transition-all text-left group"
+            >
+              <div>
+                <span className="text-xs font-bold text-[#171A2B] group-hover:text-[#6757F5] block">
+                  Guardian Portal &rarr;
+                </span>
+                <span className="text-[10px] text-[#626987]">
+                  Parent observation &amp; discussion guides
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* Sign In Form */}
         <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
           <FormField
@@ -174,19 +219,19 @@ function SignInContent() {
               <span>Backend Authentication Pending</span>
             </div>
             <p className="text-xs text-amber-900 leading-relaxed">{feedback}</p>
-            <div className="pt-1 flex flex-wrap gap-2">
+            <div className="pt-2 flex flex-col sm:flex-row gap-2">
               <Link
                 href="/dashboard/student"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-200/80 text-amber-950 text-xs font-bold hover:bg-amber-300 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs font-bold hover:bg-[#5342E8] shadow-xs transition-colors"
               >
-                <span>Student Workspace Demo</span>
+                <span>Enter Student Workspace</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/dashboard/parent"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-amber-300 text-amber-950 text-xs font-bold hover:bg-amber-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#DDD8FE] text-[#6757F5] text-xs font-bold hover:bg-[#EDEAFF] transition-colors"
               >
-                <span>Guardian Portal Demo</span>
+                <span>Enter Guardian Portal</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

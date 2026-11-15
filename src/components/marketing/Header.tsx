@@ -104,6 +104,13 @@ export function Header() {
         {/* Desktop CTA actions */}
         <div className="hidden lg:flex items-center gap-3">
           <Link
+            href="/dashboard/student"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 py-2 rounded-xl transition-colors border border-[#DDD8FE]"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Workspace Demo</span>
+          </Link>
+          <Link
             href="/sign-in"
             className="text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors"
           >
@@ -183,6 +190,14 @@ export function Header() {
               >
                 <span>Discover My Next Move</span>
                 <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/dashboard/student"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[#6757F5] font-semibold bg-[#EDEAFF] border border-[#DDD8FE] hover:bg-[#DDD8FE]"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Explore Student Workspace (Demo)</span>
               </Link>
               <Link
                 href="/sign-in"

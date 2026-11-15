@@ -152,6 +152,16 @@ export function Footer() {
                   Sign In
                 </Link>
               </li>
+              <li>
+                <Link href="/dashboard/student" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
+                  Student Workspace (Demo)
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/parent" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
+                  Guardian Portal (Demo)
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
