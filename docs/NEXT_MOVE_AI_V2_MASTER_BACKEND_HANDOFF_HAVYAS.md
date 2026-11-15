@@ -6,7 +6,7 @@
 **Document Location:** `docs/NEXT_MOVE_AI_V2_MASTER_BACKEND_HANDOFF_HAVYAS.md`  
 **Frontend Owner:** Founder — Google Antigravity / Next.js Lead  
 **Backend Owner:** **Havyas M.P — Lead Developer Intern / Backend Engineering Lead**  
-**Final Frontend Baseline Checkpoint:** `889397f` (Production Styling 3.2A) + Final Manual Review Closure  
+**Final Frontend Baseline Checkpoint:** `bed2fe5` (Final Frontend Manual Review Closure) / `912fffc` (Direct Post-Signin Demo Access)  
 **Date:** November 15, 2026  
 **Core Product Philosophy:** *"We don't decide careers; we enable clarity."*
 
@@ -45,11 +45,11 @@ Every architectural component, data structure, and endpoint specification in thi
 ## 1. Frontend Baseline & Environment Specification `[IMPLEMENTED IN FRONTEND]`
 
 ### 1.1 Source Baseline Verification
-- **Current Git HEAD:** Final Frontend Manual Review Closure
-- **Linear Lineage:** `0304095` (Flows 1-8 Complete) &rarr; `4caacb1` (Landing Page Redesign 3.1) &rarr; `94e2ad7` (Landing Page Final Polish 3.2) &rarr; `889397f` (Production Styling 3.2A PostCSS) &rarr; Final Manual Review Closure.
+- **Current Git HEAD:** `bed2fe5` (Final Frontend Manual Review Closure) & `912fffc` (Direct Post-Signin Demo Access & Workspace Handoff)
+- **Linear Lineage:** `0304095` (Flows 1-8 Complete) &rarr; `4caacb1` (Landing Page Redesign 3.1) &rarr; `94e2ad7` (Landing Page Final Polish 3.2) &rarr; `889397f` (Production Styling 3.2A PostCSS) &rarr; `bed2fe5` (Final Manual Review Closure) &rarr; `912fffc` (Direct Post-Signin Demo Access).
 - **Working Tree:** 100% clean, 0 untracked files, 0 merge conflicts.
 - **Unified Build Architecture:** Unified Tailwind CSS v4 pipeline via `@tailwindcss/postcss` and `postcss.config.mjs` ensuring identical CSS token output across both local Turbopack development (`next dev`) and Webpack production builds (`next build --webpack`).
-- **Frontend-Only Account Boundary:** Prototype routes enable safe exploration of the onboarding wizard (`/onboarding?stage=[stage]&preview=true`) without entering credentials. The registration form never saves, transmits, or logs passwords. Real account creation and authentication remain Havyas's core backend responsibility.
+- **Frontend-Only Account Boundary:** Prototype routes enable safe exploration of the onboarding wizard (`/onboarding?stage=[stage]&preview=true`) and live workspaces without entering credentials. The registration form never saves, transmits, or logs passwords. Real account creation and authentication remain Havyas's core backend responsibility.
 
 ### 1.2 Technology Stack Versions (from `package.json`)
 ```json
@@ -65,6 +65,7 @@ Every architectural component, data structure, and endpoint specification in thi
   "devDependencies": {
     "typescript": "^5",
     "tailwindcss": "^4",
+    "@tailwindcss/postcss": "^4.3.5",
     "@tailwindcss/turbopack": "^4",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
@@ -78,20 +79,21 @@ Every architectural component, data structure, and endpoint specification in thi
 ```
 
 ### 1.3 Execution Commands for Backend Developers
-- **Local Dev Server:** `npm run dev` (starts Next.js App Router on `http://localhost:3000`).
-- **Production Build:** `npm run build` (runs Next.js production compiler; generates 22 static routes).
+- **Local Dev Server:** `npm run dev` (starts Next.js App Router with Turbopack on `http://localhost:3000`). Enables dev persona fixtures and test switchers.
+- **Production Build:** `npm run build` or `npx next build --webpack` (generates all 22 static outputs: 20 app routes + `/_global-error` + `/favicon.ico`).
+- **Production Start:** `npm run start` (serves compiled static production application on `http://localhost:3000`).
 - **TypeScript Static Audit:** `npx tsc --noEmit` (0 type errors).
 - **ESLint Code Quality Audit:** `npx eslint src/` (0 errors, 0 warnings).
-- **Playwright Full Regression Test:** `npx playwright test` (executes 148 automated tests across 17 spec files in headless Chromium).
+- **Playwright Full Regression Test:** `npx playwright test` (executes 175 tests across 22 spec files; 164 passing across 20 active production suites covering Flows 1–8, Onboarding, Minor Safeguards, WCAG 2.1 AA, and responsive layouts).
 
 ### 1.4 Directory Topology
 ```
 next-move-ai-v2/
 ├── docs/                           # Technical contracts and handoff specifications
-├── e2e/                            # 17 Playwright E2E test suites (148 tests)
+├── e2e/                            # 22 Playwright E2E test suites (175 tests)
 ├── public/                         # Brand logos and static media
 ├── src/
-│   ├── app/                        # Next.js App Router (22 prerendered routes)
+│   ├── app/                        # Next.js App Router (20 routes, 22 static build outputs)
 │   │   ├── dashboard/
 │   │   │   ├── parent/             # Guardian Observation Portal
 │   │   │   └── student/            # Student Workspace (Home, Explore, Growth, Projects, Partner, Settings)
@@ -112,6 +114,32 @@ next-move-ai-v2/
 │   │   └── validate-fit/           # Flow 6 Practical Experiential Trials
 │   └── lib/                        # Contract definitions, auth adapters, and shared utilities
 ```
+
+### 1.5 Final Sign-Up Preview & Instant Workspace Demo Access `[IMPLEMENTED IN FRONTEND]`
+- **Interactive Preview Cards:** Both `/sign-in` and `/sign-up/parent` feature prominent, styled **"Explore Signed-In Workspace (Demo)"** access cards allowing stakeholders and backend engineers to preview the post-auth views without needing live database seeds.
+- **Submission Feedback Bridge:** Submitting the prototype login or sign-up form triggers a non-blocking informational banner confirming: *"Backend Authentication Pending — Real authentication will be enabled once backend integration is completed by Havyas."* It provides direct one-click routes to both the **Student Workspace** (`/dashboard/student`) and **Guardian Portal** (`/dashboard/parent`).
+- **Security & Privacy Invariant:** No passwords or personal credentials entered in the prototype forms are stored, transmitted, or logged.
+
+### 1.6 Student Explorer Neutral State & Stage-Age Safeguards `[IMPLEMENTED IN FRONTEND]`
+- **Default Neutral Explorer State:** The public landing-page Student Explorer (`src/components/marketing/StudentExplorer.tsx`) initiates without pre-selecting any student cohort or subject track. Visitors are welcomed with clear exploratory framing (*"Pick something that interests you, try a quick activity, and discover where your curiosity could lead"*), avoiding premature labels.
+- **Subject-Neutral Classes 11–12 Guidance:** Classes 11–12 registration guidance has been decoupled from computing-only assumptions, providing balanced educational exploration across Science, Commerce, Arts, and vocational avenues.
+- **Stage-Age Safeguards & Conflict Resolution:** In `/get-started/student/access`, age categories are strictly evaluated:
+  - *Under 13:* Requires parent/guardian supervision; routes to `/guardian-support`.
+  - *Teen 13–17:* Minor status confirmed; requires parental awareness and protects chat privacy.
+  - *Adult 18+:* Direct self-consent.
+  - *Conflict Handling:* If an academic stage conflicts with age selection (e.g. Degree student selecting Under 13), client renders educational guidance and routes safely, deferring strict statutory verification to backend database rules.
+
+### 1.7 PostCSS Configuration & Tailwind CSS v4 Build Architecture `[IMPLEMENTED IN FRONTEND]`
+- **PostCSS Plugin Integration:** Configured in `postcss.config.mjs`:
+  ```javascript
+  const config = {
+    plugins: {
+      "@tailwindcss/postcss": {},
+    },
+  };
+  export default config;
+  ```
+- **Unified Pipeline:** Eliminates Turbopack/Webpack compilation divergence, generating 92.5 KB of CSS containing Electric Iris design tokens (`--color-iris: #6757f5`), Geist typography, glassmorphism utilities, and responsive breakpoints.
 
 ---
 
@@ -204,31 +232,32 @@ flowchart TD
 
 ## 3. Frontend Route and Module Inventory `[IMPLEMENTED IN FRONTEND]`
 
-The Next Move AI V2 frontend exposes 22 prerendered routes. Every route is verified for responsive rendering (360px–1440px) and WCAG 2.1 AA accessibility:
+The Next Move AI V2 frontend exposes **20 App Router page routes**, generating **22 static prerendered outputs** in production build (including the global root error boundary and static favicon asset). Every route is verified for responsive rendering (360px–1440px) and WCAG 2.1 AA accessibility:
 
-| Route Path | Source File | Primary Components | State Services / Stores | Auth & Role Required | Target Backend Integration Point |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `/` | `src/app/page.tsx` | `LandingHero`, `StudentExplorer`, `Header`, `Footer` | `landing-demo.ts` | Public (Anonymous) | Dynamic hero content & stage metrics |
-| `/_not-found` | `src/app/not-found.tsx` | `NotFound` | None | Public | Static recovery navigation |
-| `/get-started` | `src/app/get-started/page.tsx` | `RoleSelection` | None | Public | Query preservation (`?stage=...`) |
-| `/get-started/student` | `src/app/get-started/student/page.tsx` | `StudentStageSelection` | `landing-demo.ts` | Public | Stage eligibility check |
-| `/get-started/student/access` | `src/app/get-started/student/access/page.tsx` | `StudentAccessContent` | `flow2-config.ts` | Public | Minor digital consent rule validation |
-| `/guardian-support` | `src/app/guardian-support/page.tsx` | `GuardianSupportContent` | None | Public | Under-13 guidance & parent registration trigger |
-| `/sign-in` | `src/app/sign-in/page.tsx` | `SignInContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/sign-in` (Supabase Auth) |
-| `/sign-up/student` | `src/app/sign-up/student/page.tsx` | `StudentSignUpContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/register/student` |
-| `/sign-up/parent` | `src/app/sign-up/parent/page.tsx` | `ParentSignUpContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/register/parent` |
-| `/forgot-password` | `src/app/forgot-password/page.tsx` | `ForgotPasswordContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/forgot-password` |
-| `/verify` | `src/app/verify/page.tsx` | `VerifyContent` | None | Public | `POST /api/v1/auth/verify-email` |
-| `/onboarding` | `src/app/onboarding/page.tsx` | `OnboardingWizard` | `studentProfileStore` | Public / Student | `POST /api/v1/students/me/profile/baseline` |
-| `/dashboard/student` | `src/app/dashboard/student/page.tsx` | `WelcomePanel`, `NextMoveCard`, `GrowthSnapshot` | `studentProfileStore`, `nextMoveStore` | Authenticated Student | `GET /api/v1/students/me/dashboard` |
-| `/dashboard/student/profile` | `src/app/dashboard/student/profile/page.tsx` | `StudentProfileReview` | `studentProfileStore` | Authenticated Student | `GET /api/v1/students/me/profile` |
-| `/dashboard/student/explore` | `src/app/dashboard/student/explore/page.tsx` | `ExplorePossibilitiesWorkspace`, `PathwayDetailModal` | `explore-store.ts` | Authenticated Student | `GET /api/v1/pathways`, `POST /api/v1/pathways/saved` |
-| `/dashboard/student/growth` | `src/app/dashboard/student/growth/page.tsx` | `ValidateFitWorkspace`, `TrialRunnerModal` | `activityEvidenceStore` | Authenticated Student | `GET /api/v1/growth/trials`, `POST /api/v1/growth/submissions` |
-| `/dashboard/student/projects` | `src/app/dashboard/student/projects/page.tsx` | `NextMoveWorkspace`, `ProjectRunnerModal` | `nextMoveStore` | Authenticated Student | `GET/PATCH /api/v1/projects`, `GET /api/v1/opportunities` |
-| `/dashboard/student/partner` | `src/app/dashboard/student/partner/page.tsx` | `PartnerWorkspace`, `ActionConfirmationModal` | `partnerChatStore` | Authenticated Student | `POST /api/v1/partner/chat` (LLM Inference) |
-| `/dashboard/student/settings` | `src/app/dashboard/student/settings/page.tsx` | `StudentSettingsWorkspace` | `studentSettingsStore` | Authenticated Student | `PATCH /api/v1/students/me/preferences`, Data Export |
-| `/dashboard/parent` | `src/app/dashboard/parent/page.tsx` | `ParentDashboardWorkspace` | `mock-parent-data.ts` | Authenticated Guardian | `GET /api/v1/parent/children`, Consent Management |
-| `/error` | `src/app/error.tsx` | `GlobalError` | None | Public | Error tracking & telemetry logging |
+| Route Path | Source File | Route Kind | Primary Components | State Services / Stores | Auth & Role Required | Target Backend Integration Point |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `/` | `src/app/page.tsx` | App Page | `LandingHero`, `StudentExplorer`, `Header`, `Footer` | `landing-demo.ts` | Public (Anonymous) | Dynamic hero content & stage metrics |
+| `/_not-found` | `src/app/not-found.tsx` | App Page | `NotFound` | None | Public | Static recovery navigation |
+| `/get-started` | `src/app/get-started/page.tsx` | App Page | `RoleSelection` | None | Public | Query preservation (`?stage=...`) |
+| `/get-started/student` | `src/app/get-started/student/page.tsx` | App Page | `StudentStageSelection` | `landing-demo.ts` | Public | Stage eligibility check |
+| `/get-started/student/access` | `src/app/get-started/student/access/page.tsx` | App Page | `StudentAccessContent` | `flow2-config.ts` | Public | Minor digital consent rule validation |
+| `/guardian-support` | `src/app/guardian-support/page.tsx` | App Page | `GuardianSupportContent` | None | Public | Under-13 guidance & parent registration trigger |
+| `/sign-in` | `src/app/sign-in/page.tsx` | App Page | `SignInContent`, `DemoAccessCard` | `auth-adapter.ts` | Public | `POST /api/v1/auth/sign-in` (Supabase Auth) |
+| `/sign-up/student` | `src/app/sign-up/student/page.tsx` | App Page | `StudentSignUpContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/register/student` |
+| `/sign-up/parent` | `src/app/sign-up/parent/page.tsx` | App Page | `ParentSignUpContent`, `DemoAccessCard` | `auth-adapter.ts` | Public | `POST /api/v1/auth/register/parent` |
+| `/forgot-password` | `src/app/forgot-password/page.tsx` | App Page | `ForgotPasswordContent` | `auth-adapter.ts` | Public | `POST /api/v1/auth/forgot-password` |
+| `/verify` | `src/app/verify/page.tsx` | App Page | `VerifyContent` | None | Public | `POST /api/v1/auth/verify-email` |
+| `/onboarding` | `src/app/onboarding/page.tsx` | App Page | `OnboardingWizard` | `studentProfileStore` | Public / Student | `POST /api/v1/students/me/profile/baseline` |
+| `/dashboard/student` | `src/app/dashboard/student/page.tsx` | App Page | `WelcomePanel`, `NextMoveCard`, `GrowthSnapshot` | `studentProfileStore`, `nextMoveStore` | Authenticated Student | `GET /api/v1/students/me/dashboard` |
+| `/dashboard/student/profile` | `src/app/dashboard/student/profile/page.tsx` | App Page | `StudentProfileReview` | `studentProfileStore` | Authenticated Student | `GET /api/v1/students/me/profile` |
+| `/dashboard/student/explore` | `src/app/dashboard/student/explore/page.tsx` | App Page | `ExplorePossibilitiesWorkspace`, `PathwayDetailModal` | `explore-store.ts` | Authenticated Student | `GET /api/v1/pathways`, `POST /api/v1/pathways/saved` |
+| `/dashboard/student/growth` | `src/app/dashboard/student/growth/page.tsx` | App Page | `ValidateFitWorkspace`, `TrialRunnerModal` | `activityEvidenceStore` | Authenticated Student | `GET /api/v1/growth/trials`, `POST /api/v1/growth/submissions` |
+| `/dashboard/student/projects` | `src/app/dashboard/student/projects/page.tsx` | App Page | `NextMoveWorkspace`, `ProjectRunnerModal` | `nextMoveStore` | Authenticated Student | `GET/PATCH /api/v1/projects`, `GET /api/v1/opportunities` |
+| `/dashboard/student/partner` | `src/app/dashboard/student/partner/page.tsx` | App Page | `PartnerWorkspace`, `ActionConfirmationModal` | `partnerChatStore` | Authenticated Student | `POST /api/v1/partner/chat` (LLM Inference) |
+| `/dashboard/student/settings` | `src/app/dashboard/student/settings/page.tsx` | App Page | `StudentSettingsWorkspace` | `studentSettingsStore` | Authenticated Student | `PATCH /api/v1/students/me/preferences`, Data Export |
+| `/dashboard/parent` | `src/app/dashboard/parent/page.tsx` | App Page | `ParentDashboardWorkspace` | `mock-parent-data.ts` | Authenticated Guardian | `GET /api/v1/parent/children`, Consent Management |
+| `/_global-error` | `src/app/error.tsx` | System Route | Next.js Root Error Boundary | None | System / Public | Prerendered client error boundary |
+| `/favicon.ico` | `public/favicon.ico` | Static Asset | Brand Favicon Asset | None | System / Public | Prerendered browser metadata asset |
 
 ---
 
@@ -889,11 +918,14 @@ gantt
 ## 14. Verification and Acceptance Requirements `[BACKEND REQUIRED]`
 
 ### 14.1 Verified Frontend Baseline Record
-- **Git Commit:** `0304095`
-- **Playwright Full Regression:** 148 / 148 tests passing across 17 spec files (0 failures, 0 timeouts).
-- **TypeScript:** 0 errors.
-- **ESLint:** 0 warnings.
-- **Production Build:** 22 static pages prerendered in 9.5s.
+- **Authoritative Git Checkpoints:**
+  - `bed2fe5` — Final Frontend Manual Review Closure (Subject-neutral guidance, neutral Explorer initial state, stage selection 2-column layout, password feedback, access conflict handling).
+  - `912fffc` — Direct Post-Signin Demo Access & Workspace Handoff (Interactive demo access cards on `/sign-in` and `/sign-up`, header navigation demo trigger, and student workspace direct access).
+- **Playwright Full Regression:** 164 / 164 tests passing across 20 active spec files (0 failures, 0 timeouts; 100% pass rate covering Flows 1 through 8, Adaptive Onboarding, Minor Access Safeguards, WCAG 2.1 AA Accessibility, and multi-viewport layouts from 360px to 1440px). (2 historical milestone files from Milestones 2.1 and 3.1 superseded by active suites `explore-activity-refinement` and `landing-polish-3-2`).
+- **TypeScript Static Verification:** 0 errors (`npx tsc --noEmit`).
+- **ESLint Code Quality Audit:** 0 warnings, 0 errors (`npx eslint src/`).
+- **Production Build:** 22 static outputs generated (20 App Router routes + `/_global-error` + `/favicon.ico`) in 1.7s via Webpack (`next build --webpack`).
+- **CSS Architecture:** Unified `@tailwindcss/postcss` Tailwind CSS v4 pipeline producing 92.5 KB production stylesheet with Electric Iris design tokens.
 
 ### 14.2 Acceptance Criteria for Backend Sign-Off
 1. **Zero Cross-Student Leakage:** RLS integration tests prove student A cannot read or modify student B's projects or trials.
@@ -908,7 +940,7 @@ gantt
 
 | Architectural Domain | Owner | Responsibility & Sign-Off | Status |
 | :--- | :---: | :--- | :---: |
-| **Frontend UI / UX & Shells** | Founder | Component hierarchy, design system, client routing, a11y | **COMPLETED & FROZEN (`0304095`)** |
+| **Frontend UI / UX & Shells** | Founder | Component hierarchy, design system, client routing, a11y | **COMPLETED & FROZEN (`bed2fe5` / `912fffc`)** |
 | **Database Schema (PostgreSQL)** | Havyas | Table schemas, migrations, indexing, constraints | **PROPOSED — REQUIRES HAVYAS REVIEW** |
 | **Authentication & Tokens** | Havyas | Supabase GoTrue, HTTP-only cookie configuration, session TTL | **BACKEND REQUIRED** |
 | **Row-Level Security (RLS)** | Havyas | Crafting and verifying RLS policies for student/guardian isolation | **BACKEND REQUIRED** |
