@@ -1,94 +1,134 @@
 "use client";
 
 import React, { useState } from "react";
-import { MY_PARTNER_SCENARIOS } from "@/data/landing-demo";
+import Link from "next/link";
 import {
   Sparkles,
-  Bot,
   User,
   ArrowRight,
-  FlaskConical,
   CheckCircle2,
-  Clock,
-  HelpCircle,
-  Lightbulb,
-  AlertCircle,
-  Calendar,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 
+interface PartnerConversation {
+  id: string;
+  category: string;
+  chipLabel: string;
+  studentMessage: string;
+  partnerResponse: string;
+  actionText: string;
+  actionHref: string;
+  relatedTips: string[];
+}
+
+const CONVERSATIONS: PartnerConversation[] = [
+  {
+    id: "curiosity",
+    category: "Curiosity & Combining Interests",
+    chipLabel: "🎨 Drawing + Science",
+    studentMessage: "I like drawing and science. Can I explore both?",
+    partnerResponse:
+      "Of course! You don't have to choose just one interest. Many exciting creative fields combine both—like scientific illustration, nature game design, and biomimicry! Would you like to try a small creative activity or see 3 pathways that connect art and science?",
+    actionText: "Explore an Activity",
+    actionHref: "#explorer",
+    relatedTips: [
+      "No need to pick a narrow track early",
+      "Creativity and technology strengthen each other",
+    ],
+  },
+  {
+    id: "uncertainty",
+    category: "Uncertainty & Low Pressure",
+    chipLabel: "🧭 Not Sure What to Learn",
+    studentMessage: "I'm not sure what I want to learn next.",
+    partnerResponse:
+      "That's completely normal—most great discoveries start with not being sure! You don't have to pick a career right now. Let's start with what made you smile recently: did you enjoy building things, reading a story, or being outdoors?",
+    actionText: "Try a Discovery Activity",
+    actionHref: "#explorer",
+    relatedTips: [
+      "Every explorer starts without knowing the whole map",
+      "One small trial gives more clarity than overthinking",
+    ],
+  },
+  {
+    id: "growth",
+    category: "Starting Small Projects",
+    chipLabel: "🚀 Start a Small Project",
+    studentMessage: "Can you help me start a small project?",
+    partnerResponse:
+      "I'd love to! A great first project takes under 30 minutes: pick a question you find intriguing, build a quick prototype, and note what you enjoyed doing. Ready to see some project sparks?",
+    actionText: "Pick a Project Spark",
+    actionHref: "#explorer",
+    relatedTips: [
+      "15–30 minutes is plenty for a first step",
+      "Hands-on doing makes learning memorable",
+    ],
+  },
+];
+
 export function MyPartnerPreview() {
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string>("class-12-pcm");
-  const [expandedPathwayIndex, setExpandedPathwayIndex] = useState<number | null>(null);
-  const scenario =
-    MY_PARTNER_SCENARIOS.find((s) => s.id === selectedScenarioId) ||
-    MY_PARTNER_SCENARIOS[0];
+  const [selectedId, setSelectedId] = useState<string>("curiosity");
+  const conversation =
+    CONVERSATIONS.find((c) => c.id === selectedId) || CONVERSATIONS[0];
 
   return (
     <section
       id="my-partner"
       className="py-16 lg:py-24 bg-[#FAF9F6] border-b border-[#E8E6F3] relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-4 border border-[#DDD8FE]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Contextual AI Guidance</span>
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-4 border border-[#DDD8FE] shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#6757F5]" />
+            <span>Meet My Partner</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#171A2B] tracking-tight">
-            Meet My Partner. Guidance that understands your journey.
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#171A2B] tracking-tight">
+            Have a question?{" "}
+            <span className="bg-gradient-to-r from-[#6757F5] via-[#8B7FF8] to-[#35B8C5] bg-clip-text text-transparent">
+              My Partner
+            </span>{" "}
+            is here to help.
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-[#31364F] leading-relaxed">
-            Not a generic chatbot that produces walls of text. My Partner is a future
-            contextual system designed to respond with structured pathways, transparent
-            uncertainties, and low-stakes starter trials.
+
+          <p className="mt-4 text-base sm:text-lg text-[#626987] leading-relaxed">
+            Explore your ideas, ask questions, and discover a next step that feels right for you.
           </p>
         </div>
 
-        {/* 3 Predetermined Student Scenario Switchers */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+        {/* Suggested Question Chips */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
           <span className="text-xs font-bold uppercase tracking-wider text-[#626987]">
-            Select Student Scenario:
+            Try an Example Question:
           </span>
           <div className="flex flex-wrap items-center justify-center gap-2">
-            {MY_PARTNER_SCENARIOS.map((sc) => {
-              const isSelected = selectedScenarioId === sc.id;
+            {CONVERSATIONS.map((conv) => {
+              const isSelected = selectedId === conv.id;
               return (
                 <button
-                  key={sc.id}
+                  key={conv.id}
                   type="button"
-                  onClick={() => setSelectedScenarioId(sc.id)}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+                  onClick={() => setSelectedId(conv.id)}
+                  className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center gap-2 ${
                     isSelected
-                      ? "bg-[#6757F5] text-white shadow-md shadow-[#6757F5]/20 ring-2 ring-[#6757F5]"
-                      : "bg-white text-[#31364F] hover:bg-[#EDEAFF] border border-[#E8E6F3]"
+                      ? "bg-[#6757F5] text-white shadow-md shadow-[#6757F5]/20 ring-2 ring-[#6757F5]/20 scale-[1.02]"
+                      : "bg-white text-[#31364F] hover:bg-[#FAF8FF] border border-[#E8E6F3] hover:border-[#DDD8FE]"
                   }`}
                 >
-                  <span>{sc.studentTag}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded ${
-                      isSelected
-                        ? "bg-white/20 text-white"
-                        : "bg-[#EDEAFF] text-[#6757F5]"
-                    }`}
-                  >
-                    {sc.stageBadge}
-                  </span>
+                  <span>{conv.chipLabel}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* The Interactive Conversation Preview Canvas */}
-        <div className="max-w-4xl mx-auto rounded-3xl bg-white border border-[#DDD8FE] shadow-xl overflow-hidden">
-          {/* Conversation Header Bar */}
-          <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171A2B] to-[#2C314E] text-white flex items-center justify-between">
+        {/* Interactive Chat Canvas Container */}
+        <div className="max-w-3xl mx-auto rounded-3xl bg-white border-2 border-[#DDD8FE] shadow-xl overflow-hidden">
+          {/* Chat Window Top Bar */}
+          <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171A2B] to-[#2B3150] text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#6757F5] flex items-center justify-center text-white shadow-sm">
-                <Bot className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-[#6757F5] flex items-center justify-center text-white shadow-sm text-lg">
+                🤖
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -96,243 +136,73 @@ export function MyPartnerPreview() {
                     My Partner
                   </h3>
                   <span className="text-[10px] bg-[#35B8C5]/20 text-[#35B8C5] px-2 py-0.5 rounded-full font-semibold border border-[#35B8C5]/30">
-                    Context-Aware Architecture
+                    Friendly Thinking Companion
                   </span>
                 </div>
                 <p className="text-[11px] text-white/70">
-                  Concept preview · No live LLM connection on public landing page
+                  Non-judgmental guidance for every learner
                 </p>
               </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs text-white/80">
-              <Sparkles className="w-4 h-4 text-[#35B8C5]" />
-              <span>Interactive Demonstration</span>
-            </div>
+            <span className="text-[11px] bg-white/10 px-2.5 py-1 rounded-full text-white/80 hidden sm:inline">
+              Example conversation
+            </span>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
-            {/* Student Message */}
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="w-9 h-9 rounded-2xl bg-[#EDEAFF] text-[#6757F5] flex items-center justify-center shrink-0 font-bold text-xs border border-[#DDD8FE]">
-                <User className="w-4 h-4" />
+          {/* Conversation Bubbles Canvas */}
+          <div className="p-6 sm:p-8 space-y-6 bg-[#FAF9F6]/50 min-h-[300px] flex flex-col justify-between">
+            <div className="space-y-4">
+              {/* Student Message Bubble (Right aligned) */}
+              <div className="flex items-start justify-end gap-3 animate-fadeIn">
+                <div className="p-4 rounded-2xl rounded-tr-xs bg-[#6757F5] text-white text-xs sm:text-sm font-medium shadow-sm max-w-md leading-relaxed">
+                  {conversation.studentMessage}
+                </div>
+                <div className="w-8 h-8 rounded-full bg-[#EDEAFF] text-[#6757F5] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                  <User className="w-4 h-4" />
+                </div>
               </div>
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#171A2B]">
-                    {scenario.studentTag}
-                  </span>
-                  <div className="flex flex-wrap gap-1">
-                    {scenario.contextPills.map((pill) => (
+
+              {/* Partner Response Bubble (Left aligned) */}
+              <div className="flex items-start gap-3 animate-fadeIn">
+                <div className="w-8 h-8 rounded-full bg-[#6757F5] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-xs">
+                  ✨
+                </div>
+                <div className="space-y-3 max-w-lg">
+                  <div className="p-5 rounded-2xl rounded-tl-xs bg-white border border-[#DDD8FE] text-xs sm:text-sm text-[#171A2B] font-normal leading-relaxed shadow-xs">
+                    {conversation.partnerResponse}
+                  </div>
+
+                  {/* Supportive Quick Principles */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {conversation.relatedTips.map((tip) => (
                       <span
-                        key={pill}
-                        className="text-[10px] font-medium bg-[#FAF9F6] text-[#626987] px-2 py-0.5 rounded-md border border-[#E8E6F3]"
+                        key={tip}
+                        className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg bg-white border border-[#E8E6F3] text-[#626987]"
                       >
-                        {pill}
+                        <CheckCircle2 className="w-3 h-3 text-[#35B8C5]" />
+                        <span>{tip}</span>
                       </span>
                     ))}
                   </div>
                 </div>
-                <div className="p-4 rounded-2xl rounded-tl-sm bg-[#FAF9F6] border border-[#E8E6F3] text-sm text-[#171A2B] font-medium leading-relaxed">
-                  &ldquo;{scenario.question}&rdquo;
-                </div>
               </div>
             </div>
 
-            {/* My Partner Structured Response */}
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="w-9 h-9 rounded-2xl bg-[#6757F5] text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-xs">
-                <Bot className="w-4 h-4" />
-              </div>
-              <div className="space-y-5 flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#6757F5] flex items-center gap-1.5">
-                    <span>My Partner Guidance</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#35B8C5]" />
-                    <span className="text-[10px] text-[#626987] font-normal">
-                      Structured Decision Response
-                    </span>
-                  </span>
-                </div>
-
-                {/* 1. Brief Acknowledgement */}
-                <div className="p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-sm text-[#31364F] leading-relaxed">
-                  {scenario.partnerResponse.acknowledgement}
-                </div>
-
-                {/* 2. Meaningful Possibilities with Expandable Details */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#626987]">
-                      Relevant Possibilities to Consider ({scenario.partnerResponse.structuredPossibilities.length}):
-                    </span>
-                    <span className="text-[11px] text-[#6757F5]">
-                      Click any card for prerequisites & context
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {scenario.partnerResponse.structuredPossibilities.map((path, idx) => {
-                      const isExpanded = expandedPathwayIndex === idx;
-                      return (
-                        <div
-                          key={path.title}
-                          className={`p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
-                            isExpanded
-                              ? "bg-white border-[#6757F5] shadow-md ring-1 ring-[#6757F5]/30"
-                              : "bg-white border-[#E8E6F3] hover:border-[#6757F5]/40 shadow-2xs"
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="text-[10px] font-bold text-[#6757F5] uppercase">
-                                Option 0{idx + 1}
-                              </span>
-                              <span className="text-[10px] font-semibold bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#E8E6F3] text-[#31364F]">
-                                {path.difficulty}
-                              </span>
-                            </div>
-                            <h4 className="text-xs font-bold text-[#171A2B] mb-1 leading-snug">
-                              {path.title}
-                            </h4>
-                            <p className="text-[11px] text-[#626987] leading-relaxed mb-2">
-                              {path.description}
-                            </p>
-                          </div>
-
-                          <div>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setExpandedPathwayIndex(isExpanded ? null : idx)
-                              }
-                              className="mt-2 pt-2 border-t border-[#F0EEF8] text-[11px] font-semibold text-[#6757F5] hover:text-[#5342E8] flex items-center justify-between w-full focus:outline-none"
-                              aria-expanded={isExpanded}
-                            >
-                              <span>{isExpanded ? "Hide Details" : "View Prerequisites & Fit"}</span>
-                              {isExpanded ? (
-                                <ChevronUp className="w-3.5 h-3.5" />
-                              ) : (
-                                <ChevronDown className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-
-                            {isExpanded && (
-                              <div className="mt-2.5 pt-2 border-t border-[#EDEAFF] space-y-1.5 text-[10px] text-[#31364F] animate-fadeIn">
-                                {path.whyItFits && (
-                                  <p>
-                                    <strong className="text-[#171A2B]">Why it fits:</strong>{" "}
-                                    {path.whyItFits}
-                                  </p>
-                                )}
-                                <p>
-                                  <strong className="text-[#6757F5]">Prerequisites:</strong>{" "}
-                                  {path.prerequisites}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 3. What Remains Unknown (Critical requirement) */}
-                <div className="p-4 rounded-2xl bg-[#FFF9F2] border border-[#FFE2C2]">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#C26B00] uppercase tracking-wider mb-2">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    <span>What Remains Unknown Today (Open Factors & Trade-offs):</span>
-                  </div>
-                  <ul className="space-y-1.5">
-                    {scenario.partnerResponse.whatRemainsUnknown.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-2 text-xs text-[#5C3B00]"
-                      >
-                        <span className="text-[#C26B00] font-bold">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* 4. Practical Starter Trial */}
-                <div className="p-4 rounded-2xl bg-[#EDEAFF]/60 border border-[#DDD8FE]">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#6757F5] uppercase tracking-wider">
-                      <FlaskConical className="w-3.5 h-3.5" />
-                      <span>Suggested Starter Micro-Trial:</span>
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#626987] flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{scenario.partnerResponse.practicalTrial.duration}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#171A2B] font-semibold mt-1">
-                    {scenario.partnerResponse.practicalTrial.action}
-                  </p>
-                  <p className="text-xs text-[#626987] mt-1">
-                    <strong>What you observe:</strong>{" "}
-                    {scenario.partnerResponse.practicalTrial.whatYouLearn}
-                  </p>
-                </div>
-
-                {/* 5. Optional Next Action & Reflection */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
-                    <div className="font-bold text-[#171A2B] mb-1 flex items-center gap-1.5">
-                      <Lightbulb className="w-3.5 h-3.5 text-[#35B8C5]" />
-                      <span>Guided Reflection:</span>
-                    </div>
-                    <p className="text-[#626987] leading-relaxed">
-                      {scenario.partnerResponse.guidedReflection}
-                    </p>
-                  </div>
-
-                  {scenario.partnerResponse.nextAction ? (
-                    <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
-                      <div className="font-bold text-[#6757F5] mb-1 flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>Recommended Next Action:</span>
-                      </div>
-                      <p className="font-semibold text-[#171A2B] mb-0.5">
-                        {scenario.partnerResponse.nextAction.title}
-                      </p>
-                      <p className="text-[#626987] leading-relaxed">
-                        {scenario.partnerResponse.nextAction.description}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6F3]">
-                      <div className="font-bold text-[#6757F5] mb-1 flex items-center gap-1.5">
-                        <HelpCircle className="w-3.5 h-3.5" />
-                        <span>Philosophy Guardrail:</span>
-                      </div>
-                      <p className="text-[#626987] leading-relaxed">
-                        {scenario.partnerResponse.mentorNote}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Demonstration Notice Banner */}
-          <div className="p-4 bg-[#FAF9F6] border-t border-[#E8E6F3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#626987]">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0" />
-              <span>
-                Demonstration of upcoming contextual guidance system. No live LLM API is active on this landing page.
+            {/* Chat Action Prompt Footer */}
+            <div className="pt-4 border-t border-[#E8E6F3] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-xs text-[#626987]">
+                Try the action My Partner suggested:
               </span>
+
+              <Link
+                href={conversation.actionHref}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] hover:bg-[#5342E8] text-white text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-[0.98]"
+              >
+                <span>{conversation.actionText}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            <a
-              href="#explorer"
-              className="inline-flex items-center gap-1 font-semibold text-[#6757F5] hover:text-[#5342E8]"
-            >
-              <span>Explore your own stage</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
           </div>
         </div>
       </div>
