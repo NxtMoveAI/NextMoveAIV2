@@ -171,7 +171,7 @@ export function TrustSection() {
                   </button>
 
                   <span className="text-[11px] text-[#626987] font-medium">
-                    Verified principle
+                    Our Commitment
                   </span>
                 </div>
               </div>

@@ -136,7 +136,7 @@ function StudentSignUpContent() {
 
     if (result.success) {
       setSubmissionFeedback(
-        "Account creation will be available once secure authentication is connected by Havyas."
+        "Account creation will be available when secure sign-in is connected. Account creation will be available once secure authentication is connected by Havyas."
       );
     } else if (result.error) {
       setErrors({ form: result.error.message });
@@ -193,8 +193,28 @@ function StudentSignUpContent() {
           </div>
         )}
 
+        {/* Direct Exploration Option (No Password Required) */}
+        <div className="mb-6 p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#6757F5] uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Explore Onboarding Preview</span>
+            </div>
+            <p className="text-xs text-[#474D66]">
+              View the student onboarding UI and interactive flow without entering credentials.
+            </p>
+          </div>
+          <Link
+            href={`/onboarding?stage=${stage.id}&preview=true`}
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-xs transition-colors"
+          >
+            <span>Explore Preview</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
         {/* Minimal Signup Form */}
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <FormField
             id="student-name"
             label="Preferred Display Name"
@@ -228,7 +248,7 @@ function StudentSignUpContent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
-            hint="Minimum 8 characters. Demo Note: Do NOT enter a real personal password; use a sample value like DemoPass123!."
+            hint="Minimum 8 characters. (Public preview: do not enter a real personal password)"
             required
             autoComplete="new-password"
           />

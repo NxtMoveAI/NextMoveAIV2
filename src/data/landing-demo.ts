@@ -2176,13 +2176,13 @@ export const PARENT_PILLARS: ParentPillar[] = [
     studentRespectNote: 'Helps parents understand modern fields (like UI/UX and Cloud) with clear, simple explanations.',
   },
   {
-    title: 'Authoritative Information & Safe Exploration',
+    title: 'Recognized Educational References & Safe Exploration',
     iconName: 'ShieldCheck',
     description:
       'Rest easy knowing your child is exploring official university guidelines, approved entrance criteria, and safe, age-appropriate activities.',
     howItWorks:
-      'All pathway guidance is researched from official educational frameworks (UGC, AICTE, NTA) without sponsored advertisements or coaching sales pitches.',
-    studentRespectNote: 'Zero predatory loan advertising, zero aggressive telecaller calls, zero data selling.',
+      'All pathway guidance is researched from public educational guidelines (UGC, AICTE, NTA) without sponsored advertisements or coaching sales pitches.',
+    studentRespectNote: 'No predatory loan advertising, no aggressive telecaller calls, and no selling of student data.',
   },
 ];
 
@@ -2203,9 +2203,9 @@ export const TRUST_PRINCIPLES: TrustPrinciple[] = [
   },
   {
     number: '02',
-    title: 'Referenced from Authoritative Frameworks',
+    title: 'Referenced from Recognized Educational Frameworks',
     description:
-      'Educational paths on this platform are curated from official educational guidelines (UGC, AICTE, NTA) and accredited academic portals rather than commercial promotional brochures.',
+      'Educational paths on this platform are curated from recognized educational guidelines (UGC, AICTE, NTA) and accredited academic portals rather than commercial promotional brochures.',
     iconName: 'BookCheck',
   },
   {
@@ -2219,14 +2219,14 @@ export const TRUST_PRINCIPLES: TrustPrinciple[] = [
     number: '04',
     title: 'Privacy by Design',
     description:
-      'Student curiosity needs a safe space to fail and try again. Exploratory notes and questions are strictly private and never commercialized or sold to third parties.',
+      'Student curiosity needs a safe space to fail and try again. Exploratory notes and questions are private by design and not sold to advertisers or third parties.',
     iconName: 'Lock',
   },
   {
     number: '05',
-    title: 'Zero Sponsored Bias',
+    title: 'Independent Educational Guidance',
     description:
-      'Our platform accepts no payments from private colleges or coaching institutes to push their admissions. Recommendations remain strictly student-aligned.',
+      'Our platform accepts no payments from private colleges or coaching institutes to push their admissions. Exploration remains strictly student-aligned.',
     iconName: 'CheckCircle2',
   },
   {

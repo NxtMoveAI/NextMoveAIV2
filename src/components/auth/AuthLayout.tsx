@@ -59,7 +59,7 @@ export function AuthLayout({
                 Next Move <span className="text-[#6757F5]">AI</span>
               </span>
               <span className="text-[10px] text-[#626987] font-medium leading-none -mt-0.5 hidden sm:block">
-                Intelligent Student Career Platform
+                Student Intelligence &amp; Decision Platform
               </span>
             </div>
           </Link>
@@ -154,7 +154,7 @@ export function AuthLayout({
               <div className="flex items-start gap-2.5 text-xs text-[#474D66]">
                 <CheckCircle2 className="w-4 h-4 text-[#35B8C5] shrink-0 mt-0.5" />
                 <span>
-                  <strong>Zero Sponsored Bias:</strong> No payments accepted from private colleges
+                  <strong>Independent Guidance:</strong> No payments accepted from private colleges
                   or coaching institutes to promote their degrees.
                 </span>
               </div>
@@ -162,13 +162,13 @@ export function AuthLayout({
                 <Lock className="w-4 h-4 text-[#6757F5] shrink-0 mt-0.5" />
                 <span>
                   <strong>Privacy by Design:</strong> Student reflections and trials are private
-                  and never commercialized.
+                  and not sold to advertisers.
                 </span>
               </div>
               <div className="flex items-start gap-2.5 text-xs text-[#474D66]">
                 <ShieldCheck className="w-4 h-4 text-[#35B8C5] shrink-0 mt-0.5" />
                 <span>
-                  <strong>Authoritative Frameworks:</strong> Referenced from official educational
+                  <strong>Recognized Frameworks:</strong> Referenced from official educational
                   guidelines (UGC, AICTE, NTA).
                 </span>
               </div>

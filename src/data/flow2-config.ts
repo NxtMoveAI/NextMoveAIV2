@@ -31,8 +31,8 @@ export const STAGE_AWARE_COPY: Record<AcademicStageId, {
   "classes-11-12": {
     tagline: "Explore your educational options and next steps.",
     focusMessage: "Streams, Degrees & Alternatives",
-    subtext: "Compare entrance exams, colleges, realistic prerequisites, and high-impact computing or research alternatives.",
-    previewFocus: "Degree Prerequisite & Trade-Off Matrix",
+    subtext: "Compare entrance exams, colleges, realistic prerequisites, and pathway possibilities across Science, Commerce, and Humanities without pressure.",
+    previewFocus: "Degree Prerequisite & Pathway Explorer",
   },
   diploma: {
     tagline: "Build on your practical learning and explore what comes next.",

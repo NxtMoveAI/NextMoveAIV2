@@ -6,8 +6,8 @@
 **Document Location:** `docs/NEXT_MOVE_AI_V2_MASTER_BACKEND_HANDOFF_HAVYAS.md`  
 **Frontend Owner:** Founder — Google Antigravity / Next.js Lead  
 **Backend Owner:** **Havyas M.P — Lead Developer Intern / Backend Engineering Lead**  
-**Final Frontend Baseline Checkpoint:** `0304095`  
-**Date:** November 3, 2026  
+**Final Frontend Baseline Checkpoint:** `889397f` (Production Styling 3.2A) + Final Manual Review Closure  
+**Date:** November 15, 2026  
 **Core Product Philosophy:** *"We don't decide careers; we enable clarity."*
 
 ---
@@ -45,9 +45,11 @@ Every architectural component, data structure, and endpoint specification in thi
 ## 1. Frontend Baseline & Environment Specification `[IMPLEMENTED IN FRONTEND]`
 
 ### 1.1 Source Baseline Verification
-- **Current Git HEAD:** Commit `0304095` (`feat: complete student settings, parent dashboard, and global error boundaries`).
-- **Linear Lineage:** `14baa68` (Flow 7) &rarr; `0f9f360` (Flow 7.1 Status Accuracy) &rarr; `2c2a055` (Flow 8 My Partner) &rarr; `0304095` (Final Complete Frontend).
+- **Current Git HEAD:** Final Frontend Manual Review Closure
+- **Linear Lineage:** `0304095` (Flows 1-8 Complete) &rarr; `4caacb1` (Landing Page Redesign 3.1) &rarr; `94e2ad7` (Landing Page Final Polish 3.2) &rarr; `889397f` (Production Styling 3.2A PostCSS) &rarr; Final Manual Review Closure.
 - **Working Tree:** 100% clean, 0 untracked files, 0 merge conflicts.
+- **Unified Build Architecture:** Unified Tailwind CSS v4 pipeline via `@tailwindcss/postcss` and `postcss.config.mjs` ensuring identical CSS token output across both local Turbopack development (`next dev`) and Webpack production builds (`next build --webpack`).
+- **Frontend-Only Account Boundary:** Prototype routes enable safe exploration of the onboarding wizard (`/onboarding?stage=[stage]&preview=true`) without entering credentials. The registration form never saves, transmits, or logs passwords. Real account creation and authentication remain Havyas's core backend responsibility.
 
 ### 1.2 Technology Stack Versions (from `package.json`)
 ```json

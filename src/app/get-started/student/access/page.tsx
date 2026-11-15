@@ -44,6 +44,20 @@ function StudentAccessContent() {
     defaultAgeId
   );
 
+  // Check if selected age category conflicts with confirmed academic stage
+  const hasStageAgeConflict =
+    (stage?.id === "classes-4-7" && selectedAge === "18_plus") ||
+    ((stage?.id === "degree-engineering" || stage?.id === "final-year-grad" || stage?.id === "diploma") &&
+      selectedAge === "under_13");
+
+  const recommendedAge = stage
+    ? stage.id === "classes-4-7"
+      ? AGE_CATEGORY_OPTIONS.find((a) => a.id === "under_13")
+      : stage.id === "classes-8-10" || stage.id === "classes-11-12"
+      ? AGE_CATEGORY_OPTIONS.find((a) => a.id === "13_to_17")
+      : AGE_CATEGORY_OPTIONS.find((a) => a.id === "18_plus")
+    : null;
+
   // Prototype state simulation switcher (for testing all 5 required conditions in dev mode)
   const [prototypeSimState, setPrototypeSimState] = useState<
     "standard" | "guardian_required" | "incomplete" | "pending" | "restricted"
@@ -206,6 +220,38 @@ function StudentAccessContent() {
             })}
           </div>
         </div>
+
+        {/* Age-Stage Mismatch Conflict Resolution */}
+        {hasStageAgeConflict && (
+          <div className="mt-4 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-left space-y-2.5 animate-fadeIn">
+            <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Stage &amp; Age Selection Conflict</span>
+            </div>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              You selected <strong>{stage.label}</strong> (typical cohort age: {stage.ageRange}), but chose{" "}
+              <strong>{AGE_CATEGORY_OPTIONS.find((o) => o.id === selectedAge)?.label}</strong>.
+              To ensure appropriate safeguards, please confirm your choice or adjust below:
+            </p>
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {recommendedAge && (
+                <button
+                  type="button"
+                  onClick={() => handleAgeChange(recommendedAge.id)}
+                  className="px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 transition-colors shadow-2xs"
+                >
+                  Switch to Recommended ({recommendedAge.label})
+                </button>
+              )}
+              <Link
+                href={`/get-started/student?stage=${stage.id}`}
+                className="px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 text-xs font-semibold hover:bg-amber-100/50 transition-colors"
+              >
+                Change Academic Stage
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Active Access Context Explanation Card */}
         <div className="mt-5 p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-3">

@@ -42,18 +42,19 @@ import {
 export function StudentExplorer() {
   // Neutral welcome state (null) for first-time visitors
   const [selectedStage, setSelectedStage] = useState<AcademicStageId | null>(null);
-  const [selectedInterest, setSelectedInterest] = useState<InterestId>("technology");
+  const [selectedInterest, setSelectedInterest] = useState<InterestId | null>(null);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(false);
 
   // Active stage fallback for matrix lookups
   const activeStageKey: AcademicStageId = selectedStage || "classes-11-12";
+  const activeInterestKey: InterestId = selectedInterest || "technology";
   const currentStageData = selectedStage
     ? ACADEMIC_STAGES.find((s) => s.id === selectedStage) || null
     : null;
 
   const currentResult =
-    EXPLORATION_MATRIX[activeStageKey]?.[selectedInterest] ||
+    EXPLORATION_MATRIX[activeStageKey]?.[activeInterestKey] ||
     EXPLORATION_MATRIX[activeStageKey]["still-exploring"];
 
   // Cohort difficulty tier
@@ -270,7 +271,7 @@ export function StudentExplorer() {
               </h3>
             </div>
             <span className="text-xs text-[#626987] font-medium hidden sm:inline">
-              {selectedStage ? `Selected: ${currentStageData?.label}` : "Click your stage to begin"}
+              {selectedStage ? `Selected: ${currentStageData?.label}` : "Click your stage to begin · Or view sample below"}
             </span>
           </div>
 
@@ -289,7 +290,12 @@ export function StudentExplorer() {
                   type="button"
                   role="radio"
                   aria-checked={isSelected}
-                  onClick={() => setSelectedStage(stage.id)}
+                  onClick={() => {
+                    setSelectedStage(stage.id);
+                    if (!selectedInterest) {
+                      setSelectedInterest("technology");
+                    }
+                  }}
                   className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] ${
                     isSelected
                       ? "bg-[#6757F5] text-white border-[#5342E8] shadow-md shadow-[#6757F5]/25 scale-[1.02]"
@@ -355,7 +361,9 @@ export function StudentExplorer() {
               </h3>
             </div>
             <span className="text-xs text-[#626987] font-medium hidden sm:inline">
-              Unsure? Try &ldquo;Still Exploring&rdquo;
+              {selectedInterest
+                ? `Selected: ${INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label}`
+                : "Choose a topic that sparks your interest · Unsure? Try “Still Exploring”"}
             </span>
           </div>
 
@@ -443,12 +451,16 @@ export function StudentExplorer() {
               <Sparkles className="w-7 h-7 animate-pulse text-[#6757F5]" />
             </div>
 
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#DDD8FE] text-xs font-semibold text-[#6757F5] mb-3">
+              <span>Sample Exploration Preview</span>
+            </div>
+
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[#171A2B] tracking-tight">
               Ready to explore your possibilities?
             </h3>
 
             <p className="mt-3 text-sm sm:text-base text-[#31364F] max-w-xl mx-auto leading-relaxed">
-              Select your learning stage above (from Classes 4–7 through College & Graduate) to unlock a friendly hands-on activity and tailored pathways.
+              Select your learning stage above (from Classes 4–7 through College &amp; Graduate) to unlock a friendly hands-on activity and tailored pathways. Or click below to try a sample preview.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-[#626987]">
@@ -469,7 +481,10 @@ export function StudentExplorer() {
             <div className="mt-8 pt-6 border-t border-[#F0EEF8] flex items-center justify-center">
               <button
                 type="button"
-                onClick={() => setSelectedStage("classes-11-12")}
+                onClick={() => {
+                  setSelectedStage("classes-11-12");
+                  setSelectedInterest("technology");
+                }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#6757F5]/20 hover:bg-[#5342E8] transition-all"
               >
                 <span>Try Sample (Classes 11 – 12)</span>
@@ -488,7 +503,7 @@ export function StudentExplorer() {
                     {currentStageData?.label}
                   </span>
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white text-[#31364F] border border-[#E8E6F3]">
-                    {INTEREST_OPTIONS.find((i) => i.id === selectedInterest)?.label}
+                    {INTEREST_OPTIONS.find((i) => i.id === activeInterestKey)?.label}
                   </span>
                   <span className="text-xs text-[#626987] font-medium ml-1">
                     Tone: {currentStageData?.focusTone}

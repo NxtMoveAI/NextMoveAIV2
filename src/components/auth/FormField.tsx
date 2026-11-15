@@ -30,19 +30,12 @@ export function FormField({
 
   return (
     <div className="space-y-1.5 text-left">
-      <div className="flex items-center justify-between">
-        <label
-          htmlFor={inputId}
-          className="block text-xs font-bold text-[#171A2B]"
-        >
-          {label} {required && <span className="text-[#6757F5]">*</span>}
-        </label>
-        {hint && (
-          <span id={hintId} className="text-[11px] text-[#626987]">
-            {hint}
-          </span>
-        )}
-      </div>
+      <label
+        htmlFor={inputId}
+        className="block text-xs font-bold text-[#171A2B]"
+      >
+        {label} {required && <span className="text-[#6757F5]">*</span>}
+      </label>
 
       <div className="relative">
         <input
@@ -76,6 +69,12 @@ export function FormField({
           </button>
         )}
       </div>
+
+      {hint && !error && (
+        <p id={hintId} className="text-[11px] text-[#626987] leading-tight">
+          {hint}
+        </p>
+      )}
 
       {error && (
         <p

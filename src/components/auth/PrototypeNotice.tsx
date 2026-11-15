@@ -7,7 +7,7 @@ interface PrototypeNoticeProps {
 }
 
 export function PrototypeNotice({
-  message = "Design & UX Preview · Live authentication will be connected by Havyas in the upcoming backend release. No credentials are stored or persisted in demo mode.",
+  message = "Design & UX Preview · Account creation will be available when secure sign-in is connected. No credentials are stored or persisted in demo mode.",
   className = "",
 }: PrototypeNoticeProps) {
   return (
@@ -20,7 +20,7 @@ export function PrototypeNotice({
       <div className="space-y-1">
         <div className="flex items-center gap-1.5 font-bold text-[#6757F5] text-[11px] uppercase tracking-wider">
           <ShieldCheck className="w-3.5 h-3.5 text-[#35B8C5]" />
-          <span>Frontend Prototype Scope Notice</span>
+          <span>Public Preview Notice</span>
         </div>
         <p className="text-[11px] text-[#474D66]">{message}</p>
       </div>

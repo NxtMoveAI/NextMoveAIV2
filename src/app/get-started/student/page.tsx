@@ -143,7 +143,7 @@ function StudentStageSelectionContent() {
             <div
               role="radiogroup"
               aria-label="Academic Stage Choices"
-              className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
             >
               {ACADEMIC_STAGES.map((stg) => {
                 const isSelected = selectedStageId === stg.id;
