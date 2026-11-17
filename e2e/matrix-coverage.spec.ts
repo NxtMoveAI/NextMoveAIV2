@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resolveMicroActivity, MICRO_ACTIVITIES_CATALOG } from '../src/features/onboarding/data/activities';
+import { resolveMicroActivity } from '../src/features/onboarding/data/activities';
 import { type AcademicStageId } from '../src/data/landing-demo';
 import * as fs from 'fs';
 import * as path from 'path';
