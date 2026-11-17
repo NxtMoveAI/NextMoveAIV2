@@ -3,11 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { AudienceNav } from "./AudienceNav";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,13 +44,14 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
+  const prefix = isHomePage ? "" : "/";
   const navLinks = [
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Explore", href: "#explorer" },
-    { label: "Experience", href: "#experiences" },
-    { label: "My Partner", href: "#my-partner" },
-    { label: "For Parents", href: "#for-parents" },
-    { label: "FAQ", href: "#faq" },
+    { label: "How It Works", href: `${prefix}#how-it-works` },
+    { label: "Explore", href: `${prefix}#explorer` },
+    { label: "Experience", href: `${prefix}#experiences` },
+    { label: "My Partner", href: `${prefix}#my-partner` },
+    { label: "For Parents", href: `${prefix}#for-parents` },
+    { label: "FAQ", href: `${prefix}#faq` },
   ];
 
   return (
@@ -79,22 +84,27 @@ export function Header() {
                 Next Move <span className="text-[#6757F5]">AI</span>
               </span>
             </div>
-            <span className="text-[11px] text-[#626987] font-medium hidden sm:inline-block">
+            <span className="text-[11px] text-[#626987] font-medium hidden 2xl:inline-block">
               Student Intelligence & Decision Platform
             </span>
           </div>
         </Link>
 
+        {/* Audience Navigation */}
+        <div className="hidden md:flex items-center shrink-0">
+          <AudienceNav />
+        </div>
+
         {/* Desktop Navigation */}
         <nav
-          className="hidden lg:flex items-center gap-1 xl:gap-2"
+          className="hidden lg:flex items-center gap-0.5 xl:gap-1 shrink-0"
           aria-label="Primary navigation"
         >
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-[#31364F] hover:text-[#6757F5] px-3 py-2 rounded-lg hover:bg-[#EDEAFF]/60 transition-colors"
+              className="text-xs xl:text-sm font-medium text-[#31364F] hover:text-[#6757F5] px-2 xl:px-3 py-1.5 rounded-lg hover:bg-[#EDEAFF]/60 transition-colors whitespace-nowrap"
             >
               {link.label}
             </a>
@@ -102,23 +112,23 @@ export function Header() {
         </nav>
 
         {/* Desktop CTA actions */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
           <Link
             href="/dashboard/student"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 py-2 rounded-xl transition-colors border border-[#DDD8FE]"
+            className="hidden xl:inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Workspace Demo</span>
           </Link>
           <Link
             href="/sign-in"
-            className="text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors"
+            className="text-xs xl:text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-3 xl:px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors shrink-0"
           >
             Sign In
           </Link>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
           >
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -151,8 +161,18 @@ export function Header() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-20 z-50 md:hidden flex flex-col bg-[#FAF9F6]/95 backdrop-blur-xl border-t border-[#E8E6F3] animate-fadeIn">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation Menu"
+          className="fixed inset-0 top-20 z-50 lg:hidden flex flex-col bg-[#FAF9F6]/95 backdrop-blur-xl border-t border-[#E8E6F3] animate-fadeIn"
+        >
           <div className="p-6 flex flex-col justify-between h-[calc(100vh-5rem)] overflow-y-auto">
+            {/* Audience Journeys in Drawer */}
+            <div className="pb-4 mb-4 border-b border-[#E8E6F3]">
+              <AudienceNav variant="drawer" />
+            </div>
+
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-wider font-semibold text-[#626987] px-3 mb-2">
                 Explore Sections

@@ -22,6 +22,12 @@ import {
   STAGE_AWARE_COPY,
   getStageOrNull,
   getStageById,
+  isValidSituation,
+  isValidAudience,
+  isValidAcademicContext,
+  type AcademicContextParam,
+  SITUATION_CONFIG,
+  ACADEMIC_CONTEXT_CONFIG,
 } from "@/data/flow2-config";
 
 const STEPS: StepItem[] = [
@@ -44,9 +50,15 @@ function StudentStageSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const stageParam = searchParams.get("stage");
+  const situationParam = searchParams.get("situation");
+  const audienceParam = searchParams.get("audience");
+  const contextParam = searchParams.get("context");
 
   const initialStage = getStageOrNull(stageParam);
   const hasInitialValidStage = initialStage !== null;
+  const validatedSituation = isValidSituation(situationParam) ? situationParam : null;
+  const validatedAudience = isValidAudience(audienceParam) ? audienceParam : null;
+  const validatedContext = isValidAcademicContext(contextParam) ? (contextParam as AcademicContextParam) : null;
 
   // If a valid stage was passed from landing page, initialize with it.
   // CRITICAL CORRECTION: If missing or invalid, do NOT preselect any stage.
@@ -60,14 +72,26 @@ function StudentStageSelectionContent() {
 
   const handleContinue = () => {
     if (!selectedStageId) return;
-    router.push(`/get-started/student/access?stage=${selectedStageId}`);
+    const params = new URLSearchParams();
+    params.set("stage", selectedStageId);
+    if (validatedSituation) params.set("situation", validatedSituation);
+    if (validatedAudience) params.set("audience", validatedAudience);
+    if (validatedContext) params.set("context", validatedContext);
+    router.push(`/get-started/student/access?${params.toString()}`);
   };
+
+  const backParams = new URLSearchParams();
+  if (selectedStageId) backParams.set("stage", selectedStageId);
+  if (validatedSituation) backParams.set("situation", validatedSituation);
+  if (validatedAudience) backParams.set("audience", validatedAudience);
+  if (validatedContext) backParams.set("context", validatedContext);
+  const backHref = backParams.toString() ? `/get-started?${backParams.toString()}` : "/get-started";
 
   return (
     <AuthLayout
       role="student"
       stageParam={selectedStageId}
-      backHref="/get-started"
+      backHref={backHref}
       backLabel="Change Role"
       activeStep={2}
       totalSteps={4}
@@ -89,6 +113,20 @@ function StudentStageSelectionContent() {
           <p className="mt-2 text-xs sm:text-sm text-[#626987]">
             We adjust our guidance to your current educational context—never forcing a career prediction.
           </p>
+
+          {validatedSituation && (
+            <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4338CA] bg-[#E0E7FF] px-3 py-1 rounded-full border border-[#C7D2FE]">
+              <Compass className="w-3.5 h-3.5 text-[#4338CA]" />
+              <span>Learning Situation: {SITUATION_CONFIG[validatedSituation].label} ({SITUATION_CONFIG[validatedSituation].title})</span>
+            </div>
+          )}
+
+          {validatedContext && (
+            <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4338CA] bg-[#EEF2FF] px-3 py-1 rounded-full border border-[#C7D2FE]">
+              <Cpu className="w-3.5 h-3.5 text-[#4338CA]" />
+              <span>Focus: {ACADEMIC_CONTEXT_CONFIG[validatedContext].label} ({ACADEMIC_CONTEXT_CONFIG[validatedContext].description})</span>
+            </div>
+          )}
         </div>
 
         {/* State 1: Recognized Stage from Landing Page (Clean Confirmation) */}
@@ -111,6 +149,15 @@ function StudentStageSelectionContent() {
               <p className="text-xs text-[#474D66] leading-relaxed">
                 {stageCopy.subtext}
               </p>
+
+              {validatedContext && activeStage.id === "degree-engineering" && (
+                <div className="pt-2 border-t border-[#DDD8FE] flex items-center gap-1.5 text-xs text-[#6757F5]">
+                  <Cpu className="w-3.5 h-3.5 shrink-0" />
+                  <span>
+                    Focus Track: <strong>{ACADEMIC_CONTEXT_CONFIG[validatedContext].label}</strong> ({ACADEMIC_CONTEXT_CONFIG[validatedContext].description})
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 text-xs text-[#626987] flex items-center justify-between">
@@ -126,7 +173,7 @@ function StudentStageSelectionContent() {
           </div>
         ) : (
           /* State 2: Full Stage Selection List (6 Compatible Stage IDs) */
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="flex items-center justify-between text-xs text-[#626987] pb-1">
               <span>Select the stage that best matches your current status:</span>
               {hasInitialValidStage && (
@@ -140,12 +187,12 @@ function StudentStageSelectionContent() {
               )}
             </div>
 
-            <div
-              role="radiogroup"
-              aria-label="Academic Stage Choices"
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-            >
-              {ACADEMIC_STAGES.map((stg) => {
+            {(() => {
+              const SCHOOL_STAGE_IDS = ["classes-4-7", "classes-8-10", "classes-11-12"];
+              const schoolStages = ACADEMIC_STAGES.filter((s) => SCHOOL_STAGE_IDS.includes(s.id));
+              const collegeStages = ACADEMIC_STAGES.filter((s) => !SCHOOL_STAGE_IDS.includes(s.id));
+
+              const renderStageItem = (stg: (typeof ACADEMIC_STAGES)[number]) => {
                 const isSelected = selectedStageId === stg.id;
                 const copy = STAGE_AWARE_COPY[stg.id];
 
@@ -202,8 +249,78 @@ function StudentStageSelectionContent() {
                     </div>
                   </div>
                 );
-              })}
-            </div>
+              };
+
+              if (validatedAudience === "school") {
+                return (
+                  <div className="space-y-5" role="radiogroup" aria-label="Academic Stage Choices">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#269CA8] bg-[#E0F7F6] px-2.5 py-0.5 rounded-full border border-[#B2EBF2]">
+                          Next Move Explore — School Stages
+                        </span>
+                        <span className="text-[11px] text-[#626987]">Recommended for school students</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {schoolStages.map(renderStageItem)}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5 pt-2 border-t border-[#E8E6F3]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] bg-[#EDEAFF] px-2.5 py-0.5 rounded-full border border-[#DDD8FE]">
+                          Next Move Build — Higher Education
+                        </span>
+                        <span className="text-[11px] text-[#626987]">Diploma & Degree pathways</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {collegeStages.map(renderStageItem)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (validatedAudience === "college") {
+                return (
+                  <div className="space-y-5" role="radiogroup" aria-label="Academic Stage Choices">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] bg-[#EDEAFF] px-2.5 py-0.5 rounded-full border border-[#DDD8FE]">
+                          Next Move Build — College & Degrees
+                        </span>
+                        <span className="text-[11px] text-[#626987]">Recommended for college students</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {collegeStages.map(renderStageItem)}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5 pt-2 border-t border-[#E8E6F3]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#269CA8] bg-[#E0F7F6] px-2.5 py-0.5 rounded-full border border-[#B2EBF2]">
+                          Next Move Explore — School Stages
+                        </span>
+                        <span className="text-[11px] text-[#626987]">Classes 4 through 12</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {schoolStages.map(renderStageItem)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  role="radiogroup"
+                  aria-label="Academic Stage Choices"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                >
+                  {ACADEMIC_STAGES.map(renderStageItem)}
+                </div>
+              );
+            })()}
           </div>
         )}
 

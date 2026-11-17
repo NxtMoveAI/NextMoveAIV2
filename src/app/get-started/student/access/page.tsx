@@ -17,7 +17,14 @@ import { AuthCard } from "@/components/auth/AuthCard";
 import { StepIndicator, type StepItem } from "@/components/auth/StepIndicator";
 import { StageBadge } from "@/components/auth/StageBadge";
 import { PrototypeNotice } from "@/components/auth/PrototypeNotice";
-import { getValidatedStage, AGE_CATEGORY_OPTIONS } from "@/data/flow2-config";
+import {
+  getValidatedStage,
+  AGE_CATEGORY_OPTIONS,
+  isValidSituation,
+  isValidAudience,
+  isValidAcademicContext,
+  type AcademicContextParam,
+} from "@/data/flow2-config";
 
 const STEPS: StepItem[] = [
   { number: 1, label: "Role" },
@@ -30,7 +37,14 @@ function StudentAccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const stageParam = searchParams.get("stage");
+  const situationParam = searchParams.get("situation");
+  const audienceParam = searchParams.get("audience");
+  const contextParam = searchParams.get("context");
+
   const stage = getValidatedStage(stageParam);
+  const validatedSituation = isValidSituation(situationParam) ? situationParam : null;
+  const validatedAudience = isValidAudience(audienceParam) ? audienceParam : null;
+  const validatedContext = isValidAcademicContext(contextParam) ? (contextParam as AcademicContextParam) : null;
 
   // Non-binding initial age recommendation based on confirmed stage
   const defaultAgeId: "under_13" | "13_to_17" | "18_plus" =
@@ -110,22 +124,45 @@ function StudentAccessContent() {
   };
 
   const handleProceed = () => {
+    const baseParams = new URLSearchParams();
+    baseParams.set("stage", stage.id);
+    if (validatedSituation) baseParams.set("situation", validatedSituation);
+    if (validatedAudience) baseParams.set("audience", validatedAudience);
+    if (validatedContext) baseParams.set("context", validatedContext);
+
     if (prototypeSimState === "guardian_required" || selectedAge === "under_13") {
-      router.push(`/guardian-support?stage=${stage.id}`);
+      const guardianParams = new URLSearchParams();
+      guardianParams.set("stage", stage.id);
+      if (validatedAudience) guardianParams.set("audience", validatedAudience);
+      if (validatedContext) guardianParams.set("context", validatedContext);
+      router.push(`/guardian-support?${guardianParams.toString()}`);
     } else if (prototypeSimState === "pending") {
-      router.push(`/verify?type=guardian_pending&stage=${stage.id}`);
+      const pendingParams = new URLSearchParams();
+      pendingParams.set("type", "guardian_pending");
+      pendingParams.set("stage", stage.id);
+      if (validatedContext) pendingParams.set("context", validatedContext);
+      router.push(`/verify?${pendingParams.toString()}`);
     } else if (selectedAge === "13_to_17") {
-      router.push(`/sign-up/student?stage=${stage.id}&access=teen`);
+      baseParams.set("access", "teen");
+      router.push(`/sign-up/student?${baseParams.toString()}`);
     } else {
-      router.push(`/sign-up/student?stage=${stage.id}&access=adult`);
+      baseParams.set("access", "adult");
+      router.push(`/sign-up/student?${baseParams.toString()}`);
     }
   };
+
+  const backParams = new URLSearchParams();
+  backParams.set("stage", stage.id);
+  if (validatedSituation) backParams.set("situation", validatedSituation);
+  if (validatedAudience) backParams.set("audience", validatedAudience);
+  if (validatedContext) backParams.set("context", validatedContext);
+  const backHref = `/get-started/student?${backParams.toString()}`;
 
   return (
     <AuthLayout
       role="student"
       stageParam={stage.id}
-      backHref={`/get-started/student?stage=${stage.id}`}
+      backHref={backHref}
       backLabel="Back to Stage"
       activeStep={3}
       totalSteps={4}

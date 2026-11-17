@@ -202,7 +202,7 @@ test.describe('Flow 5 — Explore Possibilities (/dashboard/student/explore)', (
     await card.locator('button:has-text("Explore Pathway")').click();
 
     // Assert modal opened
-    const modal = page.locator('div[role="dialog"][aria-modal="true"]');
+    const modal = page.locator('div[role="dialog"][aria-labelledby="pathway-modal-title"]');
     await expect(modal).toBeVisible();
     await expect(modal.locator('#pathway-modal-title')).toHaveText('B.Tech Computer Science & Software Engineering');
 

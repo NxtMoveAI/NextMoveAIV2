@@ -98,6 +98,153 @@ export function getValidatedStage(stageParam: string | null | undefined): Academ
 }
 
 // =============================================================================
+// 2B. LEARNING SITUATION & AUDIENCE VALIDATORS (PROMPT 6)
+// Keeps Academic Stage, Learning Situation, Audience, and Account Role strictly separate.
+// =============================================================================
+
+export type LearningSituationId = "discover" | "begin" | "progress";
+
+export const VALID_SITUATIONS: LearningSituationId[] = ["discover", "begin", "progress"];
+
+export function isValidSituation(situation: string | null | undefined): situation is LearningSituationId {
+  if (!situation) return false;
+  return VALID_SITUATIONS.includes(situation as LearningSituationId);
+}
+
+export const SITUATION_CONFIG: Record<
+  LearningSituationId,
+  {
+    label: string;
+    title: string;
+    description: string;
+    defaultStage: AcademicStageId;
+  }
+> = {
+  discover: {
+    label: "Discover",
+    title: "Explore Interests & Direction",
+    description: "Uncertain what direction fits best; explore disciplines and emerging possibilities without commitment.",
+    defaultStage: "degree-engineering",
+  },
+  begin: {
+    label: "Begin",
+    title: "Build Fundamental Capabilities",
+    description: "Know the general direction; start building structured foundational capabilities and practical projects.",
+    defaultStage: "degree-engineering",
+  },
+  progress: {
+    label: "Progress",
+    title: "Advance & Demonstrated Projects",
+    description: "Already have skills and projects; prepare for practical internships, higher education or career transition.",
+    defaultStage: "final-year-grad",
+  },
+};
+
+export type AudienceId = "school" | "college" | "professionals";
+
+export const VALID_AUDIENCES: AudienceId[] = ["school", "college", "professionals"];
+
+export function isValidAudience(audience: string | null | undefined): audience is AudienceId {
+  if (!audience) return false;
+  return VALID_AUDIENCES.includes(audience as AudienceId);
+}
+
+export const AUDIENCE_CONFIG: Record<
+  AudienceId,
+  {
+    label: string;
+    badge: string;
+    description: string;
+  }
+> = {
+  school: {
+    label: "School (Classes 4–12)",
+    badge: "Next Move Explore",
+    description: "Curiosity, creativity, foundational skills, and stream exploration.",
+  },
+  college: {
+    label: "College & Higher Ed",
+    badge: "Next Move Build",
+    description: "Discover, Begin, and Progress pathways for Diploma, Degree, and Engineering.",
+  },
+  professionals: {
+    label: "Experienced Professionals",
+    badge: "Next Move Grow (Research)",
+    description: "Transferable skills and career growth. Currently in research and development.",
+  },
+};
+
+// =============================================================================
+// 2C. ACCOUNT ROLE VALIDATORS (PROMPT 6.1)
+// Validates account role query parameters against the strict Flow 2 contract.
+// =============================================================================
+
+export type AccountRoleId = "student" | "parent";
+
+export const VALID_ACCOUNT_ROLES: AccountRoleId[] = ["student", "parent"];
+
+export function isValidAccountRole(role: string | null | undefined): role is AccountRoleId {
+  if (!role) return false;
+  return VALID_ACCOUNT_ROLES.includes(role as AccountRoleId);
+}
+
+// =============================================================================
+// 2D. ACADEMIC CONTEXT VALIDATORS (PROMPT 7)
+// Distinguishes Degree vs Engineering and other specialized stream contexts
+// without mutating the canonical 6 academic stage IDs.
+// =============================================================================
+
+export type AcademicContextParam = "degree" | "engineering" | "diploma" | "final-year-grad" | "bca";
+
+export const VALID_ACADEMIC_CONTEXTS: AcademicContextParam[] = [
+  "degree",
+  "engineering",
+  "diploma",
+  "final-year-grad",
+  "bca",
+];
+
+export function isValidAcademicContext(ctx: string | null | undefined): ctx is AcademicContextParam {
+  if (!ctx) return false;
+  return VALID_ACADEMIC_CONTEXTS.includes(ctx as AcademicContextParam);
+}
+
+export const ACADEMIC_CONTEXT_CONFIG: Record<
+  AcademicContextParam,
+  {
+    label: string;
+    focus: string;
+    description: string;
+  }
+> = {
+  degree: {
+    label: "Degree Focus",
+    focus: "BCA · B.Com · BBA · B.Sc",
+    description: "Multi-disciplinary undergraduate programs, applied business and technical foundations.",
+  },
+  engineering: {
+    label: "Engineering Focus",
+    focus: "B.Tech · B.E. Disciplines",
+    description: "Applied engineering, core architecture, algorithms and systems design.",
+  },
+  diploma: {
+    label: "Diploma Focus",
+    focus: "Polytechnic & Applied Tech",
+    description: "Hands-on technical diploma, lateral entry pathways, and practical engineering skills.",
+  },
+  "final-year-grad": {
+    label: "Transition Focus",
+    focus: "Capstone & Graduation",
+    description: "Preparation for post-graduate education, verified project portfolios, and career transitions.",
+  },
+  bca: {
+    label: "BCA Focus",
+    focus: "Computer Applications & Scripting",
+    description: "Computer applications, scripting, databases, and portfolio software development.",
+  },
+};
+
+// =============================================================================
 // 3. AGE & ACCESS CONTEXT DEFINITIONS (3-Tier Framework)
 // =============================================================================
 

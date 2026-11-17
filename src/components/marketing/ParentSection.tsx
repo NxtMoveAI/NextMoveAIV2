@@ -175,59 +175,71 @@ export function ParentSection() {
           </p>
         </div>
 
-        {/* 3 Simple Parent Benefits */}
+        {/* 3 Core Ecosystem Support Pillars: Parents, Schools, Colleges */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+          {/* Pillar 1: Parents */}
           <div className="p-6 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs hover:border-[#6757F5]/30 transition-all flex flex-col justify-between">
             <div>
               <div className="w-11 h-11 rounded-2xl bg-[#EDEAFF] text-[#6757F5] flex items-center justify-center text-xl mb-4 shadow-xs">
-                🧭
+                💬
               </div>
+              <span className="text-[11px] font-bold text-[#6757F5] uppercase tracking-wider block mb-1">
+                For Parents &amp; Families
+              </span>
               <h3 className="text-lg font-bold text-[#171A2B] mb-2 leading-snug">
                 Understand Their Journey
               </h3>
               <p className="text-xs sm:text-sm text-[#626987] leading-relaxed">
-                See age-appropriate learning updates and project milestones without intrusive surveillance.
+                Encourage constructive, positive dinner-table discussions about discoveries and interests without intrusive surveillance or pressure.
               </p>
             </div>
             <div className="mt-5 pt-3 border-t border-[#F0EEF8] flex items-center gap-1.5 text-[11px] font-semibold text-[#6757F5]">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Transparent &amp; student-respectful</span>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs hover:border-[#6757F5]/30 transition-all flex flex-col justify-between">
-            <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#E0F7FA] text-[#00838F] flex items-center justify-center text-xl mb-4 shadow-xs">
-                💬
-              </div>
-              <h3 className="text-lg font-bold text-[#171A2B] mb-2 leading-snug">
-                Talk About Possibilities
-              </h3>
-              <p className="text-xs sm:text-sm text-[#626987] leading-relaxed">
-                Use thoughtful questions to turn dinner-table discussions into positive, open chats about their interests.
-              </p>
-            </div>
-            <div className="mt-5 pt-3 border-t border-[#F0EEF8] flex items-center gap-1.5 text-[11px] font-semibold text-[#00838F]">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Positive, pressure-free dialogue</span>
             </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs hover:border-[#6757F5]/30 transition-all flex flex-col justify-between">
+          {/* Pillar 2: Schools */}
+          <div className="p-6 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs hover:border-[#35B8C5]/30 transition-all flex flex-col justify-between">
+            <div>
+              <div className="w-11 h-11 rounded-2xl bg-[#E0F7FA] text-[#00838F] flex items-center justify-center text-xl mb-4 shadow-xs">
+                🏫
+              </div>
+              <span className="text-[11px] font-bold text-[#00838F] uppercase tracking-wider block mb-1">
+                For Schools &amp; Educators
+              </span>
+              <h3 className="text-lg font-bold text-[#171A2B] mb-2 leading-snug">
+                Talk About Possibilities
+              </h3>
+              <p className="text-xs sm:text-sm text-[#626987] leading-relaxed">
+                Introduce exploration, low-stakes starter activities, and cross-subject practical micro-challenges that spark curiosity before streaming.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-[#F0EEF8] flex items-center gap-1.5 text-[11px] font-semibold text-[#00838F]">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Early curiosity &amp; stream clarity</span>
+            </div>
+          </div>
+
+          {/* Pillar 3: Colleges */}
+          <div className="p-6 rounded-3xl bg-white border border-[#E8E6F3] shadow-xs hover:border-[#10B981]/30 transition-all flex flex-col justify-between">
             <div>
               <div className="w-11 h-11 rounded-2xl bg-[#ECFDF5] text-[#047857] flex items-center justify-center text-xl mb-4 shadow-xs">
-                🌱
+                🎓
               </div>
+              <span className="text-[11px] font-bold text-[#047857] uppercase tracking-wider block mb-1">
+                For Colleges &amp; Higher Ed
+              </span>
               <h3 className="text-lg font-bold text-[#171A2B] mb-2 leading-snug">
                 Support Their Choices
               </h3>
               <p className="text-xs sm:text-sm text-[#626987] leading-relaxed">
-                Help students explore options and learn from small experiments without pressuring them into a fixed path.
+                Connect coursework with practical capability development, project portfolios, and structured next-move transitions.
               </p>
             </div>
             <div className="mt-5 pt-3 border-t border-[#F0EEF8] flex items-center gap-1.5 text-[11px] font-semibold text-[#047857]">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Clarity over premature verdicts</span>
+              <span>Practical capability over exam hype</span>
             </div>
           </div>
         </div>

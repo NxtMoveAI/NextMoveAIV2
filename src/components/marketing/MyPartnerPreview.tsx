@@ -155,7 +155,7 @@ export function MyPartnerPreview() {
           </h2>
 
           <p className="mt-4 text-base sm:text-lg text-[#626987] leading-relaxed">
-            Explore your ideas, ask questions, and discover a next step that feels right for you.
+            A learning companion that helps you explore, understand, practise, reflect and identify what to try next.
           </p>
         </div>
 

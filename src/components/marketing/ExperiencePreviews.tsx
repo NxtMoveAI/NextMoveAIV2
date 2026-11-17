@@ -79,7 +79,7 @@ export function ExperiencePreviews() {
         </div>
 
         {/* 3 Core Experience Tabs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
           <div
             role="tablist"
             aria-label="Platform Experience Previews"
@@ -138,6 +138,14 @@ export function ExperiencePreviews() {
           </div>
         </div>
 
+        {/* Explicit Non-assessment Demonstration Disclosure */}
+        <div className="max-w-2xl mx-auto mb-8 p-3 rounded-2xl bg-[#FAF9F6] border border-[#DDD8FE] shadow-xs flex items-center justify-center gap-2 text-xs text-[#626987] text-center">
+          <Sparkles className="w-3.5 h-3.5 text-[#6757F5] shrink-0" />
+          <span>
+            <strong>Demonstration Samples:</strong> Examples shown are interactive walkthroughs, not saved learning records or verified assessments.
+          </span>
+        </div>
+
         {/* The Display Showcase Area */}
         <div className="max-w-4xl mx-auto rounded-3xl bg-[#FAF9F6] border-2 border-[#DDD8FE] p-6 sm:p-8 lg:p-10 shadow-lg shadow-[#6757F5]/5">
           {/* TAB 1: EXPLORE AN INTEREST */}
@@ -157,10 +165,11 @@ export function ExperiencePreviews() {
                 </span>
               </div>
 
-              {/* 4 Clean Curiosity Selectors */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {/* Clean Curiosity Selectors with School & College Focus */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                 {[
-                  { id: "creative-tech", label: "🎨 Creative Arts", desc: "Animation & Design" },
+                  { id: "creative-tech", label: "🎨 Creative Arts", desc: "School · Storyboarding" },
+                  { id: "college-data", label: "📊 Practical Data", desc: "College · Applied Python" },
                   { id: "nature-science", label: "🌿 Nature Lab", desc: "Plants & Ecology" },
                   { id: "code-making", label: "🤖 Maker Project", desc: "Robotics & Circuits" },
                   { id: "community-stories", label: "📢 Stories & Media", desc: "Podcasts & Writing" },
@@ -238,6 +247,46 @@ export function ExperiencePreviews() {
                           className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] hover:text-[#5342E8]"
                         >
                           <span>Explore similar creative sparks</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedInterest === "college-data" && (
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    {/* Visual Code & Data Mockup */}
+                    <div className="md:col-span-7 bg-[#0F172A] rounded-xl p-4 border border-[#334155] text-left text-white font-mono">
+                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#334155]">
+                        <span className="text-xs font-bold text-[#38BDF8]">data_analysis.py</span>
+                        <span className="text-[10px] bg-[#1E293B] px-2 py-0.5 rounded text-[#94A3B8]">College Practical Trial</span>
+                      </div>
+                      <div className="space-y-1.5 text-xs text-[#E2E8F0] mb-3">
+                        <p className="text-[#64748B]"># Step 1: Clean and inspect sensor dataset</p>
+                        <p><span className="text-[#F43F5E]">import</span> pandas <span className="text-[#F43F5E]">as</span> pd</p>
+                        <p>df = pd.read_csv(<span className="text-[#A5F3FC]">&apos;campus_energy.csv&apos;</span>)</p>
+                        <p>peak_hours = df[df[<span className="text-[#A5F3FC]">&apos;load_kw&apos;</span>] &gt; 450]</p>
+                        <p className="text-[#34D399]">print(f&quot;Found &#123;len(peak_hours)&#125; peak load anomalies&quot;)</p>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-[#1E293B] border border-[#334155] text-[11px] text-[#38BDF8]">
+                        ✓ Output: 14 peak anomalies detected between 14:00 and 17:00.
+                      </div>
+                    </div>
+
+                    {/* Explanatory Details */}
+                    <div className="md:col-span-5 space-y-3">
+                      <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider block">College Practical Skill</span>
+                      <h4 className="text-lg font-black text-[#171A2B]">Data Analytics &amp; Applied Python</h4>
+                      <p className="text-xs sm:text-sm text-[#626987] leading-relaxed">
+                        College students test real-world scenarios: parsing live sensor feeds, finding anomalies, and drafting actionable insights before starting complex capstone projects.
+                      </p>
+                      <div className="pt-2">
+                        <Link
+                          href="/college"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2563EB] hover:text-[#1D4ED8]"
+                        >
+                          <span>Explore college project paths</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>

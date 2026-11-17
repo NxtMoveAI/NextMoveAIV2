@@ -25,7 +25,7 @@ test.describe('Flow 1–3 Accessibility & Multi-Viewport Responsiveness Audit', 
     // Assert unique DOM elements before axe analysis
     const heading = page.locator('h1').first();
     await expect(heading).toBeVisible();
-    await expect(heading).toContainText(/(Your next move starts with understanding you|Discover what excites you)/i);
+    await expect(heading).toContainText(/(Your next move starts with understanding you|Discover what excites you|Discover what you can learn)/i);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

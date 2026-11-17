@@ -31,7 +31,7 @@ export function Footer() {
                   </span>
                 </div>
                 <span className="text-[11px] text-white/60 font-medium">
-                  Student Intelligence & Decision Platform
+                  Student Intelligence, Skill Development &amp; Continuous Growth Platform
                 </span>
               </div>
             </Link>
@@ -55,29 +55,29 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="hover:text-white transition-colors">
                   01. Understand Me
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="hover:text-white transition-colors">
                   02. Explore Possibilities
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="hover:text-white transition-colors">
                   03. Make Informed Choices
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="hover:text-white transition-colors">
                   04. Build My Next Move
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="/#how-it-works" className="hover:text-white transition-colors">
                   Continuous Growth Loop
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -85,38 +85,38 @@ export function Footer() {
           {/* Column: Target Audiences */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white/90 mb-4">
-              Who We Help
+              Audience Journeys
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
               <li>
-                <a href="#explorer" className="hover:text-white transition-colors">
-                  Middle School (Classes 4–7)
-                </a>
+                <Link href="/school" className="hover:text-[#35B8C5] transition-colors font-medium">
+                  Next Move Explore (School 4–12)
+                </Link>
               </li>
               <li>
-                <a href="#explorer" className="hover:text-white transition-colors">
-                  High School (Classes 8–10)
-                </a>
+                <Link href="/college" className="hover:text-[#35B8C5] transition-colors font-medium">
+                  Next Move Build (College & Degrees)
+                </Link>
               </li>
               <li>
-                <a href="#explorer" className="hover:text-white transition-colors">
-                  Pre-University (Classes 11–12)
-                </a>
+                <Link href="/professionals" className="hover:text-[#35B8C5] transition-colors font-medium">
+                  Next Move Grow (Professionals Preview)
+                </Link>
               </li>
               <li>
-                <a href="#explorer" className="hover:text-white transition-colors">
-                  Diploma & Polytechnic
-                </a>
-              </li>
-              <li>
-                <a href="#explorer" className="hover:text-white transition-colors">
-                  Degree & Engineering
-                </a>
-              </li>
-              <li>
-                <a href="#for-parents" className="hover:text-white transition-colors">
+                <Link href="/school#for-parents" className="hover:text-white transition-colors">
                   Parents & Families
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/student" className="hover:text-white transition-colors">
+                  Student Workspace (Demo)
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/parent" className="hover:text-white transition-colors">
+                  Guardian Portal (Demo)
+                </Link>
               </li>
             </ul>
           </div>
@@ -128,19 +128,19 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
               <li>
-                <a href="#my-partner" className="hover:text-white transition-colors">
+                <Link href="/#my-partner" className="hover:text-white transition-colors">
                   Meet My Partner
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#experiences" className="hover:text-white transition-colors">
+                <Link href="/#experiences" className="hover:text-white transition-colors">
                   Interactive Previews
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition-colors">
+                <Link href="/#faq" className="hover:text-white transition-colors">
                   FAQ & Pricing Beta
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href="/get-started" className="hover:text-white transition-colors">
@@ -172,7 +172,7 @@ export function Footer() {
             <span>© 2026 Next Move AI. All rights reserved.</span>
             <span className="hidden sm:inline">·</span>
             <span className="font-semibold text-white/90">
-              A product by Navlore AI Technologies LLP.
+              A brand of Navlore AI Technologies LLP.
             </span>
           </div>
 

@@ -39,12 +39,26 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-export function StudentExplorer() {
-  // Neutral welcome state (null) for first-time visitors
-  const [selectedStage, setSelectedStage] = useState<AcademicStageId | null>(null);
+export interface StudentExplorerProps {
+  allowedStages?: AcademicStageId[];
+  initialStage?: AcademicStageId | null;
+  className?: string;
+}
+
+export function StudentExplorer({
+  allowedStages,
+  initialStage = null,
+  className = "",
+}: StudentExplorerProps = {}) {
+  // Neutral welcome state (null) for first-time visitors unless specified
+  const [selectedStage, setSelectedStage] = useState<AcademicStageId | null>(initialStage);
   const [selectedInterest, setSelectedInterest] = useState<InterestId | null>(null);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(false);
+
+  const displayedStages = allowedStages
+    ? ACADEMIC_STAGES.filter((s) => allowedStages.includes(s.id))
+    : ACADEMIC_STAGES;
 
   // Active stage fallback for matrix lookups
   const activeStageKey: AcademicStageId = selectedStage || "classes-11-12";
@@ -228,7 +242,7 @@ export function StudentExplorer() {
   return (
     <section
       id="explorer"
-      className="py-16 lg:py-24 bg-white border-y border-[#E8E6F3] relative overflow-hidden"
+      className={`py-16 lg:py-24 bg-white border-y border-[#E8E6F3] relative overflow-hidden ${className}`}
     >
       {/* Decorative Background Lighting */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#EDEAFF] rounded-full blur-3xl opacity-40 pointer-events-none -translate-y-1/2" />
@@ -280,7 +294,7 @@ export function StudentExplorer() {
             aria-label="Academic Cohort Selection"
             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3"
           >
-            {ACADEMIC_STAGES.map((stage) => {
+            {displayedStages.map((stage) => {
               const isSelected = selectedStage === stage.id;
               const StageIcon = getStageIcon(stage.id);
 

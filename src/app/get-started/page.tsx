@@ -9,36 +9,86 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
+  Briefcase,
+  Compass,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { isValidStageId } from "@/data/flow2-config";
+import {
+  isValidStageId,
+  isValidSituation,
+  isValidAudience,
+  isValidAccountRole,
+  isValidAcademicContext,
+  type AccountRoleId,
+  type AcademicContextParam,
+  getStageById,
+  SITUATION_CONFIG,
+  ACADEMIC_CONTEXT_CONFIG,
+} from "@/data/flow2-config";
 
 function GetStartedRoleSelection() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const stageParam = searchParams.get("stage");
-  const validatedStage = isValidStageId(stageParam) ? stageParam : null;
 
-  const [selectedRole, setSelectedRole] = useState<"student" | "parent" | null>(null);
+  // Safely extract and validate allowlisted incoming query parameters
+  const stageParam = searchParams.get("stage");
+  const situationParam = searchParams.get("situation");
+  const audienceParam = searchParams.get("audience");
+  const roleParam = searchParams.get("role");
+  const contextParam = searchParams.get("context");
+
+  const validatedStage = isValidStageId(stageParam) ? stageParam : null;
+  const validatedSituation = isValidSituation(situationParam) ? situationParam : null;
+  const validatedAudience = isValidAudience(audienceParam) ? audienceParam : null;
+  const validatedRole: AccountRoleId | null = isValidAccountRole(roleParam) ? roleParam : null;
+  const validatedContext: AcademicContextParam | null = isValidAcademicContext(contextParam) ? contextParam : null;
+
+  const [selectedRole, setSelectedRole] = useState<AccountRoleId | null>(validatedRole);
 
   const handleContinue = () => {
     if (selectedRole === "student") {
-      const target = validatedStage
-        ? `/get-started/student?stage=${validatedStage}`
-        : "/get-started/student";
-      router.push(target);
+      const params = new URLSearchParams();
+      if (validatedStage) params.set("stage", validatedStage);
+      if (validatedSituation) params.set("situation", validatedSituation);
+      if (validatedAudience) params.set("audience", validatedAudience);
+      if (validatedContext) params.set("context", validatedContext);
+      const queryStr = params.toString() ? `?${params.toString()}` : "";
+      router.push(`/get-started/student${queryStr}`);
     } else if (selectedRole === "parent") {
-      router.push("/sign-up/parent");
+      const params = new URLSearchParams();
+      if (validatedStage) params.set("stage", validatedStage);
+      if (validatedAudience) params.set("audience", validatedAudience);
+      if (validatedContext) params.set("context", validatedContext);
+      const queryStr = params.toString() ? `?${params.toString()}` : "";
+      router.push(`/sign-up/parent${queryStr}`);
     }
   };
+
+  const backDestination =
+    validatedAudience === "school"
+      ? "/school"
+      : validatedAudience === "college"
+      ? "/college"
+      : validatedAudience === "professionals"
+      ? "/professionals"
+      : "/";
+
+  const backLabel =
+    validatedAudience === "school"
+      ? "Return to School Page"
+      : validatedAudience === "college"
+      ? "Return to College Page"
+      : validatedAudience === "professionals"
+      ? "Return to Professionals Page"
+      : "Return to Landing Page";
 
   return (
     <AuthLayout
       role="general"
       stageParam={validatedStage}
-      backHref="/"
-      backLabel="Return to Landing Page"
+      backHref={backDestination}
+      backLabel={backLabel}
     >
       <AuthCard>
         <div className="text-center mb-6 sm:mb-8">
@@ -55,6 +105,57 @@ function GetStartedRoleSelection() {
             Tell us how you&apos;d like to begin.
           </p>
         </div>
+
+        {/* Professional Safety Banner (When arriving from /professionals) */}
+        {validatedAudience === "professionals" && (
+          <div className="mb-6 p-4 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] text-left space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#1E40AF]">
+              <Briefcase className="w-4 h-4 text-[#2563EB]" />
+              <span>Professional Tracks in Research &amp; Development</span>
+            </div>
+            <p className="text-xs text-[#1E3A8A] leading-relaxed">
+              Next Move Grow for working professionals is currently in active research and prototyping. Active student onboarding is designed for <strong>School</strong> (Classes 4–12) and <strong>College</strong> (Higher Ed) learners. You may explore our student/parent workspaces below, or return to the professional research preview.
+            </p>
+            <div className="pt-1">
+              <Link
+                href="/professionals"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2563EB] hover:underline"
+              >
+                <span>Return to Professional Preview</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Preserved Context Summary Badges (If coming with valid context) */}
+        {(validatedStage || validatedSituation || validatedContext) && (
+          <div className="mb-6 p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#DDD8FE] text-left space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#6757F5] block">
+              Recognized Learning Context:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {validatedStage && (
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6757F5] bg-[#EDEAFF] px-2.5 py-1 rounded-lg">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#6757F5]" />
+                  <span>Stage: {getStageById(validatedStage).label}</span>
+                </div>
+              )}
+              {validatedContext && (
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563EB] bg-[#EFF6FF] px-2.5 py-1 rounded-lg border border-[#DBEAFE]">
+                  <GraduationCap className="w-3.5 h-3.5 text-[#2563EB]" />
+                  <span>{ACADEMIC_CONTEXT_CONFIG[validatedContext].label}: {ACADEMIC_CONTEXT_CONFIG[validatedContext].focus}</span>
+                </div>
+              )}
+              {validatedSituation && (
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4338CA] bg-[#E0E7FF] px-2.5 py-1 rounded-lg">
+                  <Compass className="w-3.5 h-3.5 text-[#4338CA]" />
+                  <span>Situation: {SITUATION_CONFIG[validatedSituation].label} ({SITUATION_CONFIG[validatedSituation].title})</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Role Selection Cards */}
         <div

@@ -19,11 +19,11 @@ test.describe("Hero Visual Refinement 1.4 — Curiosity Spark & Storytelling Scr
 
     // 3. Verify Headline
     const headline = page.locator("h1").first();
-    await expect(headline).toContainText("Discover what excites you.");
-    await expect(headline).toContainText("Build what comes next.");
+    await expect(headline).toContainText(/(Discover what excites you|Discover what you can learn)/i);
+    await expect(headline).toContainText(/(Build what comes next|Build what you can do)/i);
 
     // 4. Verify Supporting Copy
-    const copy = page.locator("text=Explore your interests, try new things, discover possibilities, and grow with guidance that understands your journey.").first();
+    const copy = page.locator("p").filter({ hasText: /Explore (your|new) interests/i }).first();
     await expect(copy).toBeVisible();
 
     // 5. Verify Primary CTA

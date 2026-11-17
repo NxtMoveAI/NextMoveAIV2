@@ -29,10 +29,10 @@ export function Hero() {
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-[#171A2B] tracking-tight leading-[1.14]">
-              Discover what excites you.{" "}
+              Discover what you can learn.{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 text-[#6757F5]">
-                  Build what comes next.
+                  Build what you can do.
                 </span>
                 <span
                   className="absolute bottom-1 sm:bottom-2 left-0 w-full h-2.5 sm:h-3 bg-[#35B8C5]/20 -z-0 rounded"
@@ -43,8 +43,7 @@ export function Hero() {
 
             {/* Supporting Description */}
             <p className="mt-6 text-lg sm:text-xl text-[#31364F] leading-relaxed max-w-2xl font-normal">
-              Explore your interests, try new things, discover possibilities,
-              and grow with guidance that understands your journey.
+              Explore new interests, try practical experiences, develop meaningful skills, and take your next step with confidence.
             </p>
 
             {/* CTAs */}
