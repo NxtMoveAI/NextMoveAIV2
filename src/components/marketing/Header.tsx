@@ -6,12 +6,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
 import { AudienceNav } from "./AudienceNav";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const isMarketing = useIsMarketingMode();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -112,37 +114,67 @@ export function Header() {
         </nav>
 
         {/* Desktop CTA actions */}
-        <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
-          <Link
-            href="/dashboard/student"
-            className="hidden xl:inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Workspace Demo</span>
-          </Link>
-          <Link
-            href="/sign-in"
-            className="text-xs xl:text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-3 xl:px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors shrink-0"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/get-started"
-            className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
-          >
-            <span>Get Started</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+        <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0" suppressHydrationWarning>
+          {!isMarketing ? (
+            <>
+              <Link
+                href="/dashboard/student"
+                className="hidden xl:inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Workspace Demo</span>
+              </Link>
+              <Link
+                href="/sign-in"
+                className="text-xs xl:text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-3 xl:px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors shrink-0"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/get-started"
+                className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <a
+                href={isHomePage ? "#explorer" : "/#explorer"}
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs xl:text-sm font-semibold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Try Explorer</span>
+              </a>
+              <a
+                href="mailto:partnerships@nextmove.ai?subject=Institutional%20Pilot%20Inquiry"
+                className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
+              >
+                <span>Pilot Inquiries</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex lg:hidden items-center gap-2">
-          <Link
-            href="/get-started"
-            className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
-          >
-            Get Started
-          </Link>
+        <div className="flex lg:hidden items-center gap-2" suppressHydrationWarning>
+          {!isMarketing ? (
+            <Link
+              href="/get-started"
+              className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
+            >
+              Get Started
+            </Link>
+          ) : (
+            <a
+              href={isHomePage ? "#explorer" : "/#explorer"}
+              className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
+            >
+              Try Explorer
+            </a>
+          )}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -203,29 +235,51 @@ export function Header() {
                 </div>
               </div>
 
-              <Link
-                href="/get-started"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
-              >
-                <span>Discover My Next Move</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/dashboard/student"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[#6757F5] font-semibold bg-[#EDEAFF] border border-[#DDD8FE] hover:bg-[#DDD8FE]"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Explore Student Workspace (Demo)</span>
-              </Link>
-              <Link
-                href="/sign-in"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center py-2.5 px-4 rounded-xl text-[#31364F] font-semibold bg-white border border-[#DDD8FE] hover:bg-[#FAF9F6]"
-              >
-                Sign In
-              </Link>
+              {!isMarketing ? (
+                <>
+                  <Link
+                    href="/get-started"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
+                  >
+                    <span>Discover My Next Move</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/dashboard/student"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[#6757F5] font-semibold bg-[#EDEAFF] border border-[#DDD8FE] hover:bg-[#DDD8FE]"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Explore Student Workspace (Demo)</span>
+                  </Link>
+                  <Link
+                    href="/sign-in"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center py-2.5 px-4 rounded-xl text-[#31364F] font-semibold bg-white border border-[#DDD8FE] hover:bg-[#FAF9F6]"
+                  >
+                    Sign In
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <a
+                    href={isHomePage ? "#explorer" : "/#explorer"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25"
+                  >
+                    <span>Try Interactive Explorer</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="mailto:partnerships@nextmove.ai?subject=Institutional%20Pilot%20Inquiry"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[#6757F5] font-semibold bg-[#EDEAFF] border border-[#DDD8FE] hover:bg-[#DDD8FE]"
+                  >
+                    <span>Institutional Pilot Inquiries</span>
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>

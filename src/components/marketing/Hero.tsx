@@ -9,8 +9,10 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { StudentJourneyShowcase } from "./hero/StudentJourneyShowcase";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 
 export function Hero() {
+  const isMarketing = useIsMarketingMode();
   return (
     <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 bg-[#FAF9F6]">
       {/* Background subtle radial gradients */}
@@ -47,14 +49,24 @@ export function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
-              <Link
-                href="/get-started"
-                className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_10px_25px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_14px_30px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
-              >
-                <span>Explore Your Next Move</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto" suppressHydrationWarning>
+              {!isMarketing ? (
+                <Link
+                  href="/get-started"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_10px_25px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_14px_30px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
+                >
+                  <span>Explore Your Next Move</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              ) : (
+                <a
+                  href="#explorer"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_10px_25px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_14px_30px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
+                >
+                  <span>Try Interactive Explorer</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              )}
 
               <a
                 href="#how-it-works"

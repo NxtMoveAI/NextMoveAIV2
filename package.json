@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test:prod": "playwright test e2e/college-landing-prompt4.spec.ts e2e/explore-activity-refinement.spec.ts e2e/flow1-landing.spec.ts e2e/flow2-auth-entry.spec.ts e2e/flow3-matrix.spec.ts e2e/flow3-personas.spec.ts e2e/homepage-refinement-prompt2.spec.ts e2e/integration-closure-prompt6-1.spec.ts e2e/integration-prompt6.spec.ts e2e/landing-polish-3-2.spec.ts e2e/matrix-coverage.spec.ts e2e/professionals-landing-prompt5.spec.ts e2e/prompt7-ux-audit.spec.ts e2e/school-landing-prompt3.spec.ts e2e/smoke.spec.ts e2e/stage-fallback.spec.ts",
     "test:dev": "playwright test e2e/flow4-1-integrity.spec.ts e2e/flow4-dashboard.spec.ts e2e/flow5-explore.spec.ts e2e/flow6-validate-fit.spec.ts e2e/flow7-build-next-move.spec.ts e2e/flow8-my-partner.spec.ts",
+    "test:marketing": "playwright test e2e/marketing-mode-isolation.spec.ts",
     "test:all": "npm run test:prod && npm run test:dev",
     "test:historical": "playwright test e2e/a11y-responsive.spec.ts e2e/cross-flow-integration.spec.ts e2e/explore-redesign-verification.spec.ts e2e/final-completion.spec.ts e2e/hero-redesign-verification.spec.ts e2e/landing-redesign-3-1.spec.ts"
   },

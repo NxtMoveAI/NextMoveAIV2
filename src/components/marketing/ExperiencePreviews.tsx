@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 import {
   Sparkles,
   Compass,
@@ -16,6 +17,7 @@ type PreviewTab = "explore" | "try" | "plan";
 
 export function ExperiencePreviews() {
   const [activeTab, setActiveTab] = useState<PreviewTab>("explore");
+  const isMarketing = useIsMarketingMode();
 
   // Preview 1: Selected Curiosity
   const [selectedInterest, setSelectedInterest] = useState<string>("creative-tech");
@@ -660,10 +662,10 @@ export function ExperiencePreviews() {
                 </div>
 
                 <Link
-                  href="/get-started/student"
+                  href={isMarketing ? "#explorer" : "/get-started/student"}
                   className="px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs font-bold hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/20 shrink-0 transition-all"
                 >
-                  Start Your Learning Notebook
+                  {isMarketing ? "Try Interactive Explorer" : "Start Your Learning Notebook"}
                 </Link>
               </div>
             </div>

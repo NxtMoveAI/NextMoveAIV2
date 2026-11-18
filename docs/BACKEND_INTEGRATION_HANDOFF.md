@@ -16,16 +16,25 @@ This document establishes the authoritative, strongly-typed integration boundary
 
 In the frontend release candidate:
 - **Public Marketing Pages** (`/`, `/school`, `/college`, `/professionals`) are completely stateless and expose no live account generation.
-- **Server Middleware** (`src/middleware.ts`) isolates prototype routes when running in marketing mode (`DEPLOYMENT_MODE=marketing`), redirecting unauthenticated or general public visitors to `/preview-restricted`.
-- **Demonstration Workspaces** (`/dashboard/student/*`, `/dashboard/parent`, `/onboarding`) utilize browser-scoped `sessionStorage` mock adapters solely for controlled institutional evaluation and automated Playwright regression testing.
+- **Next.js 16 Proxy Architecture (`src/proxy.ts`):** Replaces deprecated `middleware.ts` conventions with Next.js 16's official proxy pattern. Enforces a **fail-closed security policy**: in production, any missing, empty, or misspelled `DEPLOYMENT_MODE` fails closed to public marketing preview mode, intercepting prototype routes with HTTP 307 redirects before any client bundle or state is served. Only explicitly authorized demo mode (`DEPLOYMENT_MODE=demo`) unlocks prototype routes for controlled evaluations.
+- **Demonstration Workspaces** (`/dashboard/student/*`, `/dashboard/parent`, `/onboarding`) utilize window-session-scoped `sessionStorage` mock adapters solely for controlled institutional evaluation and automated Playwright regression testing.
 - **Production Integration Requirement:** Real visitor authentication, encrypted credential storage, verifiable parental consent under the Digital Personal Data Protection (DPDP) Act, and persistent student evidence logging must be implemented by Havyas M.P. against this contract.
 
 ---
 
 ## 2. Authentication & Session Hygiene (HTTP-Only Cookies)
 
-### 2.1 Rejection of Client-Side Storage for Sensitive Credentials
+### 2.1 Rejection of Client-Side Storage for Sensitive Credentials & Storage Lifecycle Realities
 The frontend strictly prohibits storing JWT access tokens, refresh tokens, passwords, or session secrets in `localStorage` or `sessionStorage`. Storing bearer tokens in web storage exposes learners to cross-site scripting (XSS) credential exfiltration.
+
+#### Technical Storage Lifecycle Audit:
+1. **No "RAM-Only" Guarantee:** `sessionStorage` is not volatile memory (RAM-only). Browser engines (Blink/Chromium, WebKit, Gecko) persist `sessionStorage` to disk-backed SQLite/LevelDB caches during active browser sessions.
+2. **Persistence Across Page Reloads:** `sessionStorage` survives intentional or accidental page reloads (`F5` / `Ctrl+R`) and internal single-page navigation.
+3. **Cloning on Tab Duplication:** When a browser tab is duplicated (via browser context menu, `Ctrl+T` duplicate, or script-initiated window clone), the browser engine creates an exact clone of the parent tab's `sessionStorage` in the new tab.
+4. **Restoration on Session Recovery:** When a browser crashes, or when a user closes and restores a tab (`Ctrl+Shift+T`), or restarts a browser with *"On startup: Open where you left off"*, modern browsers restore the entire `sessionStorage` state.
+5. **Shared Device / Kiosk Risks:** On shared institutional workstations, if a student leaves a browser window open, subsequent users have access to that tab's `sessionStorage` unless an explicit manual sign-out / reset (`sessionStorage.clear()`) is performed.
+
+Because of these realities, Next Move AI's frontend uses `sessionStorage` exclusively for transient, synthetic mock fixtures. Production authentication must never use browser storage and must rely entirely on the HTTP-only cookie architecture below.
 
 ### 2.2 Dual-Cookie Partitioned Session Model
 The production backend must implement an enterprise-grade dual-cookie authentication scheme over HTTPS/TLS:
@@ -180,10 +189,13 @@ The frontend architecture is partitioned into six canonical academic cohorts. Th
 | `classes-11-12` | `classes_11_12` | Pre-University / Senior Secondary | Classes 11–12 | Academic stream exploration (Science, Commerce, Arts), practical clarity |
 | `diploma` | `diploma` | Polytechnic & Applied Technical | 3-Year Diploma | Hands-on technical skills, industry application blueprints, career bridges |
 | `degree-engineering` | `degree_engineering` | Undergraduate Higher Education | B.Tech / B.E. / Degree | Project prototypes, multidisciplinary trials, industry readiness |
-| `final-year-graduate` | `final_year_graduate` | Career Launch & Post-Graduation | Final Year / Early Career | Capstone evidence, transition reality checks, professional portfolio |
+| `final-year-grad` | `final_year_grad` | Career Launch & Post-Graduation | Final Year / Early Career | Capstone evidence, transition reality checks, professional portfolio |
 
-### 4.1 Stage Fallback Resilience
-In scenarios where an incoming request lacks a validated stage (e.g. unauthenticated deep links), both frontend and backend must gracefully default to `classes-11-12` as the reference curriculum standard, preventing unhandled exceptions or 500 crashes.
+### 4.1 Neutral Academic Stage Selection & Missing Context Handling
+In accordance with pedagogical integrity invariants, when an incoming request to authenticated registration, onboarding (`/onboarding`), or profile setup lacks an established academic stage context or contains an invalid identifier:
+- **Zero Silent Defaulting:** The system **MUST NEVER silently default or pre-select Class 12 (`classes-11-12`) or any other stage**. Silent defaulting distorts student evidence, biases recommendations, and masks navigation defects.
+- **Explicit User Stage Selection Required:** The system must actively present the neutral 6-stage selection screen (*"Select your academic stage to begin"*), requiring the student to explicitly choose their current cohort before proceeding, as verified by `e2e/stage-fallback.spec.ts` (`STAGE.1` and `STAGE.2`).
+- **Anonymous Marketing Demonstrations:** Only in completely unauthenticated public marketing previews where no learner record or session is being created may the UI display a neutral reference sample for demonstrative illustration.
 
 ---
 

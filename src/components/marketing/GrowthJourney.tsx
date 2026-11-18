@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 import {
   Sparkles,
   ArrowRight,
@@ -368,6 +369,7 @@ function GrowthWorldScene({ stepIndex }: { stepIndex: number }) {
 
 export function GrowthJourney() {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const isMarketing = useIsMarketingMode();
   const stage = GROWTH_STAGES[activeStep];
 
   const handleNext = () => {
@@ -482,10 +484,10 @@ export function GrowthJourney() {
                 </div>
 
                 <Link
-                  href="/get-started/student"
+                  href={isMarketing ? "#explorer" : "/get-started/student"}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] hover:text-[#5342E8]"
                 >
-                  <span>Start Your Trail</span>
+                  <span>{isMarketing ? "Explore Pathways" : "Start Your Trail"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

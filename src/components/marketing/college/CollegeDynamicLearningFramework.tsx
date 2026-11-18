@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 import {
   Compass,
   Sparkles,
@@ -177,6 +178,8 @@ const DISCOVER_DOMAINS: DiscoverDomain[] = [
 ];
 
 export function CollegeDynamicLearningFramework() {
+  const isMarketing = useIsMarketingMode();
+
   // Situation State: Discover / Begin / Progress
   const [activeSituation, setActiveSituation] = useState<LearningSituation>("discover");
 
@@ -648,10 +651,10 @@ export function CollegeDynamicLearningFramework() {
                       </span>
                     </div>
                     <Link
-                      href={`/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=discover&audience=college`}
+                      href={isMarketing ? "#college-projects" : `/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=discover&audience=college`}
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#6757F5]/20 hover:bg-[#5342E8] transition-all shrink-0"
                     >
-                      <span>Start Discover Path</span>
+                      <span>{isMarketing ? "Explore Practical Projects" : "Start Discover Path"}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
@@ -821,10 +824,10 @@ export function CollegeDynamicLearningFramework() {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                   <Link
-                    href={`/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=begin&audience=college`}
+                    href={isMarketing ? "#college-projects" : `/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=begin&audience=college`}
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#6757F5] text-white text-xs font-bold hover:bg-[#5342E8] shadow-sm shadow-[#6757F5]/20 transition-all shrink-0"
                   >
-                    <span>Continue with Begin Plan</span>
+                    <span>{isMarketing ? "View Project Showcase" : "Continue with Begin Plan"}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -1006,10 +1009,10 @@ export function CollegeDynamicLearningFramework() {
                   </span>
                 </div>
                 <Link
-                  href={`/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=progress&audience=college`}
+                  href={isMarketing ? "#college-partnerships" : `/get-started?stage=${activeAcademicContext === "diploma" ? "diploma" : activeAcademicContext === "final-year-grad" ? "final-year-grad" : "degree-engineering"}&context=${activeAcademicContext}&situation=progress&audience=college`}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#6757F5]/20 hover:bg-[#5342E8] transition-all shrink-0"
                 >
-                  <span>Continue with Progress Track</span>
+                  <span>{isMarketing ? "College Pilot Inquiries" : "Continue with Progress Track"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

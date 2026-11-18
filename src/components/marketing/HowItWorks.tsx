@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 import {
   Sparkles,
   ArrowRight,
@@ -448,6 +449,8 @@ function StageIllustration({ stageIndex }: { stageIndex: number }) {
 
 export function HowItWorks() {
   const [activeStage, setActiveStage] = useState<number>(0);
+  const isMarketing = useIsMarketingMode();
+
   const stage = STAGES[activeStage];
 
   return (
@@ -564,10 +567,14 @@ export function HowItWorks() {
               {/* Action Button Linking to Explorer */}
               <div className="pt-2">
                 <Link
-                  href={stage.actionHref}
+                  href={isMarketing && stage.actionHref.startsWith("/get-started") ? "#explorer" : stage.actionHref}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#6757F5] text-white text-sm font-bold shadow-md shadow-[#6757F5]/25 hover:bg-[#5342E8] hover:shadow-lg transition-all"
                 >
-                  <span>{stage.actionText}</span>
+                  <span>
+                    {isMarketing && stage.actionHref.startsWith("/get-started")
+                      ? "Explore Interactive Journeys"
+                      : stage.actionText}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

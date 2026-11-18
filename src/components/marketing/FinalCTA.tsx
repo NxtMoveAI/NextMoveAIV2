@@ -3,8 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles, CheckCircle2, ChevronRight } from "lucide-react";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 
 export function FinalCTA() {
+  const isMarketing = useIsMarketingMode();
+
   return (
     <section className="py-20 lg:py-28 bg-gradient-to-b from-white to-[#FAF9F6] relative overflow-hidden">
       {/* Decorative background blurs */}
@@ -29,14 +32,24 @@ export function FinalCTA() {
         </p>
 
         {/* CTAs */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/get-started"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_12px_30px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_16px_36px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
-          >
-            <span>Start Exploring</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4" suppressHydrationWarning>
+          {!isMarketing ? (
+            <Link
+              href="/get-started"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_12px_30px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_16px_36px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
+            >
+              <span>Start Exploring</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          ) : (
+            <a
+              href="#explorer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-[0_12px_30px_-5px_rgba(103,87,245,0.4)] hover:shadow-[0_16px_36px_-5px_rgba(103,87,245,0.5)] transition-all duration-200 group active:scale-[0.98]"
+            >
+              <span>Try Interactive Explorer</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </a>
+          )}
 
           <a
             href="#how-it-works"

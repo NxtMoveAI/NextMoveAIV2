@@ -1,6 +1,6 @@
 import React from "react";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2, LucideIcon } from "lucide-react";
+import { CheckCircle2, LucideIcon } from "lucide-react";
+import { AudienceHeroCTA } from "./AudienceHeroCTA";
 
 export interface AudiencePageHeroProps {
   audience: "school" | "college" | "professionals";
@@ -83,24 +83,12 @@ export function AudiencePageHero({
             </p>
 
             {/* CTAs */}
-            <div className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto">
-              <Link
-                href={primaryCta.href}
-                className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold shadow-md transition-all duration-200 group active:scale-[0.99] ${accentTheme.btn}`}
-              >
-                <span>{primaryCta.label}</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-
-              {secondaryCta && (
-                <Link
-                  href={secondaryCta.href}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold text-[#31364f] bg-white border border-[#dedaf5] hover:bg-[#faf9f6] transition-colors"
-                >
-                  <span>{secondaryCta.label}</span>
-                </Link>
-              )}
-            </div>
+            <AudienceHeroCTA
+              audience={audience}
+              primaryCta={primaryCta}
+              secondaryCta={secondaryCta}
+              btnClass={accentTheme.btn}
+            />
 
             {/* Trust Pills */}
             <div className="mt-8 pt-6 border-t border-[#e8e6f3] flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-[#626987]">

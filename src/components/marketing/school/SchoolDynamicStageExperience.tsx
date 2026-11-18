@@ -24,6 +24,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 
 // Code-split heavy 2,400-line StudentExplorer component for optional extended matrix view
 const StudentExplorer = dynamic(
@@ -551,6 +552,7 @@ const SCHOOL_STAGES_CONFIG: Record<SchoolStageKey, StageConfig> = {
 
 export function SchoolDynamicStageExperience() {
   const [activeStageKey, setActiveStageKey] = useState<SchoolStageKey>("classes-4-7");
+  const isMarketing = useIsMarketingMode();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("creative-storytelling");
   const [userReflection, setUserReflection] = useState<string>("");
   const [reflectionSubmitted, setReflectionSubmitted] = useState<boolean>(false);
@@ -909,16 +911,28 @@ export function SchoolDynamicStageExperience() {
                     Ready to begin with {currentStageConfig.label}?
                   </span>
                   <span className="text-[11px] text-[#626987]">
-                    Continue to personalized exploration workspace
+                    {!isMarketing
+                      ? "Continue to personalized exploration workspace"
+                      : "Try hands-on activities or explore pilot partnership"}
                   </span>
                 </div>
-                <Link
-                  href={`/get-started?stage=${activeStageKey}&audience=school`}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#269CA8] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#35B8C5]/20 hover:bg-[#1F808A] transition-all shrink-0"
-                >
-                  <span>Begin {currentStageConfig.label} Exploration</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                {!isMarketing ? (
+                  <Link
+                    href={`/get-started?stage=${activeStageKey}&audience=school`}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#269CA8] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#35B8C5]/20 hover:bg-[#1F808A] transition-all shrink-0"
+                  >
+                    <span>Begin {currentStageConfig.label} Exploration</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                ) : (
+                  <a
+                    href="#school-partnerships"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#269CA8] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#35B8C5]/20 hover:bg-[#1F808A] transition-all shrink-0"
+                  >
+                    <span>Inquire for School Pilot</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
 
               {/* Privacy Disclaimer Callout */}

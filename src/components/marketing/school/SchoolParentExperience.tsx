@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 import {
   Heart,
   ShieldCheck,
@@ -49,6 +50,7 @@ const DINNER_CONVERSATION_CARDS: DinnerCard[] = [
 
 export function SchoolParentExperience() {
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
+  const isMarketing = useIsMarketingMode();
 
   const prevCard = () => {
     setActiveCardIndex((prev) =>
@@ -202,17 +204,17 @@ export function SchoolParentExperience() {
 
             <div className="pt-2">
               <Link
-                href="/get-started?role=parent&stage=classes-4-7&audience=school"
+                href={isMarketing ? "#family-cards" : "/get-started?role=parent&stage=classes-4-7&audience=school"}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6757F5] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#6757F5]/20 hover:bg-[#5342E8] transition-all"
               >
-                <span>Explore Parent Overview</span>
+                <span>{isMarketing ? "Explore Family Discussion Cards" : "Explore Parent Overview"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
           {/* Right Column: Interactive Family Conversation Card Carousel */}
-          <div className="lg:col-span-6 rounded-3xl bg-white border-2 border-[#DDD8FE] p-6 sm:p-8 shadow-md shadow-[#6757F5]/5">
+          <div id="family-cards" className="lg:col-span-6 rounded-3xl bg-white border-2 border-[#DDD8FE] p-6 sm:p-8 shadow-md shadow-[#6757F5]/5 scroll-mt-24">
             <div className="flex items-center justify-between pb-3 border-b border-[#F0EEF8] mb-5">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">{currentCard.icon}</span>

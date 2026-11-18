@@ -3,8 +3,10 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useIsMarketingMode } from "@/lib/deployment-mode";
 
 export function Footer() {
+  const isMarketing = useIsMarketingMode();
   return (
     <footer className="bg-[#171A2B] text-white pt-16 pb-12 border-t border-[#2C314E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,16 +110,33 @@ export function Footer() {
                   Parents & Families
                 </Link>
               </li>
-              <li>
-                <Link href="/dashboard/student" className="hover:text-white transition-colors">
-                  Student Workspace (Demo)
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard/parent" className="hover:text-white transition-colors">
-                  Guardian Portal (Demo)
-                </Link>
-              </li>
+              {!isMarketing ? (
+                <>
+                  <li>
+                    <Link href="/dashboard/student" className="hover:text-white transition-colors">
+                      Student Workspace (Demo)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/parent" className="hover:text-white transition-colors">
+                      Guardian Portal (Demo)
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link href="/school#school-partnerships" className="hover:text-white transition-colors">
+                      School Pilot Inquiries
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/college#college-partnerships" className="hover:text-white transition-colors">
+                      College Pilot Inquiries
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -142,26 +161,48 @@ export function Footer() {
                   FAQ & Pricing Beta
                 </Link>
               </li>
-              <li>
-                <Link href="/get-started" className="hover:text-white transition-colors">
-                  Get Started (Role Entry)
-                </Link>
-              </li>
-              <li>
-                <Link href="/sign-in" className="hover:text-white transition-colors">
-                  Sign In
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard/student" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
-                  Student Workspace (Demo)
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard/parent" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
-                  Guardian Portal (Demo)
-                </Link>
-              </li>
+              {!isMarketing ? (
+                <>
+                  <li>
+                    <Link href="/get-started" className="hover:text-white transition-colors">
+                      Get Started (Role Entry)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/sign-in" className="hover:text-white transition-colors">
+                      Sign In
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/student" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
+                      Student Workspace (Demo)
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/parent" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
+                      Guardian Portal (Demo)
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link href="/#explorer" className="hover:text-white transition-colors">
+                      Student Explorer Preview
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/#audiences" className="hover:text-white transition-colors">
+                      Curriculum Pathways
+                    </Link>
+                  </li>
+                  <li>
+                    <a href="mailto:partnerships@nextmove.ai?subject=Platform%20Pilot%20Inquiry" className="text-[#35B8C5] hover:text-white transition-colors font-medium">
+                      Institutional Inquiries
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>
