@@ -11,7 +11,8 @@
     "test:dev": "playwright test e2e/flow4-1-integrity.spec.ts e2e/flow4-dashboard.spec.ts e2e/flow5-explore.spec.ts e2e/flow6-validate-fit.spec.ts e2e/flow7-build-next-move.spec.ts e2e/flow8-my-partner.spec.ts",
     "test:marketing": "playwright test e2e/marketing-mode-isolation.spec.ts",
     "test:all": "npm run test:prod && npm run test:dev",
-    "test:historical": "playwright test e2e/a11y-responsive.spec.ts e2e/cross-flow-integration.spec.ts e2e/explore-redesign-verification.spec.ts e2e/final-completion.spec.ts e2e/hero-redesign-verification.spec.ts e2e/landing-redesign-3-1.spec.ts"
+    "test:historical": "playwright test e2e/a11y-responsive.spec.ts e2e/cross-flow-integration.spec.ts e2e/explore-redesign-verification.spec.ts e2e/final-completion.spec.ts e2e/hero-redesign-verification.spec.ts e2e/landing-redesign-3-1.spec.ts",
+    "test:screenshots": "playwright test e2e/capture-final-screens.spec.ts e2e/capture-prompt3-screenshots.spec.ts e2e/capture-prompt4-screenshots.spec.ts e2e/capture-prompt5-screenshots.spec.ts e2e/capture-prompt6-screenshots.spec.ts e2e/capture-prompt7-after-screenshots.spec.ts e2e/capture-prompt7-baseline-screenshots.spec.ts e2e/capture-explore-refinement-screenshots.spec.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

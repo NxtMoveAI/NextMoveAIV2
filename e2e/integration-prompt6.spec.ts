@@ -11,8 +11,8 @@ test.describe("Prompt 6: Audience Landing Page to Onboarding & Dashboard Integra
     await expect(page).toHaveTitle(/Next Move AI/i);
 
     // Click School card on homepage
-    const schoolCard = page.locator('a[href="/school"]:has-text("Explore My World")');
-    await schoolCard.scrollIntoViewIfNeeded();
+    const schoolCard = page.locator('[data-testid="audience-card-school"] a[href="/school"]');
+    await expect(schoolCard).toBeVisible();
     await schoolCard.click();
     await expect(page).toHaveURL(/\/school/);
 
@@ -42,8 +42,8 @@ test.describe("Prompt 6: Audience Landing Page to Onboarding & Dashboard Integra
     await page.goto("/");
 
     // Click College card
-    const collegeCard = page.locator('a[href="/college"]:has-text("Build My Next Move")');
-    await collegeCard.scrollIntoViewIfNeeded();
+    const collegeCard = page.locator('[data-testid="audience-card-college"] a[href="/college"]');
+    await expect(collegeCard).toBeVisible();
     await collegeCard.click();
     await expect(page).toHaveURL(/\/college/);
 
@@ -354,7 +354,7 @@ test.describe("Prompt 6: Audience Landing Page to Onboarding & Dashboard Integra
 
     await expect(page).toHaveURL(/\/guardian-support\?stage=classes-4-7/);
     await expect(page.locator("text=Guardian Support Gateway")).toBeVisible();
-    await expect(page.locator("text=A little help to get started.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "A little help to get started." })).toBeVisible();
   });
 
   // ---------------------------------------------------------------------------

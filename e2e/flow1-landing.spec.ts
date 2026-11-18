@@ -93,7 +93,7 @@ test.describe('Flow 1 — Intelligent Landing Page', () => {
     const explorer = page.locator('#explorer');
 
     // Select "Creativity" interest
-    const creativityBtn = explorer.locator('button[role="radio"]:has-text("Design & Creativity")');
+    const creativityBtn = explorer.locator('button[role="radio"]:has-text("Art & Creativity")');
     await creativityBtn.click();
     await expect(creativityBtn).toHaveAttribute('aria-checked', 'true');
 
@@ -109,13 +109,9 @@ test.describe('Flow 1 — Intelligent Landing Page', () => {
   test('L1.6: Interactive mini-challenge participation, feedback, and reset', async ({ page }) => {
     const explorer = page.locator('#explorer');
 
-    // Set to Classes 11-12 and Technology
+    // Set to Classes 11-12 and Technology & Making
     await explorer.locator('button[role="radio"]:has-text("Classes 11 – 12")').click();
-    await explorer.locator('button[role="radio"]:has-text("Technology & Coding")').click();
-
-    // Select Activity tab
-    const activityTab = explorer.locator('#tab-activity');
-    await activityTab.click();
+    await explorer.locator('button[role="radio"]:has-text("Technology & Making")').click();
 
     // Verify refined 2.2 identity
     await expect(explorer).toContainText('Try a Mini Activity');

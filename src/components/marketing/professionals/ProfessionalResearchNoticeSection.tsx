@@ -138,7 +138,7 @@ export function ProfessionalResearchNoticeSection() {
                 )}%0A%0AHello%20Next%20Move%20AI%20Team,%0AI%20am%20interested%20in%20participating%20in%20your%20professional%20learning%20research.`}
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#2563EB] text-white text-xs sm:text-sm font-bold hover:bg-[#1D4ED8] transition-all shadow-xs"
               >
-                <span>Compose Research Email</span>
+                <span>Express Interest in Research</span>
                 <Send className="w-3.5 h-3.5" />
               </a>
             </div>

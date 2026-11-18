@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Next Move AI — Prompt 4: Dynamic College Landing Page (/college)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/college");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
   });
 
   test("1. College landing route renders correctly with metadata, hero, and trust indicators", async ({ page }) => {
@@ -110,13 +110,17 @@ test.describe("Next Move AI — Prompt 4: Dynamic College Landing Page (/college
 
   test("6. Reflection and simulated review state resets when switching modes or contexts", async ({ page }) => {
     const frameworkSection = page.locator("#college-framework");
+    await expect(frameworkSection).toBeVisible();
 
     // In Discover mode, type a reflection
     const textarea = frameworkSection.locator("textarea");
+    await expect(textarea).toBeVisible();
+    await textarea.click();
     await textarea.fill("Testing reflection reset behavior across modes.");
 
     // Submit reflection
     const submitBtn = frameworkSection.locator('button:has-text("Test Reflection")');
+    await expect(submitBtn).toBeEnabled();
     await submitBtn.click();
     await expect(frameworkSection).toContainText("My Partner's Supportive Guidance:");
 

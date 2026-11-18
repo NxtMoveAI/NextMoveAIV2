@@ -158,4 +158,44 @@ test.describe("Next Move AI — Prompt 10.1 Public Marketing Release & CTA Isola
     await expect(page.locator('div[role="dialog"] a[href="/sign-in"]')).not.toBeVisible();
     await expect(page.locator('div[role="dialog"] a[href="/get-started"]')).not.toBeVisible();
   });
+
+  test("8. Client cookie manipulation (nm_mode=demo) cannot bypass server-side route restrictions", async ({
+    page,
+    context,
+  }) => {
+    // Attempt malicious cookie injection
+    await context.addCookies([
+      {
+        name: "nm_mode",
+        value: "demo",
+        domain: "localhost",
+        path: "/",
+      },
+    ]);
+
+    // Try accessing a restricted route directly with spoofed cookie
+    await page.goto("/dashboard/student");
+    await expect(page).toHaveURL(new RegExp(`/preview-restricted\\?from=`));
+    await expect(page.locator("h1")).toContainText("Interactive Workspaces Restricted in Public Preview");
+
+    // Try accessing onboarding with spoofed cookie
+    await page.goto("/onboarding?stage=classes-11-12");
+    await expect(page).toHaveURL(/\/preview-restricted.*from=/);
+  });
+
+  test("9. Client-side navigation to prototype routes is intercepted by server proxy", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    // Attempt client-side navigation via location assignment
+    await page.evaluate(() => {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign("/dashboard/student");
+    });
+
+    await expect(page).toHaveURL(new RegExp(`/preview-restricted\\?from=`));
+    await expect(page.locator("h1")).toContainText("Interactive Workspaces Restricted in Public Preview");
+  });
 });
