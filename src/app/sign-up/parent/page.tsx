@@ -10,6 +10,7 @@ import {
   Loader2,
   HeartHandshake,
   Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -111,6 +112,19 @@ function ParentSignUpContent() {
 
           <p className="mt-2 text-xs sm:text-sm text-[#626987] leading-relaxed">
             Stay involved in ways that encourage exploration and informed decisions.
+          </p>
+        </div>
+
+        {/* Public Demo & Evaluation Notice */}
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-left text-xs text-[#92400E] space-y-1 shadow-xs">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[#D97706] shrink-0" />
+            <span className="font-bold text-[#D97706] uppercase tracking-wider text-[11px]">
+              Demonstration Environment · Guardian Registration In Development
+            </span>
+          </div>
+          <p className="text-[11px] text-[#78350F] leading-relaxed">
+            Live guardian account registration and parent-child linking are currently disabled pending backend API integration. <strong>Do not enter real personal passwords.</strong> You can explore the guardian portal preview directly below.
           </p>
         </div>
 

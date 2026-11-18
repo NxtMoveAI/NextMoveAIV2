@@ -103,6 +103,19 @@ function SignInContent() {
           </p>
         </div>
 
+        {/* Public Demo & Evaluation Environment Notice */}
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-left text-xs text-[#92400E] space-y-1 shadow-xs">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[#D97706] shrink-0" />
+            <span className="font-bold text-[#D97706] uppercase tracking-wider text-[11px]">
+              Demonstration &amp; Evaluation Environment
+            </span>
+          </div>
+          <p className="text-[11px] text-[#78350F] leading-relaxed">
+            Operational authentication is currently in active backend development. <strong>Do not enter real personal passwords or credentials.</strong> Use the instant demo shortcuts below to evaluate the student and guardian workspaces safely.
+          </p>
+        </div>
+
         {/* Quick Demo Access - Direct Access to Signed-In Pages */}
         <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-[#F7F6FF] to-[#FAF8FF] border border-[#DDD8FE] text-left space-y-3">
           <div className="flex items-center justify-between">
