@@ -60,134 +60,138 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? "bg-[#FAF9F6]/90 backdrop-blur-md border-b border-[#E8E6F3] shadow-[0_4px_20px_-4px_rgba(23,26,43,0.05)]"
-          : "bg-[#FAF9F6] border-b border-transparent"
+          ? "bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E8E6F3] shadow-[0_4px_20px_-4px_rgba(23,26,43,0.05)]"
+          : "bg-[#FAF9F6] border-b border-[#E8E6F3]/80"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        {/* Brand identity */}
-        <Link
-          href="/"
-          className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] rounded-xl p-1"
-        >
-          <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-[#E4E1F8] bg-white flex items-center justify-center p-1 group-hover:scale-105 transition-transform duration-200">
-            <Image
-              src="/logo.png"
-              alt="Next Move AI Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-              priority
-            />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-xl tracking-tight text-[#171A2B]">
-                Next Move <span className="text-[#6757F5]">AI</span>
-              </span>
-            </div>
-            <span className="text-[11px] text-[#626987] font-medium hidden 2xl:inline-block">
-              Student Intelligence & Decision Platform
-            </span>
-          </div>
-        </Link>
-
-        {/* Audience Navigation */}
-        <div className="hidden md:flex items-center shrink-0">
-          <AudienceNav />
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav
-          className="hidden lg:flex items-center gap-0.5 xl:gap-1 shrink-0"
-          aria-label="Primary navigation"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-xs xl:text-sm font-medium text-[#31364F] hover:text-[#6757F5] px-2 xl:px-3 py-1.5 rounded-lg hover:bg-[#EDEAFF]/60 transition-colors whitespace-nowrap"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ROW 1: [ LOGO (LEFT) ]       [ AUDIENCE NAV (CENTERED) ] [ GET STARTED ] [ SIGN IN ] */}
+        <div className="h-14 sm:h-15 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:border-b lg:border-[#E8E6F3]">
+          {/* Column 1: Brand (far left) */}
+          <div className="flex items-center justify-self-start shrink-0">
+            <Link
+              href="/"
+              className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6757F5] rounded-xl py-1 shrink-0"
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-xs border border-[#E4E1F8] bg-white flex items-center justify-center p-1 group-hover:scale-105 transition-transform duration-200">
+                <Image
+                  src="/logo.png"
+                  alt="Next Move AI Logo"
+                  width={38}
+                  height={38}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-lg sm:text-xl tracking-tight text-[#171A2B]">
+                    Next Move <span className="text-[#6757F5]">AI</span>
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#626987] font-medium hidden 2xl:inline-block">
+                  Student Intelligence & Decision Platform
+                </span>
+              </div>
+            </Link>
+          </div>
 
-        {/* Desktop CTA actions */}
-        <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0" suppressHydrationWarning>
-          {!isMarketing ? (
-            <>
-              <Link
-                href="/dashboard/student"
-                className="hidden xl:inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Workspace Demo</span>
-              </Link>
-              <Link
-                href="/sign-in"
-                className="text-xs xl:text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-3 xl:px-4 py-2 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors shrink-0"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/get-started"
-                className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-            </>
-          ) : (
-            <>
-              <a
-                href={isHomePage ? "#explorer" : "/#explorer"}
-                className="hidden sm:inline-flex items-center gap-1.5 text-xs xl:text-sm font-semibold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 py-2 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Try Explorer</span>
-              </a>
+          {/* Column 2: Audience Navigation (centered horizontally) */}
+          <div className="hidden md:flex items-center justify-self-center shrink-0">
+            <AudienceNav />
+          </div>
+
+          {/* Column 3: Action Buttons (far right) */}
+          <div
+            className="hidden lg:flex items-center gap-2 xl:gap-2.5 justify-self-end shrink-0"
+            suppressHydrationWarning
+          >
+            {!isMarketing ? (
+              <>
+                <Link
+                  href="/get-started"
+                  className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-3.5 xl:px-4.5 h-8.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="inline-flex items-center text-xs xl:text-sm font-semibold text-[#31364F] hover:text-[#6757F5] px-3 xl:px-3.5 h-8.5 rounded-xl hover:bg-[#EDEAFF]/50 transition-colors shrink-0"
+                >
+                  Sign In
+                </Link>
+              </>
+            ) : (
               <a
                 href="mailto:partnerships@nextmove.ai?subject=Institutional%20Pilot%20Inquiry"
-                className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
+                className="inline-flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-semibold text-white bg-[#6757F5] hover:bg-[#5342E8] px-4 xl:px-5 h-8.5 rounded-xl shadow-[0_4px_14px_rgba(103,87,245,0.3)] hover:shadow-[0_6px_20px_rgba(103,87,245,0.4)] transition-all duration-200 group active:scale-[0.98] shrink-0"
               >
                 <span>Pilot Inquiries</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </a>
-            </>
-          )}
+            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex lg:hidden items-center" suppressHydrationWarning>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg text-[#171A2B] hover:bg-[#EDEAFF] focus:outline-none focus:ring-2 focus:ring-[#6757F5]"
+              aria-expanded={mobileMenuOpen}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile menu button */}
-        <div className="flex lg:hidden items-center gap-2" suppressHydrationWarning>
-          {!isMarketing ? (
-            <Link
-              href="/get-started"
-              className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
-            >
-              Get Started
-            </Link>
-          ) : (
-            <a
-              href={isHomePage ? "#explorer" : "/#explorer"}
-              className="text-xs font-semibold text-white bg-[#6757F5] px-3.5 py-2 rounded-lg"
-            >
-              Try Explorer
-            </a>
-          )}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg text-[#171A2B] hover:bg-[#EDEAFF] focus:outline-none focus:ring-2 focus:ring-[#6757F5]"
-            aria-expanded={mobileMenuOpen}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+        {/* ROW 2: [ EMPTY (1fr) ]       [ 6 NAVIGATION LINKS (CENTERED) ]       [ WORKSPACE DEMO (1fr, RIGHT) ] */}
+        <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] h-11 sm:h-12 items-center">
+          {/* Column 1: Empty balancing space */}
+          <div aria-hidden="true" />
+
+          {/* Column 2: Website Navigation Links (centered horizontally) */}
+          <nav
+            className="flex items-center gap-0.5 xl:gap-1 justify-self-center"
+            aria-label="Primary navigation"
           >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="inline-flex items-center text-xs xl:text-sm font-medium text-[#31364F] hover:text-[#6757F5] px-2 xl:px-2.5 h-8.5 rounded-lg hover:bg-[#EDEAFF]/60 transition-colors whitespace-nowrap"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Column 3: Workspace Demo (far right, independent placement that does NOT affect centering) */}
+          <div className="justify-self-end shrink-0" suppressHydrationWarning>
+            {!isMarketing ? (
+              <Link
+                href="/dashboard/student"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 h-8.5 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Workspace Demo</span>
+              </Link>
             ) : (
-              <Menu className="w-6 h-6" />
+              <a
+                href={isHomePage ? "#explorer" : "/#explorer"}
+                className="inline-flex items-center gap-1.5 text-xs xl:text-sm font-semibold text-[#6757F5] bg-[#EDEAFF] hover:bg-[#DDD8FE] px-3.5 h-8.5 rounded-xl transition-colors border border-[#DDD8FE] shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Try Explorer</span>
+              </a>
             )}
-          </button>
+          </div>
         </div>
       </div>
 

@@ -133,11 +133,6 @@ export function AudienceNav({ className = "", variant = "header" }: AudienceNavP
               }`}
             />
             <span>{item.label}</span>
-            {item.sublabel && (
-              <span className="hidden xl:inline text-[9px] text-[#9ea3b5] font-normal">
-                ({item.sublabel})
-              </span>
-            )}
           </Link>
         );
       })}
