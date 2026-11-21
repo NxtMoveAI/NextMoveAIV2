@@ -179,9 +179,9 @@ export const AUDIENCE_CONFIG: Record<
 // Validates account role query parameters against the strict Flow 2 contract.
 // =============================================================================
 
-export type AccountRoleId = "student" | "parent";
+export type AccountRoleId = "student" | "professional" | "parent";
 
-export const VALID_ACCOUNT_ROLES: AccountRoleId[] = ["student", "parent"];
+export const VALID_ACCOUNT_ROLES: AccountRoleId[] = ["student", "professional", "parent"];
 
 export function isValidAccountRole(role: string | null | undefined): role is AccountRoleId {
   if (!role) return false;

@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Default: Deny all read and write access across all unspecified paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User profile documents: users/{userId}
+    match /users/{userId} {
+      // Authenticated users can only read their own profile
+      allow read: if isOwner(userId);
+
+      // Authenticated users can only create their own profile document
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == userId;
+
+      // Authenticated users can only update their own profile document
+      // Prevents reassigning the document ownership or altering uid
+      allow update: if isOwner(userId)
+                    && request.resource.data.uid == userId;
+
+      // Profile deletion disabled by default (governed by account deletion flow)
+      allow delete: if false;
+    }
+  }
+}

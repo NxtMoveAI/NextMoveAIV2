@@ -1,24 +1,32 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Flow 2 — Student / Parent Entry, Signup and Sign In', () => {
-  test('L2.1: Entry role selection — student vs parent routing', async ({ page }) => {
+  test('L2.1: Entry role selection — student vs professional and parent routing', async ({ page }) => {
     await page.goto('/get-started');
     await expect(page).toHaveTitle(/Next Move AI/);
 
     const studentCard = page.locator('div[role="radio"]:has-text("I\'m a Student")');
-    const parentCard = page.locator('div[role="radio"]:has-text("I\'m a Parent or Guardian")');
+    const professionalCard = page.locator('div[role="radio"]:has-text("I\'m a Professional")');
     const continueBtn = page.locator('button:has-text("Continue")');
 
     await expect(studentCard).toBeVisible();
-    await expect(parentCard).toBeVisible();
+    await expect(professionalCard).toBeVisible();
 
     // Select Student and click continue
     await studentCard.click();
     await continueBtn.click();
     await expect(page).toHaveURL(/\/get-started\/student/);
 
-    // Go back and select Parent
+    // Go back and select Professional
     await page.goto('/get-started');
+    await professionalCard.click();
+    await continueBtn.click();
+    await expect(page).toHaveURL(/\/professionals/);
+
+    // Test Parent routing with ?role=parent
+    await page.goto('/get-started?role=parent');
+    const parentCard = page.locator('div[role="radio"]:has-text("I\'m a Parent or Guardian")');
+    await expect(parentCard).toBeVisible();
     await parentCard.click();
     await continueBtn.click();
     await expect(page).toHaveURL(/\/sign-up\/parent/);
@@ -27,7 +35,7 @@ test.describe('Flow 2 — Student / Parent Entry, Signup and Sign In', () => {
   test('L2.2: Academic stage preservation, invalid stage rejection, and missing stage handling', async ({ page }) => {
     // 1. Valid stage preserved from query
     await page.goto('/get-started/student?stage=classes-11-12');
-    await expect(page.locator('text=Classes 11 – 12 (Pre-University / +2)').first()).toBeVisible();
+    await expect(page.locator('div[role="radio"]:has-text("Class 11–12")').first()).toBeVisible();
     await expect(page.locator('button:has-text("Confirm & Continue")')).toBeVisible();
 
     // 2. Invalid stage rejected — does not auto-select or crash
@@ -36,7 +44,7 @@ test.describe('Flow 2 — Student / Parent Entry, Signup and Sign In', () => {
     await expect(page.locator('button:has-text("Select an Academic Stage to Continue")')).toBeDisabled();
     // Verify the grid of stages is displayed for user selection
     const stageButtons = page.locator('div[role="radio"]');
-    expect(await stageButtons.count()).toBe(6);
+    expect(await stageButtons.count()).toBe(7);
 
     // 3. Missing stage — requires explicit selection
     await page.goto('/get-started/student');
@@ -143,7 +151,14 @@ test.describe('Flow 2 — Student / Parent Entry, Signup and Sign In', () => {
     await expect(page.locator('text=Parent account creation proposal submitted')).toBeVisible();
   });
 
-  test('L2.7: Sign in form validation, prototype simulator, and error handling', async ({ page }) => {
+  test('L2.7: Sign in form validation, authentication, and error handling', async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as unknown as { __NEXT_MOVE_MOCK_AUTH__: unknown }).__NEXT_MOVE_MOCK_AUTH__ = {
+        customUid: "uid-verified-student-12345",
+      };
+      (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__: boolean }).__NEXT_MOVE_MOCK_FIRESTORE__ = true;
+    });
+
     await page.goto('/sign-in');
 
     const submitBtn = page.locator('button:has-text("Sign In")');
@@ -157,9 +172,11 @@ test.describe('Flow 2 — Student / Parent Entry, Signup and Sign In', () => {
     await page.locator('#signin-email').fill('test.student@example.com');
     await page.locator('#signin-password').fill('TestPassword123!');
 
-    // Submit with default normal simState
+    // Submit form with valid credentials
     await submitBtn.click();
-    await expect(page.locator('text=Backend Authentication Pending')).toBeVisible();
+
+    // Verify successful authentication redirects to Student Workspace
+    await page.waitForURL(/\/dashboard\/student/);
   });
 
   test('L2.8: URL tampering security check — query parameter does not grant authenticated session', async ({ page }) => {

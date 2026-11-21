@@ -16,12 +16,8 @@ import {
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { StepIndicator, type StepItem } from "@/components/auth/StepIndicator";
-import { StageBadge } from "@/components/auth/StageBadge";
-import { ACADEMIC_STAGES, type AcademicStageId } from "@/data/landing-demo";
+import { type AcademicStageId } from "@/data/landing-demo";
 import {
-  STAGE_AWARE_COPY,
-  getStageOrNull,
-  getStageById,
   isValidSituation,
   isValidAudience,
   isValidAcademicContext,
@@ -37,14 +33,110 @@ const STEPS: StepItem[] = [
   { number: 4, label: "Create Space" },
 ];
 
-const STAGE_ICONS: Record<AcademicStageId, React.ReactNode> = {
-  "classes-4-7": <Sparkles className="w-5 h-5 text-[#6757F5]" />,
-  "classes-8-10": <BookOpen className="w-5 h-5 text-[#6757F5]" />,
-  "classes-11-12": <Compass className="w-5 h-5 text-[#6757F5]" />,
-  diploma: <Wrench className="w-5 h-5 text-[#6757F5]" />,
-  "degree-engineering": <Cpu className="w-5 h-5 text-[#6757F5]" />,
-  "final-year-grad": <Briefcase className="w-5 h-5 text-[#6757F5]" />,
+export type OnboardingStageId =
+  | "classes-4-7"
+  | "classes-8-10"
+  | "classes-11-12"
+  | "diploma"
+  | "degree"
+  | "engineering"
+  | "working-professional";
+
+interface StageOption {
+  id: OnboardingStageId;
+  label: string;
+  sublabel: string;
+  ageRange: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+const FIRST_SIX_STAGES: StageOption[] = [
+  {
+    id: "classes-4-7",
+    label: "Class 4–7",
+    sublabel: "Middle School",
+    ageRange: "Ages 9–12",
+    description: "Curiosity, foundational exploration and playful discovery without grade pressure.",
+    icon: <Sparkles className="w-5 h-5" />,
+  },
+  {
+    id: "classes-8-10",
+    label: "Class 8–10",
+    sublabel: "High School",
+    ageRange: "Ages 13–15",
+    description: "Subject exploration, real-world hobbies, and clarity on 10th stream choices.",
+    icon: <BookOpen className="w-5 h-5" />,
+  },
+  {
+    id: "classes-11-12",
+    label: "Class 11–12",
+    sublabel: "Pre-University / +2",
+    ageRange: "Ages 16–18",
+    description: "Entrance tests, degrees, realistic prerequisites, and stream pathways.",
+    icon: <Compass className="w-5 h-5" />,
+  },
+  {
+    id: "diploma",
+    label: "Diploma",
+    sublabel: "Polytechnic & Applied",
+    ageRange: "Applied Learning",
+    description: "Practical technical skills, hands-on learning, and lateral entry degrees.",
+    icon: <Wrench className="w-5 h-5" />,
+  },
+  {
+    id: "degree",
+    label: "Degree",
+    sublabel: "BCA · B.Com · BBA · B.Sc",
+    ageRange: "Undergraduate",
+    description: "Multi-disciplinary undergraduate programs, business, and applied sciences.",
+    icon: <GraduationCap className="w-5 h-5" />,
+  },
+  {
+    id: "engineering",
+    label: "Engineering",
+    sublabel: "B.Tech · B.E. Disciplines",
+    ageRange: "Technical Degree",
+    description: "Applied engineering, core architecture, algorithms, and technical specializations.",
+    icon: <Cpu className="w-5 h-5" />,
+  },
+];
+
+const WORKING_PROFESSIONAL_STAGE: StageOption = {
+  id: "working-professional",
+  label: "Working Professional",
+  sublabel: "Early & Experienced",
+  ageRange: "Career Growth",
+  description: "Transferable skills, upskilling opportunities, and structured career transitions.",
+  icon: <Briefcase className="w-5 h-5" />,
 };
+
+const VALID_ONBOARDING_STAGES: OnboardingStageId[] = [
+  "classes-4-7",
+  "classes-8-10",
+  "classes-11-12",
+  "diploma",
+  "degree",
+  "engineering",
+  "working-professional",
+];
+
+function normalizeStageId(id: string | null | undefined): OnboardingStageId | null {
+  if (!id) return null;
+  if (id === "degree-engineering") return "engineering";
+  if (id === "final-year-grad") return "working-professional";
+  if (VALID_ONBOARDING_STAGES.includes(id as OnboardingStageId)) {
+    return id as OnboardingStageId;
+  }
+  return null;
+}
+
+function toCanonicalStage(stageId: OnboardingStageId | null): AcademicStageId | null {
+  if (!stageId) return null;
+  if (stageId === "degree" || stageId === "engineering") return "degree-engineering";
+  if (stageId === "working-professional") return "final-year-grad";
+  return stageId;
+}
 
 function StudentStageSelectionContent() {
   const router = useRouter();
@@ -54,21 +146,13 @@ function StudentStageSelectionContent() {
   const audienceParam = searchParams.get("audience");
   const contextParam = searchParams.get("context");
 
-  const initialStage = getStageOrNull(stageParam);
-  const hasInitialValidStage = initialStage !== null;
+  const validatedStage = normalizeStageId(stageParam);
   const validatedSituation = isValidSituation(situationParam) ? situationParam : null;
   const validatedAudience = isValidAudience(audienceParam) ? audienceParam : null;
   const validatedContext = isValidAcademicContext(contextParam) ? (contextParam as AcademicContextParam) : null;
 
-  // If a valid stage was passed from landing page, initialize with it.
-  // CRITICAL CORRECTION: If missing or invalid, do NOT preselect any stage.
-  const [selectedStageId, setSelectedStageId] = useState<AcademicStageId | null>(
-    initialStage ? initialStage.id : null
-  );
-  const [isEditing, setIsEditing] = useState<boolean>(!hasInitialValidStage);
-
-  const activeStage = selectedStageId ? getStageById(selectedStageId) : null;
-  const stageCopy = activeStage ? STAGE_AWARE_COPY[activeStage.id] : null;
+  // Selected stage state (preselected if valid stage passed in query, else null)
+  const [selectedStageId, setSelectedStageId] = useState<OnboardingStageId | null>(validatedStage);
 
   const handleContinue = () => {
     if (!selectedStageId) return;
@@ -81,16 +165,73 @@ function StudentStageSelectionContent() {
   };
 
   const backParams = new URLSearchParams();
-  if (selectedStageId) backParams.set("stage", selectedStageId);
+  backParams.set("role", "student");
   if (validatedSituation) backParams.set("situation", validatedSituation);
   if (validatedAudience) backParams.set("audience", validatedAudience);
   if (validatedContext) backParams.set("context", validatedContext);
-  const backHref = backParams.toString() ? `/get-started?${backParams.toString()}` : "/get-started";
+  const backHref = `/get-started?${backParams.toString()}`;
+
+  const renderStageCard = (stg: StageOption) => {
+    const isSelected = selectedStageId === stg.id;
+
+    return (
+      <div
+        key={stg.id}
+        data-stage={stg.id}
+        role="radio"
+        aria-checked={isSelected}
+        tabIndex={0}
+        onClick={() => setSelectedStageId(stg.id)}
+        onKeyDown={(e) => {
+          if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            setSelectedStageId(stg.id);
+          }
+        }}
+        className={`p-3.5 sm:p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer text-left flex items-start gap-3.5 focus:outline-hidden focus:ring-2 focus:ring-[#6757F5] ${
+          isSelected
+            ? "bg-[#FAF9F6] border-[#6757F5] ring-2 sm:ring-4 ring-[#EDEAFF] shadow-sm"
+            : "bg-white border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-[#FAF9F6]/50"
+        }`}
+      >
+        <div
+          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+            isSelected
+              ? "bg-[#6757F5] text-white"
+              : "bg-[#EDEAFF] text-[#6757F5]"
+          }`}
+        >
+          {isSelected ? (
+            <Check className="w-5 h-5 text-white" />
+          ) : (
+            stg.icon
+          )}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm sm:text-base font-extrabold text-[#171A2B] truncate">
+              {stg.label}
+            </span>
+            <span className="text-[10px] font-semibold text-[#626987] bg-[#FAF9F6] px-2 py-0.5 rounded-md border border-[#E8E6F3] shrink-0">
+              {stg.ageRange}
+            </span>
+          </div>
+          <p className="text-xs text-[#6757F5] font-semibold mt-0.5 truncate">
+            {stg.sublabel}
+          </p>
+          <p className="text-xs text-[#474D66] mt-1 line-clamp-2 leading-relaxed">
+            {stg.description}
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <AuthLayout
       role="student"
-      stageParam={selectedStageId}
+      stageParam={toCanonicalStage(selectedStageId)}
       backHref={backHref}
       backLabel="Change Role"
       activeStep={2}
@@ -103,7 +244,7 @@ function StudentStageSelectionContent() {
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-2 border border-[#DDD8FE]">
             <GraduationCap className="w-3.5 h-3.5" />
-            <span>Student Entry</span>
+            <span>Step 2: Academic Stage</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-[#171A2B] tracking-tight">
@@ -111,7 +252,7 @@ function StudentStageSelectionContent() {
           </h1>
 
           <p className="mt-2 text-xs sm:text-sm text-[#626987]">
-            We adjust our guidance to your current educational context—never forcing a career prediction.
+            Select your current academic stage or experience level so we can adapt guidance to your exact context.
           </p>
 
           {validatedSituation && (
@@ -129,200 +270,24 @@ function StudentStageSelectionContent() {
           )}
         </div>
 
-        {/* State 1: Recognized Stage from Landing Page (Clean Confirmation) */}
-        {!isEditing && hasInitialValidStage && activeStage && stageCopy ? (
-          <div className="space-y-5">
-            <StageBadge
-              stage={activeStage}
-              onEdit={() => setIsEditing(true)}
-              showEdit={true}
-            />
+        {/* 7 Academic Stage Options */}
+        <div
+          role="radiogroup"
+          aria-label="Academic Stage Choices"
+          className="space-y-3 sm:space-y-3.5"
+        >
+          {/* First six options in clean 2-column grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+            {FIRST_SIX_STAGES.map(renderStageCard)}
+          </div>
 
-            {/* Stage Context Card */}
-            <div className="p-4 rounded-2xl bg-[#F7F6FF] border border-[#DDD8FE] text-left space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6757F5]">
-                What this means for your experience:
-              </span>
-              <p className="text-sm font-semibold text-[#171A2B] leading-snug">
-                &ldquo;{stageCopy.tagline}&rdquo;
-              </p>
-              <p className="text-xs text-[#474D66] leading-relaxed">
-                {stageCopy.subtext}
-              </p>
-
-              {validatedContext && activeStage.id === "degree-engineering" && (
-                <div className="pt-2 border-t border-[#DDD8FE] flex items-center gap-1.5 text-xs text-[#6757F5]">
-                  <Cpu className="w-3.5 h-3.5 shrink-0" />
-                  <span>
-                    Focus Track: <strong>{ACADEMIC_CONTEXT_CONFIG[validatedContext].label}</strong> ({ACADEMIC_CONTEXT_CONFIG[validatedContext].description})
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-2 text-xs text-[#626987] flex items-center justify-between">
-              <span>Not in {activeStage.label}?</span>
-              <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="font-bold text-[#6757F5] hover:underline"
-              >
-                Change Academic Stage
-              </button>
+          {/* 7th option: Working Professional as a separate centered option beneath */}
+          <div className="pt-0.5 flex justify-center">
+            <div className="w-full sm:max-w-md">
+              {renderStageCard(WORKING_PROFESSIONAL_STAGE)}
             </div>
           </div>
-        ) : (
-          /* State 2: Full Stage Selection List (6 Compatible Stage IDs) */
-          <div className="space-y-5">
-            <div className="flex items-center justify-between text-xs text-[#626987] pb-1">
-              <span>Select the stage that best matches your current status:</span>
-              {hasInitialValidStage && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="text-[#6757F5] font-semibold hover:underline"
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-
-            {(() => {
-              const SCHOOL_STAGE_IDS = ["classes-4-7", "classes-8-10", "classes-11-12"];
-              const schoolStages = ACADEMIC_STAGES.filter((s) => SCHOOL_STAGE_IDS.includes(s.id));
-              const collegeStages = ACADEMIC_STAGES.filter((s) => !SCHOOL_STAGE_IDS.includes(s.id));
-
-              const renderStageItem = (stg: (typeof ACADEMIC_STAGES)[number]) => {
-                const isSelected = selectedStageId === stg.id;
-                const copy = STAGE_AWARE_COPY[stg.id];
-
-                return (
-                  <div
-                    key={stg.id}
-                    role="radio"
-                    aria-checked={isSelected}
-                    tabIndex={0}
-                    onClick={() => {
-                      setSelectedStageId(stg.id);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === " " || e.key === "Enter") {
-                        e.preventDefault();
-                        setSelectedStageId(stg.id);
-                      }
-                    }}
-                    className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer text-left flex items-start gap-3 focus:outline-hidden focus:ring-2 focus:ring-[#6757F5] ${
-                      isSelected
-                        ? "bg-[#FAF9F6] border-[#6757F5] ring-2 ring-[#EDEAFF] shadow-xs"
-                        : "bg-white border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-[#FAF9F6]/50"
-                    }`}
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected
-                          ? "bg-[#6757F5] text-white"
-                          : "bg-[#EDEAFF] text-[#6757F5]"
-                      }`}
-                    >
-                      {isSelected ? (
-                        <Check className="w-5 h-5 text-white" />
-                      ) : (
-                        STAGE_ICONS[stg.id]
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-sm font-bold text-[#171A2B] truncate">
-                          {stg.label}
-                        </span>
-                        <span className="text-[10px] font-semibold text-[#626987] bg-[#FAF9F6] px-2 py-0.5 rounded border border-[#E8E6F3] shrink-0">
-                          {stg.ageRange}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#6757F5] font-medium mt-0.5">
-                        {stg.sublabel} · {stg.focusTone}
-                      </p>
-                      <p className="text-[11px] text-[#474D66] mt-1 leading-normal">
-                        {copy.tagline}
-                      </p>
-                    </div>
-                  </div>
-                );
-              };
-
-              if (validatedAudience === "school") {
-                return (
-                  <div className="space-y-5" role="radiogroup" aria-label="Academic Stage Choices">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#269CA8] bg-[#E0F7F6] px-2.5 py-0.5 rounded-full border border-[#B2EBF2]">
-                          Next Move Explore — School Stages
-                        </span>
-                        <span className="text-[11px] text-[#626987]">Recommended for school students</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {schoolStages.map(renderStageItem)}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5 pt-2 border-t border-[#E8E6F3]">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] bg-[#EDEAFF] px-2.5 py-0.5 rounded-full border border-[#DDD8FE]">
-                          Next Move Build — Higher Education
-                        </span>
-                        <span className="text-[11px] text-[#626987]">Diploma & Degree pathways</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {collegeStages.map(renderStageItem)}
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (validatedAudience === "college") {
-                return (
-                  <div className="space-y-5" role="radiogroup" aria-label="Academic Stage Choices">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#6757F5] bg-[#EDEAFF] px-2.5 py-0.5 rounded-full border border-[#DDD8FE]">
-                          Next Move Build — College & Degrees
-                        </span>
-                        <span className="text-[11px] text-[#626987]">Recommended for college students</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {collegeStages.map(renderStageItem)}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5 pt-2 border-t border-[#E8E6F3]">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#269CA8] bg-[#E0F7F6] px-2.5 py-0.5 rounded-full border border-[#B2EBF2]">
-                          Next Move Explore — School Stages
-                        </span>
-                        <span className="text-[11px] text-[#626987]">Classes 4 through 12</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {schoolStages.map(renderStageItem)}
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <div
-                  role="radiogroup"
-                  aria-label="Academic Stage Choices"
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-                >
-                  {ACADEMIC_STAGES.map(renderStageItem)}
-                </div>
-              );
-            })()}
-          </div>
-        )}
+        </div>
 
         {/* Continue Action */}
         <div className="mt-8 space-y-3">
@@ -330,7 +295,7 @@ function StudentStageSelectionContent() {
             type="button"
             disabled={!selectedStageId}
             onClick={handleContinue}
-            className={`w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-all ${
+            className={`w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
               selectedStageId
                 ? "text-white bg-[#6757F5] hover:bg-[#5342E8] shadow-md shadow-[#6757F5]/25 hover:shadow-lg active:scale-[0.99] cursor-pointer"
                 : "text-[#626987] bg-[#E8E6F3] cursor-not-allowed opacity-70"
@@ -343,7 +308,7 @@ function StudentStageSelectionContent() {
           </button>
 
           <p className="text-[11px] text-[#626987] text-center">
-            No personal data or assessment is requested here. Specific skills and goals belong to Flow 3.
+            Next Move AI adapts guidance to your current educational level — never forcing a career prediction.
           </p>
         </div>
       </AuthCard>
@@ -356,7 +321,7 @@ export default function StudentStageSelectionPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center text-sm text-[#626987]">
-          Loading...
+          Loading stage selection...
         </div>
       }
     >

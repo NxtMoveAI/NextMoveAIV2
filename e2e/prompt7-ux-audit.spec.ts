@@ -411,7 +411,7 @@ test.describe("Next Move AI — Prompt 7 Comprehensive UX & Interaction Audit", 
     await page.goto("/get-started");
     // Verify all role options visible
     await expect(page.locator('div[role="radio"]:has-text("Student")').first()).toBeVisible();
-    await expect(page.locator('div[role="radio"]:has-text("Parent")').first()).toBeVisible();
+    await expect(page.locator('div[role="radio"]:has-text("Professional")').first()).toBeVisible();
 
     // Verify continue button is disabled until selection made
     const continueBtn = page.locator('button:has-text("Continue")');

@@ -55,6 +55,12 @@ function GetStartedRoleSelection() {
       if (validatedContext) params.set("context", validatedContext);
       const queryStr = params.toString() ? `?${params.toString()}` : "";
       router.push(`/get-started/student${queryStr}`);
+    } else if (selectedRole === "professional") {
+      const params = new URLSearchParams();
+      if (validatedSituation) params.set("situation", validatedSituation);
+      if (validatedAudience) params.set("audience", validatedAudience);
+      const queryStr = params.toString() ? `?${params.toString()}` : "";
+      router.push(`/professionals${queryStr}`);
     } else if (selectedRole === "parent") {
       const params = new URLSearchParams();
       if (validatedStage) params.set("stage", validatedStage);
@@ -89,44 +95,25 @@ function GetStartedRoleSelection() {
       stageParam={validatedStage}
       backHref={backDestination}
       backLabel={backLabel}
+      activeStep={1}
+      totalSteps={4}
+      stepTitle="Role Selection"
     >
       <AuthCard>
         <div className="text-center mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDEAFF] text-[#6757F5] text-xs font-bold uppercase tracking-wider mb-3 border border-[#DDD8FE]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Step 1: Choose Your Path</span>
+            <span>Step 1: Role Selection</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-[#171A2B] tracking-tight">
-            Every journey starts somewhere.
+            How would you like to start?
           </h1>
 
           <p className="mt-2 text-sm text-[#626987]">
-            Tell us how you&apos;d like to begin.
+            Choose your learning or career path to begin your personalized journey.
           </p>
         </div>
-
-        {/* Professional Safety Banner (When arriving from /professionals) */}
-        {validatedAudience === "professionals" && (
-          <div className="mb-6 p-4 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] text-left space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#1E40AF]">
-              <Briefcase className="w-4 h-4 text-[#2563EB]" />
-              <span>Professional Tracks in Research &amp; Development</span>
-            </div>
-            <p className="text-xs text-[#1E3A8A] leading-relaxed">
-              Next Move Grow for working professionals is currently in active research and prototyping. Active student onboarding is designed for <strong>School</strong> (Classes 4–12) and <strong>College</strong> (Higher Ed) learners. You may explore our student/parent workspaces below, or return to the professional research preview.
-            </p>
-            <div className="pt-1">
-              <Link
-                href="/professionals"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2563EB] hover:underline"
-              >
-                <span>Return to Professional Preview</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        )}
 
         {/* Preserved Context Summary Badges (If coming with valid context) */}
         {(validatedStage || validatedSituation || validatedContext) && (
@@ -210,7 +197,7 @@ function GetStartedRoleSelection() {
               </div>
 
               <p className="text-xs sm:text-sm text-[#474D66] mt-1.5 leading-relaxed">
-                Explore my interests, discover possibilities, build skills and plan my next move.
+                School (Classes 4–12), College, Polytechnic or Degree learner exploring interests, building capabilities and planning realistic next steps.
               </p>
 
               {validatedStage && (
@@ -222,7 +209,59 @@ function GetStartedRoleSelection() {
             </div>
           </div>
 
-          {/* 2. Parent / Guardian Card */}
+          {/* 2. Professional Card */}
+          <div
+            role="radio"
+            aria-checked={selectedRole === "professional"}
+            tabIndex={0}
+            onClick={() => setSelectedRole("professional")}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                setSelectedRole("professional");
+              }
+            }}
+            className={`p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer text-left flex items-start gap-4 focus:outline-hidden focus:ring-2 focus:ring-[#6757F5] ${
+              selectedRole === "professional"
+                ? "bg-[#FAF9F6] border-[#6757F5] ring-4 ring-[#EDEAFF] shadow-md"
+                : "bg-white border-[#E8E6F3] hover:border-[#DDD8FE] hover:bg-[#FAF9F6]/50"
+            }`}
+          >
+            <div
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                selectedRole === "professional"
+                  ? "bg-[#6757F5] text-white"
+                  : "bg-[#EDEAFF] text-[#6757F5]"
+              }`}
+            >
+              <Briefcase className="w-6 h-6" />
+            </div>
+
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-extrabold text-[#171A2B]">
+                  I&apos;m a Professional
+                </h2>
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                    selectedRole === "professional"
+                      ? "border-[#6757F5] bg-[#6757F5] text-white"
+                      : "border-[#C7C4E2] bg-white"
+                  }`}
+                >
+                  {selectedRole === "professional" && (
+                    <div className="w-2 h-2 rounded-full bg-white" />
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs sm:text-sm text-[#474D66] mt-1.5 leading-relaxed">
+                Working professional or graduate exploring transferable capabilities, upskilling opportunities, and structured career progression pathways.
+              </p>
+            </div>
+          </div>
+
+          {/* 3. Parent / Guardian Card */}
           <div
             role="radio"
             aria-checked={selectedRole === "parent"}
