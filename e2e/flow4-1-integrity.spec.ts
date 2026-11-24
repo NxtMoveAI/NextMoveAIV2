@@ -91,18 +91,10 @@ test.describe('Flow 4.1 — Visual Review Corrections & Profile Integrity', () =
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Compare 2 Diverse Undergraduate Directions for Science (PCM)');
 
-    // F) Verify Partner Preview prompts are tailored to broad PCM exploration
-    const partnerPreview = page.locator('#partner-preview');
-    await expect(partnerPreview).toBeVisible();
-    await expect(partnerPreview).toContainText('How can I explore degree options across engineering, pure sciences, and analytics without feeling overwhelmed?');
-    await expect(partnerPreview).toContainText('What if I\'m not sure whether traditional engineering is the right fit for me?');
-
-    // Must NOT contain arbitrary "85%" or fear-based language
-    const partnerText = await partnerPreview.innerText();
-    expect(partnerText).not.toContain('85%');
-    expect(partnerText).not.toContain('puts you behind peer interns');
-    expect(partnerText).not.toContain('No hallucinations');
-    expect(partnerText).toContain('Deterministic Preview • Context-grounded exploration guidance');
+    // F) Verify Partner Preview prompts are removed from home dashboard (Prompt requirement)
+    await expect(page.locator('#partner-preview')).toHaveCount(0);
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
 
     // Capture screenshot for visual audit
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'flow4-1-class12-still-exploring.png'), fullPage: true });

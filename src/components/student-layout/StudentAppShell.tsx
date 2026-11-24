@@ -12,12 +12,15 @@ import { AlertTriangle } from "lucide-react";
 import { StudentSidebar } from "./StudentSidebar";
 import { StudentHeader } from "./StudentHeader";
 import { StudentMobileNav } from "./StudentMobileNav";
+import { useStudentHome } from "@/features/student-home/hooks/useStudentHome";
 
 interface StudentAppShellProps {
   children: React.ReactNode;
 }
 
 export function StudentAppShell({ children }: StudentAppShellProps) {
+  const { isRealAuthenticatedUser } = useStudentHome();
+
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#171A2B] flex flex-col lg:flex-row font-sans antialiased overflow-x-hidden selection:bg-[#EDEAFF] selection:text-[#6757F5]">
       {/* Accessibility Skip Link */}
@@ -33,16 +36,18 @@ export function StudentAppShell({ children }: StudentAppShellProps) {
 
       {/* Main Workspace Column */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Demonstration Workspace Notice Banner */}
-        <aside
-          aria-label="Demonstration Workspace Notice"
-          className="bg-[#FFFBEB] border-b border-[#FDE68A] text-[#92400E] text-[11px] font-medium py-1.5 px-4 text-center flex items-center justify-center gap-2"
-        >
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-[#D97706]" />
-          <span>
-            <strong>Demonstration Preview:</strong> Illustrative student workspace. Real student accounts and cloud database persistence are currently disabled.
-          </span>
-        </aside>
+        {/* Demonstration Workspace Notice Banner (only in demo mode) */}
+        {!isRealAuthenticatedUser && (
+          <aside
+            aria-label="Demonstration Workspace Notice"
+            className="bg-[#FFFBEB] border-b border-[#FDE68A] text-[#92400E] text-[11px] font-medium py-1.5 px-4 text-center flex items-center justify-center gap-2"
+          >
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-[#D97706]" />
+            <span>
+              <strong>Demonstration Preview:</strong> Illustrative student workspace. Real student accounts and cloud database persistence are currently disabled.
+            </span>
+          </aside>
+        )}
 
         <StudentHeader />
 

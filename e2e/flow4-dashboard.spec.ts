@@ -36,13 +36,13 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Create a 3-Scene Adventure Story Comic');
 
-    // Verify Creative possibilities
-    await expect(page.locator('text=Visual Storyteller & Comic Creator')).toBeVisible();
-    await expect(page.locator('text=Junior Nature & Wildlife Observer')).toBeVisible();
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
+    await expect(page.locator('#partner-preview')).toHaveCount(0);
 
     // Verify no career fit scores or fake percentages
     await expect(page.locator('text=Career-Fit Score')).not.toBeVisible();
-    await expect(page.locator('text=Building real capability rather than assigning arbitrary fit percentages')).toBeVisible();
   });
 
   test('F4.2: Persona B (Class 9 Undecided): Low-pressure multi-path discovery without stream lock', async ({ page }) => {
@@ -60,9 +60,8 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Try 2 Low-Stakes Mini-Tasks Across Different Streams');
 
-    // Verify broad possibilities
-    await expect(page.locator('text=Multi-Stream Subject Explorer')).toBeVisible();
-    await expect(page.locator('text=Applied Problem Solving & Logic')).toBeVisible();
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
   });
 
   test('F4.3: Persona C (Class 12 Science PCM): Pathway comparisons without false guarantees', async ({ page }) => {
@@ -80,7 +79,10 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // Verify Next Move
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Compare 2 Undergraduate Pathways');
-    await expect(page.locator('text=Computer Science & Engineering Pathways').first()).toBeVisible();
+
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
   });
 
   test('F4.4: Persona D (Diploma Mechanical): Lateral entry B.Tech and practical engineering', async ({ page }) => {
@@ -98,10 +100,12 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // Verify Next Move
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Review Lateral Entry Entrance Exam (LEET) Requirements');
-    await expect(page.locator('text=Industrial Automation & CNC Specialist').first()).toBeVisible();
+
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
   });
 
-  test('F4.5: Persona E (BCA Python): Truthful epistemic labels (Self-Reported vs Practised)', async ({ page }) => {
+  test('F4.5: Persona E (BCA Python): Adaptive dashboard and removed growth snapshot from home', async ({ page }) => {
     await page.goto('/dashboard/student');
     await page.waitForLoadState('networkidle');
 
@@ -111,12 +115,13 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     await expect(page.locator('text=Kavya Menon').first()).toBeVisible();
     await expect(page.locator('text=BCA in Computer Applications (2nd Year)').first()).toBeVisible();
 
-    // Verify truth in evidence taxonomy:
-    // Python is Self-Reported, Query Optimization is Practised
-    await expect(page.locator('text=Python Scripting & Basic Syntax').first()).toBeVisible();
-    await expect(page.locator('text=You Told Us (Self-Reported)').first()).toBeVisible();
-    await expect(page.locator('text=Relational Query Diagnosis (N+1 Avoidance)').first()).toBeVisible();
-    await expect(page.locator('text=Practised in Challenge').first()).toBeVisible();
+    // Verify Starting Point card
+    const startingPoint = page.locator('#starting-point');
+    await expect(startingPoint).toBeVisible();
+    await expect(startingPoint).toContainText('BCA');
+
+    // Verify growth snapshot is removed from home dashboard
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
   });
 
   test('F4.6: Persona F (BCom Finance): Cash flow analysis without forced coding challenges', async ({ page }) => {
@@ -133,9 +138,8 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Analyze a Real-World 12-Month Cash Flow Statement');
 
-    // Verify finance possibilities
-    await expect(page.locator('text=Corporate Financial Planning & Analysis (FP&A)').first()).toBeVisible();
-    await expect(page.locator('text=Equity Research & Valuation').first()).toBeVisible();
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
   });
 
   test('F4.7: Persona G (Engineering Senior): Benchmarking existing project without fake certification', async ({ page }) => {
@@ -150,7 +154,9 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
 
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Benchmark Your Existing Sensor Project with Latency Profiles');
-    await expect(page.locator('text=Site Reliability & Systems Engineering').first()).toBeVisible();
+
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
   });
 
   test('F4.8: Persona H (Humanities Graduate): Policy brief synthesis without tech startup assumptions', async ({ page }) => {
@@ -166,7 +172,9 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
 
     const nextMove = page.locator('#next-move');
     await expect(nextMove).toContainText('Draft a 1-Page Policy Brief on an Urban Sustainability Trade-Off');
-    await expect(page.locator('text=Public Policy Research & Think-Tank Analyst').first()).toBeVisible();
+
+    // Verify removed sections are not present on home dashboard
+    await expect(page.locator('#explore-possibilities')).toHaveCount(0);
   });
 
   test('F4.9: Empty State: First-time student sees reassuring message without fake progress', async ({ page }) => {
@@ -176,9 +184,12 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // Select Empty Persona
     await page.locator('button:has-text("First-Time (Empty)")').click();
 
-    // Verify growth section empty state
-    await expect(page.locator('text=You haven\'t completed an activity yet. That\'s a place to begin, not a problem.')).toBeVisible();
-    await expect(page.locator('text=Try Your First Discovery Action')).toBeVisible();
+    // Verify next move and starting point without fake progress
+    const nextMove = page.locator('#next-move');
+    await expect(nextMove).toContainText('Try Your First 5-Minute Practical Discovery Task');
+
+    // Growth snapshot should not be on home
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
   });
 
   test('F4.10: Returning Student: Verified recent activity history and continued action', async ({ page }) => {
@@ -188,10 +199,12 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     // Select Returning Persona
     await page.locator('button:has-text("Returning User")').click();
 
-    // Verify recent activity event
-    await expect(page.locator('text=Latest Activity Completed:')).toBeVisible();
-    await expect(page.locator('text=28 Oct 2026 · Synthetic fixture')).toBeVisible();
-    await expect(page.locator('text=Continue: 12-Month Cash Flow Statement Modeling')).toBeVisible();
+    // Verify continued next move action
+    const nextMove = page.locator('#next-move');
+    await expect(nextMove).toContainText('Continue: 12-Month Cash Flow Statement Modeling');
+
+    // Growth snapshot should not be on home
+    await expect(page.locator('#growth-snapshot')).toHaveCount(0);
   });
 
   // ===========================================================================
@@ -255,26 +268,17 @@ test.describe('Flow 4 — Personalized Student Home Dashboard', () => {
     await expect(startingPoint.locator('text=Selected Sub-Interests:')).not.toBeVisible();
   });
 
-  test('F4.13: My Partner Preview: Contextual questions render structured deterministic answers', async ({ page }) => {
+  test('F4.13: My Partner Preview: Removed from home dashboard and accessible via Partner route', async ({ page }) => {
     await page.goto('/dashboard/student');
     await page.waitForLoadState('networkidle');
 
-    const partnerPreview = page.locator('#partner-preview');
-    await partnerPreview.scrollIntoViewIfNeeded();
+    // Assert partner preview is removed from home dashboard
+    await expect(page.locator('#partner-preview')).toHaveCount(0);
 
-    // Assert header and prompt tabs
-    await expect(partnerPreview.getByRole('heading', { name: 'My Partner Preview' })).toBeVisible();
-
-    // Assert 4-part structured response
-    await expect(partnerPreview.locator('text=1. Understanding Your Dilemma')).toBeVisible();
-    await expect(partnerPreview.locator('text=2. Two Grounded Exploration Directions')).toBeVisible();
-    await expect(partnerPreview.locator('text=3. Important Trade-Off or Unknown to Keep in Mind:')).toBeVisible();
-    await expect(partnerPreview.locator('text=4. Practical Suggested Action:')).toBeVisible();
-
-    // Switch to second prompt question
-    const secondButton = partnerPreview.locator('button[aria-pressed="false"]').first();
-    await secondButton.click();
-    await expect(partnerPreview.locator('text=1. Understanding Your Dilemma')).toBeVisible();
+    // Verify dedicated Partner page is accessible
+    await page.goto('/dashboard/student/partner');
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/\/dashboard\/student\/partner/);
   });
 
   // ===========================================================================

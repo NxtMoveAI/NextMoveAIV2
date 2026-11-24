@@ -21,16 +21,13 @@ import { PersonaSwitcherBar } from "@/features/student-home/components/PersonaSw
 import { WelcomePanel } from "@/features/student-home/components/WelcomePanel";
 import { StartingPointCard } from "@/features/student-home/components/StartingPointCard";
 import { NextMoveCard } from "@/features/student-home/components/NextMoveCard";
-import { ExplorePreview } from "@/features/student-home/components/ExplorePreview";
-import { GrowthSnapshot } from "@/features/student-home/components/GrowthSnapshot";
-import { PartnerPreview } from "@/features/student-home/components/PartnerPreview";
 import { HomeLoadingState } from "@/features/student-home/components/HomeLoadingState";
 import { HomeErrorState } from "@/features/student-home/components/HomeErrorState";
 import { HomeEmptyState } from "@/features/student-home/components/HomeEmptyState";
 
 export default function StudentHomePage() {
   const router = useRouter();
-  const { viewModel, hasRealHandoff, isLoading, error, retryLoad } = useStudentHome();
+  const { viewModel, hasRealHandoff, isLoading, error, retryLoad, isRealAuthenticatedUser } = useStudentHome();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -57,18 +54,18 @@ export default function StudentHomePage() {
     (window.location.search.includes("mode=production") ||
       window.location.search.includes("session=anonymous"));
 
-  if (isAnonymousProductionVisit && !hasRealHandoff) {
+  if (isAnonymousProductionVisit && !hasRealHandoff && !isRealAuthenticatedUser) {
     return <HomeEmptyState />;
   }
 
   return (
     <div className="space-y-8 pb-8">
-      {/* 1. Development Persona Switcher (Non-production only) */}
-      {process.env.NODE_ENV !== "production" && !isAnonymousProductionVisit && (
+      {/* Development Persona Switcher (Non-production only, completely hidden for authenticated users) */}
+      {!isRealAuthenticatedUser && process.env.NODE_ENV !== "production" && !isAnonymousProductionVisit && (
         <PersonaSwitcherBar />
       )}
 
-      {/* 2. Personalized Welcome Area */}
+      {/* 1. Personalized Welcome Area */}
       <WelcomePanel
         stageId={viewModel.academicStageId}
         studentName={viewModel.studentName}
@@ -76,28 +73,11 @@ export default function StudentHomePage() {
         academicSummary={viewModel.academicSummary}
       />
 
-      {/* 3. Your Next Move (Primary Intelligent Decision Widget) */}
-      <NextMoveCard />
-
-      {/* 4. My Starting Point (Profile Summary & Progressive Disclosure) */}
+      {/* 2. My Starting Point (Baseline Questionnaire & Profile Summary) */}
       <StartingPointCard viewModel={viewModel} />
 
-      {/* 5. Explore Possibilities Preview (Up to 3 curated cards) */}
-      <ExplorePreview
-        possibilities={viewModel.possibilities}
-        stageLabel={viewModel.academicStageLabel}
-      />
-
-      {/* 6. My Growth Snapshot (Truthful Evidence Taxonomy) */}
-      <GrowthSnapshot
-        snapshot={viewModel.growthSnapshot}
-      />
-
-      {/* 7. My Partner Preview (Contextual Guidance Cards) */}
-      <PartnerPreview
-        prompts={viewModel.partnerPrompts}
-        stageLabel={viewModel.academicStageLabel}
-      />
+      {/* 3. Your Next Move (Primary Intelligent Decision Widget) */}
+      <NextMoveCard />
     </div>
   );
 }

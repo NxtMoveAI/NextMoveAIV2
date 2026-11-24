@@ -385,10 +385,36 @@ export async function signInWithIdentifier(
   };
 }
 
+const mockAuthListeners: Set<(user: AuthUser | null) => void> = new Set();
+
 /**
  * Sign out current authenticated user.
  */
 export async function signOutUser(): Promise<void> {
+  // Testing mock hook for browser tests (e.g. Playwright)
+  if (
+    typeof window !== "undefined" &&
+    (window as unknown as { __NEXT_MOVE_MOCK_AUTH__?: unknown }).__NEXT_MOVE_MOCK_AUTH__
+  ) {
+    const mockHost = window as unknown as {
+      __NEXT_MOVE_MOCK_AUTH__: unknown;
+      __AUTH_SIGNED_OUT__?: boolean;
+    };
+    mockHost.__AUTH_SIGNED_OUT__ = true;
+    if (typeof mockHost.__NEXT_MOVE_MOCK_AUTH__ === "object" && mockHost.__NEXT_MOVE_MOCK_AUTH__ !== null) {
+      (mockHost.__NEXT_MOVE_MOCK_AUTH__ as { notAuthenticated?: boolean; isAuthenticated?: boolean }).notAuthenticated = true;
+      (mockHost.__NEXT_MOVE_MOCK_AUTH__ as { notAuthenticated?: boolean; isAuthenticated?: boolean }).isAuthenticated = false;
+    } else {
+      mockHost.__NEXT_MOVE_MOCK_AUTH__ = { notAuthenticated: true, isAuthenticated: false };
+    }
+    mockAuthListeners.forEach((listener) => {
+      try {
+        listener(null);
+      } catch (err) {
+        console.error("Error in mock auth listener", err);
+      }
+    });
+  }
   await firebaseSignOut(auth);
 }
 
@@ -399,6 +425,19 @@ export async function signOutUser(): Promise<void> {
 export function onAuthStateChange(
   callback: (user: AuthUser | null) => void
 ): () => void {
+  // Testing mock hook for browser tests
+  if (
+    typeof window !== "undefined" &&
+    (window as unknown as { __NEXT_MOVE_MOCK_AUTH__?: unknown }).__NEXT_MOVE_MOCK_AUTH__
+  ) {
+    mockAuthListeners.add(callback);
+    const mockUser = getCurrentAuthUser();
+    queueMicrotask(() => callback(mockUser));
+    return () => {
+      mockAuthListeners.delete(callback);
+    };
+  }
+
   return onAuthStateChanged(auth, (firebaseUser) => {
     callback(firebaseUser ? mapFirebaseUser(firebaseUser) : null);
   });
@@ -408,6 +447,66 @@ export function onAuthStateChange(
  * Synchronously get the currently authenticated user (if any).
  */
 export function getCurrentAuthUser(): AuthUser | null {
+  // Testing mock hook for browser tests
+  if (
+    typeof window !== "undefined" &&
+    (window as unknown as { __NEXT_MOVE_MOCK_AUTH__?: unknown }).__NEXT_MOVE_MOCK_AUTH__
+  ) {
+    const mockHost = window as unknown as {
+      __NEXT_MOVE_MOCK_AUTH__:
+        | boolean
+        | {
+            mockUser?: AuthUser | null;
+            customUid?: string;
+            customEmail?: string;
+            customName?: string;
+            notAuthenticated?: boolean;
+            isAuthenticated?: boolean;
+            shouldFailSignIn?: boolean;
+            shouldFail?: boolean;
+          };
+    };
+
+    if (
+      typeof mockHost.__NEXT_MOVE_MOCK_AUTH__ === "object" &&
+      mockHost.__NEXT_MOVE_MOCK_AUTH__ !== null
+    ) {
+      if (
+        mockHost.__NEXT_MOVE_MOCK_AUTH__.notAuthenticated ||
+        mockHost.__NEXT_MOVE_MOCK_AUTH__.shouldFailSignIn ||
+        mockHost.__NEXT_MOVE_MOCK_AUTH__.shouldFail
+      ) {
+        return null;
+      }
+      if (mockHost.__NEXT_MOVE_MOCK_AUTH__.mockUser !== undefined) {
+        return mockHost.__NEXT_MOVE_MOCK_AUTH__.mockUser;
+      }
+      if (
+        mockHost.__NEXT_MOVE_MOCK_AUTH__.isAuthenticated ||
+        mockHost.__NEXT_MOVE_MOCK_AUTH__.customUid
+      ) {
+        return {
+          uid: mockHost.__NEXT_MOVE_MOCK_AUTH__.customUid || "uid-verified-student-12345",
+          email: mockHost.__NEXT_MOVE_MOCK_AUTH__.customEmail || "student@example.com",
+          displayName: mockHost.__NEXT_MOVE_MOCK_AUTH__.customName || "Authenticated Student",
+          phoneNumber: null,
+          emailVerified: true,
+        };
+      }
+      return null;
+    }
+
+    if (mockHost.__NEXT_MOVE_MOCK_AUTH__ === true) {
+      return {
+        uid: "uid-verified-student-12345",
+        email: "student@example.com",
+        displayName: "Authenticated Student",
+        phoneNumber: null,
+        emailVerified: true,
+      };
+    }
+  }
+
   const current = auth.currentUser;
   return current ? mapFirebaseUser(current) : null;
 }

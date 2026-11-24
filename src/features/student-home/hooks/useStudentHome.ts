@@ -1,7 +1,8 @@
 /**
  * NEXT MOVE AI V2 — FLOW 4: USE STUDENT HOME HOOK
  * 
- * Manages reactive home dashboard state, persona switching, and intelligent UI interactions.
+ * Manages reactive home dashboard state, Firebase Auth & Firestore profile integration,
+ * academic stage locking, persona switching (development only), and intelligent UI interactions.
  */
 
 "use client";
@@ -12,6 +13,8 @@ import { transformProfileToHomeViewModel } from "../services/home-adapter";
 import { type StudentHomeViewModel, type PersonaFixtureId } from "../schemas/types";
 import { DEMO_PERSONAS } from "../data/demo-personas";
 import { isValidStageId, isValidSituation } from "@/data/flow2-config";
+import { onAuthStateChange, getCurrentAuthUser, signOutUser, type AuthUser } from "@/lib/auth-service";
+import { type UserProfile, type UserStartingPoint, type StudentNextMoveActivity } from "@/lib/firestore-service";
 
 const STAGE_TO_PERSONA: Record<string, PersonaFixtureId> = {
   "classes-4-7": "persona_a_class6",
@@ -30,16 +33,41 @@ const SITUATION_TO_PERSONA: Record<string, PersonaFixtureId> = {
 
 export function useStudentHome() {
   const [, setTick] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localLoading, setLocalLoading] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
-  // Align initial demo persona with incoming query parameters if present and no real handoff exists
+  // 1. Subscribe to Firebase Auth state changes
+  useEffect(() => {
+    // Immediate initial sync
+    const initialUser = getCurrentAuthUser();
+    if (initialUser) {
+      studentProfileStore.setAuthUser(initialUser);
+    }
+
+    const unsubscribe = onAuthStateChange((user) => {
+      studentProfileStore.setAuthUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // 2. Re-render when profile store changes
+  useEffect(() => {
+    const unsubscribe = studentProfileStore.subscribe(() => {
+      setTick((t) => t + 1);
+    });
+    return unsubscribe;
+  }, []);
+
+  // 3. Align initial demo persona with incoming query parameters ONLY for unauthenticated demo visits
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      // CRITICAL SAFEGUARD: If a real student profile is confirmed (from Flow 3 onboarding or session),
-      // URL demo parameters must NEVER overwrite or mutate it.
-      if (studentProfileStore.hasRealHandoff()) {
+      // CRITICAL SAFEGUARD: Authenticated user OR confirmed session profile MUST NEVER be mutated by URL params
+      if (
+        studentProfileStore.isRealAuthenticatedUser() ||
+        studentProfileStore.hasRealHandoff()
+      ) {
         return;
       }
 
@@ -57,7 +85,6 @@ export function useStudentHome() {
 
       // 2. Academic Stage param alignment
       if (isValidStageId(stageParam)) {
-        // Degree vs Engineering distinction: if stage is degree-engineering and context indicates BCA / non-engineering degree
         if (stageParam === "degree-engineering" && (contextParam === "bca" || contextParam === "degree")) {
           studentProfileStore.setActivePersonaId("persona_e_bca");
         } else if (stageParam === "degree-engineering" && contextParam === "engineering") {
@@ -93,13 +120,9 @@ export function useStudentHome() {
     }
   }, []);
 
-  // Re-render when profile store changes
-  useEffect(() => {
-    const unsubscribe = studentProfileStore.subscribe(() => {
-      setTick((t) => t + 1);
-    });
-    return unsubscribe;
-  }, []);
+  const authUser: AuthUser | null = studentProfileStore.getAuthUser();
+  const userProfile: UserProfile | null = studentProfileStore.getUserProfile();
+  const isRealAuthenticatedUser: boolean = studentProfileStore.isRealAuthenticatedUser();
 
   const activePersonaId = studentProfileStore.getActivePersonaId();
   const hasRealHandoff = studentProfileStore.hasRealHandoff();
@@ -110,13 +133,16 @@ export function useStudentHome() {
   const selectedAltId = studentProfileStore.getSelectedAlternativeMove();
   const isPostponed = studentProfileStore.getIsMovePostponed();
 
-  // Find persona display name if available - never invent identity in production or when unconfirmed
+  // Student Name: Authenticated user's real Firestore name ALWAYS takes precedence
   const studentName = useMemo(() => {
+    if (isRealAuthenticatedUser && userProfile?.name) {
+      return userProfile.name;
+    }
     if (!hasConfirmedProfile) return undefined;
-    if (hasRealHandoff) return undefined; // neutral or read from student session
+    if (hasRealHandoff) return undefined;
     if (isProductionMode) return undefined;
     return DEMO_PERSONAS[activePersonaId]?.name;
-  }, [hasConfirmedProfile, hasRealHandoff, isProductionMode, activePersonaId]);
+  }, [isRealAuthenticatedUser, userProfile, hasConfirmedProfile, hasRealHandoff, isProductionMode, activePersonaId]);
 
   const viewModel: StudentHomeViewModel = useMemo(() => {
     return transformProfileToHomeViewModel(profile, {
@@ -124,8 +150,12 @@ export function useStudentHome() {
       selectedAlternativeMoveId: selectedAltId,
       isMovePostponed: isPostponed,
       isReturningUser: activePersonaId === "persona_returning_bcom",
+      isDemoMode: !isRealAuthenticatedUser,
     });
-  }, [profile, studentName, selectedAltId, isPostponed, activePersonaId]);
+  }, [profile, studentName, selectedAltId, isPostponed, activePersonaId, isRealAuthenticatedUser]);
+
+  const isLoading = localLoading || studentProfileStore.getIsProfileLoading();
+  const error = localError || studentProfileStore.getProfileError();
 
   // Actions
   const selectAlternativeMove = useCallback((moveId: string) => {
@@ -142,20 +172,54 @@ export function useStudentHome() {
   }, []);
 
   const switchPersona = useCallback((personaId: PersonaFixtureId) => {
-    setIsLoading(true);
-    setError(null);
+    // Authenticated users cannot switch personas
+    if (studentProfileStore.isRealAuthenticatedUser()) {
+      return;
+    }
+    setLocalLoading(true);
+    setLocalError(null);
     setTimeout(() => {
       studentProfileStore.setActivePersonaId(personaId);
-      setIsLoading(false);
+      setLocalLoading(false);
     }, 120);
   }, []);
 
   const retryLoad = useCallback(() => {
-    setIsLoading(true);
-    setError(null);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 150);
+    const user = studentProfileStore.getAuthUser();
+    if (user) {
+      studentProfileStore.loadUserProfile(user.uid);
+    } else {
+      setLocalLoading(true);
+      setLocalError(null);
+      setTimeout(() => {
+        setLocalLoading(false);
+      }, 150);
+    }
+  }, []);
+
+  const signOut = useCallback(async () => {
+    try {
+      await signOutUser();
+    } catch (err) {
+      console.error("Sign out error", err);
+    }
+    studentProfileStore.clearAll();
+    if (typeof window !== "undefined") {
+      sessionStorage.clear();
+    }
+  }, []);
+
+  const startingPoint = userProfile?.startingPoint || studentProfileStore.getStartingPoint();
+
+  const saveStartingPoint = useCallback(async (data: UserStartingPoint) => {
+    return studentProfileStore.saveStartingPoint(data);
+  }, []);
+
+  const nextMoveActivity = userProfile?.nextMoveActivity || studentProfileStore.getNextMoveActivity();
+  const nextMoveHistory = userProfile?.nextMoveHistory || studentProfileStore.getNextMoveHistory();
+
+  const saveNextMoveActivity = useCallback(async (data: StudentNextMoveActivity) => {
+    return studentProfileStore.saveNextMoveActivity(data);
   }, []);
 
   return {
@@ -165,11 +229,19 @@ export function useStudentHome() {
     activePersonaId,
     hasRealHandoff,
     hasConfirmedProfile,
+    isRealAuthenticatedUser,
+    authUser,
+    userProfile,
+    startingPoint,
+    saveStartingPoint,
+    nextMoveActivity,
+    nextMoveHistory,
+    saveNextMoveActivity,
     selectAlternativeMove,
     restoreSuggestedMove,
     postponeMove,
     switchPersona,
     retryLoad,
+    signOut,
   };
 }
-

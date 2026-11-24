@@ -3,6 +3,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  onSnapshot,
   serverTimestamp,
   type Timestamp,
   type FieldValue,
@@ -15,6 +16,39 @@ import { type UserRole } from "./api-contracts";
 // FIRESTORE USER PROFILE SCHEMA & TYPES
 // =============================================================================
 
+export interface UserStartingPoint {
+  answers: Record<string, string>;
+  academicStage: string;
+  primaryFocus: string;
+  status: string;
+  activeInterests: string[];
+  isCompleted: boolean;
+  completedAt: string;
+  updatedAt: string;
+}
+
+export interface ActivityStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  instruction: string;
+}
+
+export interface StudentNextMoveActivity {
+  activityId: string;
+  title: string;
+  description: string;
+  learningOutcome: string;
+  estimatedDuration: string;
+  steps: ActivityStep[];
+  completedStepIds: string[];
+  progressPercentage: number;
+  status: "not_started" | "in_progress" | "completed";
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string | null;
+}
+
 export interface UserProfile {
   uid: string;
   name: string;
@@ -24,7 +58,11 @@ export interface UserProfile {
   institution?: string | null;
   role: UserRole | "professional" | string;
   academicStage?: AcademicStageId | string | null;
+  currentClass?: "Class 4" | "Class 5" | "Class 6" | "Class 7" | string | null;
   isOnboardingCompleted: boolean;
+  startingPoint?: UserStartingPoint | null;
+  nextMoveActivity?: StudentNextMoveActivity | null;
+  nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
   createdAt: Timestamp | FieldValue | string | null;
   updatedAt: Timestamp | FieldValue | string | null;
 }
@@ -38,7 +76,11 @@ export interface CreateUserProfileInput {
   institution?: string | null;
   role?: UserRole | "professional" | string;
   academicStage?: AcademicStageId | string | null;
+  currentClass?: "Class 4" | "Class 5" | "Class 6" | "Class 7" | string | null;
   isOnboardingCompleted?: boolean;
+  startingPoint?: UserStartingPoint | null;
+  nextMoveActivity?: StudentNextMoveActivity | null;
+  nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
 }
 
 export interface UpdateUserProfileInput {
@@ -49,7 +91,11 @@ export interface UpdateUserProfileInput {
   institution?: string | null;
   role?: UserRole | "professional" | string;
   academicStage?: AcademicStageId | string | null;
+  currentClass?: "Class 4" | "Class 5" | "Class 6" | "Class 7" | string | null;
   isOnboardingCompleted?: boolean;
+  startingPoint?: UserStartingPoint | null;
+  nextMoveActivity?: StudentNextMoveActivity | null;
+  nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
   [key: string]: unknown;
 }
 
@@ -140,6 +186,7 @@ export async function createUserProfile(
         role: input.role || "student",
         academicStage: input.academicStage || null,
         isOnboardingCompleted: input.isOnboardingCompleted ?? false,
+        startingPoint: input.startingPoint || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -165,6 +212,7 @@ export async function createUserProfile(
       role: input.role || "student",
       academicStage: input.academicStage || null,
       isOnboardingCompleted: input.isOnboardingCompleted ?? false,
+      startingPoint: input.startingPoint || null,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -265,6 +313,7 @@ export async function getUserProfile(
               role: mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.customRole,
               academicStage: mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.customStage || "classes-8-10",
               isOnboardingCompleted: false,
+              startingPoint: null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             } as unknown as UserProfile,
@@ -282,6 +331,7 @@ export async function getUserProfile(
           role: "student",
           academicStage: "classes-8-10",
           isOnboardingCompleted: false,
+          startingPoint: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         } as unknown as UserProfile,
@@ -312,6 +362,100 @@ export async function getUserProfile(
       },
     };
   }
+}
+
+/**
+ * Realtime Firestore subscription for a user's profile document at `users/{uid}`.
+ * Immediately pushes profile updates, Starting Point changes, and activity progress
+ * to the calling component or store.
+ */
+export function subscribeToUserProfile(
+  uid: string,
+  onUpdate: (profile: UserProfile | null) => void,
+  onError?: (error: Error) => void
+): () => void {
+  if (!uid || !uid.trim()) {
+    onUpdate(null);
+    return () => {};
+  }
+
+  // Testing mock hook for browser tests (e.g. Playwright)
+  if (
+    typeof window !== "undefined" &&
+    (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__?: unknown }).__NEXT_MOVE_MOCK_FIRESTORE__
+  ) {
+    const mockHost = window as unknown as {
+      __NEXT_MOVE_MOCK_FIRESTORE__:
+        | boolean
+        | {
+            mockProfile?: UserProfile | null;
+            profileNotFound?: boolean;
+            getProfileShouldFail?: boolean;
+            getProfileErrorMessage?: string;
+            customRole?: string;
+            customStage?: string;
+          };
+      __LAST_FIRESTORE_GET_UID__?: string;
+      __MOCK_SUBSCRIBERS__?: Set<() => void>;
+    };
+
+    mockHost.__LAST_FIRESTORE_GET_UID__ = uid;
+
+    const notifyMockUpdate = () => {
+      if (typeof mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ === "object" && mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ !== null) {
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.profileNotFound) {
+          onUpdate(null);
+          return;
+        }
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile !== undefined) {
+          onUpdate(mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile);
+          return;
+        }
+      }
+      onUpdate({
+        uid,
+        name: "Devansh Mehta",
+        email: "student@example.com",
+        role: "student",
+        academicStage: "classes-8-10",
+        isOnboardingCompleted: false,
+        startingPoint: null,
+        nextMoveActivity: null,
+        nextMoveHistory: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as unknown as UserProfile);
+    };
+
+    notifyMockUpdate();
+
+    if (!mockHost.__MOCK_SUBSCRIBERS__) {
+      mockHost.__MOCK_SUBSCRIBERS__ = new Set();
+    }
+    mockHost.__MOCK_SUBSCRIBERS__.add(notifyMockUpdate);
+
+    return () => {
+      mockHost.__MOCK_SUBSCRIBERS__?.delete(notifyMockUpdate);
+    };
+  }
+
+  const userDocRef = doc(db, USERS_COLLECTION, uid);
+  const unsubscribe = onSnapshot(
+    userDocRef,
+    (docSnap) => {
+      if (docSnap.exists()) {
+        onUpdate(docSnap.data() as UserProfile);
+      } else {
+        onUpdate(null);
+      }
+    },
+    (err) => {
+      console.error("Firestore subscribeToUserProfile error:", err);
+      if (onError) onError(err);
+    }
+  );
+
+  return unsubscribe;
 }
 
 /**
@@ -347,6 +491,28 @@ export async function updateUserProfile(
       };
     }
 
+    // Testing mock hook for browser tests (e.g. Playwright)
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__?: unknown }).__NEXT_MOVE_MOCK_FIRESTORE__
+    ) {
+      const mockHost = window as unknown as {
+        __NEXT_MOVE_MOCK_FIRESTORE__:
+          | boolean
+          | { mockProfile?: UserProfile | null };
+        __LAST_FIRESTORE_UPDATE__?: UpdateUserProfileInput;
+      };
+      mockHost.__LAST_FIRESTORE_UPDATE__ = updates;
+      if (
+        typeof mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ === "object" &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ !== null &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile
+      ) {
+        Object.assign(mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile, updates);
+      }
+      return { success: true };
+    }
+
     const userDocRef = doc(db, USERS_COLLECTION, uid);
 
     // Sanitize payload: strip any accidental attempts to overwrite UID
@@ -368,6 +534,206 @@ export async function updateUserProfile(
       error: {
         code: err.code || "firestore/update-failed",
         message: err.message || "Failed to update user profile in Firestore.",
+      },
+    };
+  }
+}
+
+/**
+ * Saves the student's starting point questionnaire responses and generated baseline
+ * directly inside their Firestore user profile document at `users/{uid}`.
+ */
+export async function saveStartingPoint(
+  uid: string,
+  startingPoint: UserStartingPoint
+): Promise<FirestoreServiceResponse<UserStartingPoint>> {
+  try {
+    if (!uid || !uid.trim()) {
+      return {
+        success: false,
+        error: {
+          code: "firestore/invalid-uid",
+          message: "A valid user UID is required to save Starting Point.",
+        },
+      };
+    }
+
+    // Testing mock hook for browser tests (e.g. Playwright)
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__?: unknown }).__NEXT_MOVE_MOCK_FIRESTORE__
+    ) {
+      const mockHost = window as unknown as {
+        __NEXT_MOVE_MOCK_FIRESTORE__:
+          | boolean
+          | {
+              mockProfile?: UserProfile | null;
+              saveStartingPointShouldFail?: boolean;
+              saveStartingPointErrorMessage?: string;
+            };
+        __LAST_SAVED_STARTING_POINT__?: UserStartingPoint;
+        __LAST_FIRESTORE_WRITE__?: unknown;
+        __MOCK_SUBSCRIBERS__?: Set<() => void>;
+      };
+
+      mockHost.__LAST_SAVED_STARTING_POINT__ = startingPoint;
+      mockHost.__LAST_FIRESTORE_WRITE__ = { startingPoint };
+
+      if (
+        typeof mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ === "object" &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ !== null
+      ) {
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.saveStartingPointShouldFail) {
+          return {
+            success: false,
+            error: {
+              code: "firestore/unavailable",
+              message:
+                mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.saveStartingPointErrorMessage ||
+                "Failed to save Starting Point to Firestore.",
+            },
+          };
+        }
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile) {
+          mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile.startingPoint = startingPoint;
+          try {
+            window.sessionStorage.setItem("__E2E_MOCK_PROFILE__", JSON.stringify(mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile));
+          } catch {}
+          mockHost.__MOCK_SUBSCRIBERS__?.forEach((cb) => {
+            try { cb(); } catch {}
+          });
+        }
+      }
+
+      return {
+        success: true,
+        data: startingPoint,
+      };
+    }
+
+    const userDocRef = doc(db, USERS_COLLECTION, uid);
+    await updateDoc(userDocRef, {
+      startingPoint,
+      updatedAt: serverTimestamp(),
+    });
+
+    return {
+      success: true,
+      data: startingPoint,
+    };
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    return {
+      success: false,
+      error: {
+        code: err.code || "firestore/save-starting-point-failed",
+        message: err.message || "Failed to save Starting Point in Firestore.",
+      },
+    };
+  }
+}
+
+/**
+ * Saves the student's active Next Move activity progress
+ * directly inside their Firestore user profile document at `users/{uid}`.
+ */
+export async function saveNextMoveActivity(
+  uid: string,
+  activity: StudentNextMoveActivity
+): Promise<FirestoreServiceResponse<StudentNextMoveActivity>> {
+  try {
+    if (!uid || !uid.trim()) {
+      return {
+        success: false,
+        error: {
+          code: "firestore/invalid-uid",
+          message: "A valid user UID is required to save Next Move activity.",
+        },
+      };
+    }
+
+    // Testing mock hook for browser tests (e.g. Playwright)
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__?: unknown }).__NEXT_MOVE_MOCK_FIRESTORE__
+    ) {
+      const mockHost = window as unknown as {
+        __NEXT_MOVE_MOCK_FIRESTORE__:
+          | boolean
+          | {
+              mockProfile?: UserProfile | null;
+              saveNextMoveShouldFail?: boolean;
+              saveNextMoveErrorMessage?: string;
+            };
+        __LAST_SAVED_NEXT_MOVE__?: StudentNextMoveActivity;
+        __LAST_FIRESTORE_WRITE__?: unknown;
+        __MOCK_SUBSCRIBERS__?: Set<() => void>;
+      };
+
+      mockHost.__LAST_SAVED_NEXT_MOVE__ = activity;
+      mockHost.__LAST_FIRESTORE_WRITE__ = { nextMoveActivity: activity };
+
+      if (
+        typeof mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ === "object" &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ !== null
+      ) {
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.saveNextMoveShouldFail) {
+          return {
+            success: false,
+            error: {
+              code: "firestore/unavailable",
+              message:
+                mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.saveNextMoveErrorMessage ||
+                "Failed to save Next Move activity to Firestore.",
+            },
+          };
+        }
+        if (mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile) {
+          mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile.nextMoveActivity = activity;
+          const currentHistory = mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile.nextMoveHistory || {};
+          currentHistory[activity.activityId] = activity;
+          mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile.nextMoveHistory = currentHistory;
+          try {
+            window.sessionStorage.setItem("__E2E_MOCK_PROFILE__", JSON.stringify(mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile));
+          } catch {}
+          mockHost.__MOCK_SUBSCRIBERS__?.forEach((cb) => {
+            try { cb(); } catch {}
+          });
+        }
+      }
+
+      return {
+        success: true,
+        data: activity,
+      };
+    }
+
+    const userDocRef = doc(db, USERS_COLLECTION, uid);
+    const docSnap = await getDoc(userDocRef);
+    const existingData = docSnap.exists() ? (docSnap.data() as UserProfile) : null;
+    const existingHistory = existingData?.nextMoveHistory || {};
+    const updatedHistory = {
+      ...existingHistory,
+      [activity.activityId]: activity,
+    };
+
+    await updateDoc(userDocRef, {
+      nextMoveActivity: activity,
+      nextMoveHistory: updatedHistory,
+      updatedAt: serverTimestamp(),
+    });
+
+    return {
+      success: true,
+      data: activity,
+    };
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    return {
+      success: false,
+      error: {
+        code: err.code || "firestore/save-next-move-failed",
+        message: err.message || "Failed to save Next Move activity in Firestore.",
       },
     };
   }

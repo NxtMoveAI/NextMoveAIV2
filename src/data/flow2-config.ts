@@ -97,6 +97,72 @@ export function getValidatedStage(stageParam: string | null | undefined): Academ
   return getStageOrNull(stageParam);
 }
 
+/**
+ * Normalizes raw stage identifiers (e.g. from registration, Firestore, or URL params)
+ * into a canonical AcademicStageId.
+ */
+export function normalizeAcademicStage(rawStage: string | null | undefined): AcademicStageId {
+  if (!rawStage) return "classes-8-10";
+  const clean = rawStage.trim().toLowerCase();
+
+  // School stages
+  if (
+    clean === "classes-4-7" ||
+    clean === "class-4-7" ||
+    clean === "class-4" ||
+    clean === "class-5" ||
+    clean === "class-6" ||
+    clean === "class-7" ||
+    clean === "middle-school"
+  ) {
+    return "classes-4-7";
+  }
+
+  if (
+    clean === "classes-8-10" ||
+    clean === "class-8-10" ||
+    clean === "class-8" ||
+    clean === "class-9" ||
+    clean === "class-10" ||
+    clean === "high-school"
+  ) {
+    return "classes-8-10";
+  }
+
+  if (
+    clean === "classes-11-12" ||
+    clean === "class-11-12" ||
+    clean === "class-11" ||
+    clean === "class-12"
+  ) {
+    return "classes-11-12";
+  }
+
+  // Non-school stages
+  if (clean === "diploma") {
+    return "diploma";
+  }
+
+  if (clean === "degree" || clean === "engineering" || clean === "degree-engineering") {
+    return "degree-engineering";
+  }
+
+  if (
+    clean === "working-professional" ||
+    clean === "final-year-grad" ||
+    clean === "graduate" ||
+    clean === "grad"
+  ) {
+    return "final-year-grad";
+  }
+
+  if (isValidStageId(clean)) {
+    return clean;
+  }
+
+  return "classes-8-10";
+}
+
 // =============================================================================
 // 2B. LEARNING SITUATION & AUDIENCE VALIDATORS (PROMPT 6)
 // Keeps Academic Stage, Learning Situation, Audience, and Account Role strictly separate.

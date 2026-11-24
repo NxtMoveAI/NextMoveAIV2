@@ -36,6 +36,11 @@ export function PersonaSwitcherExploreBar() {
     return null;
   }
 
+  // CRITICAL LOCK: Authenticated users must use their actual profile, not demo fixtures
+  if (studentProfileStore.isRealAuthenticatedUser()) {
+    return null;
+  }
+
   const activePersonaId = studentProfileStore.getActivePersonaId();
   const hasRealHandoff = studentProfileStore.hasRealHandoff();
   const currentPersona = DEMO_PERSONAS[activePersonaId];

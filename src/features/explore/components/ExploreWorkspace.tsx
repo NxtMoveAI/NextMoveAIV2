@@ -12,6 +12,9 @@ import React from "react";
 import { AlertCircle, RotateCcw, Compass } from "lucide-react";
 import { useExploreWorkspace } from "../hooks/useExploreWorkspace";
 import { PersonaSwitcherExploreBar } from "./PersonaSwitcherExploreBar";
+import { Classes47ExploreSpace } from "./Classes47ExploreSpace";
+import { studentProfileStore } from "@/features/student-home/services/profile-store";
+import { normalizeAcademicStage } from "@/data/flow2-config";
 import { ExploreHeaderBanner } from "./ExploreHeaderBanner";
 import { StageDiscoveryPrompt } from "./StageDiscoveryPrompt";
 import { ExploreFilterBar } from "./ExploreFilterBar";
@@ -54,6 +57,36 @@ export function ExploreWorkspace() {
     setIsSavedDrawerOpen,
     getProvenance,
   } = useExploreWorkspace();
+
+  const userProfile = studentProfileStore.getUserProfile();
+  const startingPoint = userProfile?.startingPoint || studentProfileStore.getStartingPoint();
+  const completedActivity = userProfile?.nextMoveActivity || studentProfileStore.getNextMoveActivity();
+
+  // Prioritize authenticated user profile truth to prevent fixture overriding
+  const isRealUser = studentProfileStore.isRealAuthenticatedUser();
+  const activeStage = isRealUser
+    ? normalizeAcademicStage(userProfile?.academicStage)
+    : profile?.academicStageId || normalizeAcademicStage(userProfile?.academicStage);
+
+  const isClasses47 = activeStage === "classes-4-7";
+
+  if (isClasses47) {
+    return (
+      <div data-testid="explore-workspace" className="space-y-6">
+        {/* Dev Persona Switcher (Hidden in production and anonymous sessions or for real authenticated users) */}
+        <PersonaSwitcherExploreBar />
+
+        {/* Classes 4–7 Simplified Child-Friendly Exploration Space */}
+        <Classes47ExploreSpace
+          startingPoint={startingPoint}
+          activeInterests={startingPoint?.activeInterests}
+          completedActivity={completedActivity}
+          userProfile={userProfile}
+          profile={profile}
+        />
+      </div>
+    );
+  }
 
   return (
     <div data-testid="explore-workspace" className="space-y-6">

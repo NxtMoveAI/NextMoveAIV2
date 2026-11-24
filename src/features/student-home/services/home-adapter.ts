@@ -523,6 +523,7 @@ export function transformProfileToHomeViewModel(
     selectedAlternativeMoveId?: string | null;
     isMovePostponed?: boolean;
     isReturningUser?: boolean;
+    isDemoMode?: boolean;
   }
 ): StudentHomeViewModel {
   const stageId = profile.academicStageId;
@@ -741,7 +742,7 @@ export function transformProfileToHomeViewModel(
   return {
     profileRevision: profile.profileId,
     studentName: options?.studentName,
-    isDemoMode: true,
+    isDemoMode: options?.isDemoMode !== undefined ? options.isDemoMode : true,
     onboardingStatus: profile.status,
     academicStageId: stageId,
     academicStageLabel: stageTitle,

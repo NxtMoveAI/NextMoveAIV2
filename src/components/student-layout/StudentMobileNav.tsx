@@ -52,14 +52,14 @@ const TABS: NavTab[] = [
     icon: <Compass className="w-5 h-5" />,
   },
   {
-    label: "Growth",
-    href: "/dashboard/student/growth",
-    icon: <TrendingUp className="w-5 h-5" />,
-  },
-  {
     label: "Projects",
     href: "/dashboard/student/projects",
     icon: <FolderGit2 className="w-5 h-5" />,
+  },
+  {
+    label: "Growth",
+    href: "/dashboard/student/growth",
+    icon: <TrendingUp className="w-5 h-5" />,
   },
   {
     label: "Partner",

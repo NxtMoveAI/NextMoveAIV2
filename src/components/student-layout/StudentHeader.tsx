@@ -19,11 +19,10 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useStudentHome } from "@/features/student-home/hooks/useStudentHome";
-import { studentProfileStore } from "@/features/student-home/services/profile-store";
 
 export function StudentHeader() {
   const router = useRouter();
-  const { viewModel, hasConfirmedProfile } = useStudentHome();
+  const { viewModel, hasConfirmedProfile, isRealAuthenticatedUser, userProfile, signOut } = useStudentHome();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -113,12 +112,16 @@ export function StudentHeader() {
               <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white border border-[#E8E6F3] shadow-xl py-2 z-30 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="px-4 py-2 border-b border-[#E8E6F3]">
                   <p className="text-xs font-bold text-[#171A2B]">
-                    {hasConfirmedProfile && viewModel.studentName
+                    {isRealAuthenticatedUser && userProfile
+                      ? userProfile.name
+                      : hasConfirmedProfile && viewModel.studentName
                       ? viewModel.studentName
                       : "Student Workspace"}
                   </p>
                   <p className="text-[11px] text-[#626987] truncate">
-                    {hasConfirmedProfile
+                    {isRealAuthenticatedUser && userProfile
+                      ? userProfile.email
+                      : hasConfirmedProfile
                       ? viewModel.academicSummary
                       : "Anonymous Prototype Session"}
                   </p>
@@ -170,9 +173,9 @@ export function StudentHeader() {
                   {hasConfirmedProfile ? (
                     <button
                       type="button"
-                      onClick={() => {
-                        studentProfileStore.clearConfirmedProfile();
+                      onClick={async () => {
                         setMenuOpen(false);
+                        await signOut();
                         router.push("/sign-in");
                       }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] transition-colors text-left"

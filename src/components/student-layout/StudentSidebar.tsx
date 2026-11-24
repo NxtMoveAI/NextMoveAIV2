@@ -21,7 +21,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { useStudentHome } from "@/features/student-home/hooks/useStudentHome";
-import { studentProfileStore } from "@/features/student-home/services/profile-store";
 
 // Home icon using SVG to avoid Lucide import collisions if needed
 function HomeIcon({ className }: { className?: string }) {
@@ -60,14 +59,14 @@ const PRIMARY_NAV: NavItem[] = [
     icon: <Compass className="w-4 h-4 shrink-0" />,
   },
   {
-    label: "My Growth",
-    href: "/dashboard/student/growth",
-    icon: <TrendingUp className="w-4 h-4 shrink-0" />,
-  },
-  {
     label: "My Projects",
     href: "/dashboard/student/projects",
     icon: <FolderGit2 className="w-4 h-4 shrink-0" />,
+  },
+  {
+    label: "My Growth",
+    href: "/dashboard/student/growth",
+    icon: <TrendingUp className="w-4 h-4 shrink-0" />,
   },
   {
     label: "My Partner",
@@ -93,7 +92,7 @@ const SECONDARY_NAV: NavItem[] = [
 export function StudentSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { hasConfirmedProfile } = useStudentHome();
+  const { hasConfirmedProfile, signOut } = useStudentHome();
 
   const isCurrent = (href: string) => {
     if (href === "/dashboard/student") {
@@ -215,8 +214,8 @@ export function StudentSidebar() {
               {hasConfirmedProfile ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    studentProfileStore.clearConfirmedProfile();
+                  onClick={async () => {
+                    await signOut();
                     router.push("/sign-in");
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#C026D3] hover:bg-[#FDF4FF] transition-all group text-left"
