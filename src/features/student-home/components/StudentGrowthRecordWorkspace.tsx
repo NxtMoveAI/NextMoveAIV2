@@ -95,6 +95,21 @@ export function StudentGrowthRecordWorkspace() {
     const seen = new Set<string>();
 
     allActivities.forEach((act) => {
+      // 1. Incorporate skills directly verified by AI analysis if submitted
+      const sub = act.submission || userProfile?.activitySubmissions?.[act.activityId];
+      if (sub?.aiAnalysis?.skillsPracticed) {
+        sub.aiAnalysis.skillsPracticed.forEach((s) => {
+          if (!seen.has(s.toLowerCase())) {
+            seen.add(s.toLowerCase());
+            list.push({
+              skill: s,
+              activityTitle: act.title,
+              isCompleted: true,
+            });
+          }
+        });
+      }
+
       if (!act.learningOutcome) return;
       const isCompleted = act.status === "completed" || (act.completedStepIds?.length || 0) >= (act.steps?.length || 5);
       // Split learning outcomes into discrete skill phrases
@@ -114,7 +129,7 @@ export function StudentGrowthRecordWorkspace() {
     });
 
     return list;
-  }, [allActivities]);
+  }, [allActivities, userProfile?.activitySubmissions]);
 
   // 3. Learning History Events Timeline
   const timelineEvents = useMemo(() => {
@@ -141,6 +156,7 @@ export function StudentGrowthRecordWorkspace() {
 
     // Completed Activities
     completedActivities.forEach((act) => {
+      const sub = act.submission || userProfile?.activitySubmissions?.[act.activityId];
       events.push({
         id: `ev-completed-${act.activityId}`,
         title: `Completed Activity: ${act.title}`,
@@ -149,6 +165,17 @@ export function StudentGrowthRecordWorkspace() {
         type: "activity_completed",
         badge: "Activity Completed",
       });
+
+      if (sub?.aiAnalysis) {
+        events.push({
+          id: `ev-ai-analysis-${act.activityId}`,
+          title: `AI Work Analysis: ${act.title}`,
+          description: `${sub.aiAnalysis.whatYouLearned} Discovery: ${sub.aiAnalysis.discovery}`,
+          timestamp: sub.submittedAt || null,
+          type: "activity_completed",
+          badge: "AI Insights",
+        });
+      }
     });
 
     // In Progress Activities
@@ -498,6 +525,74 @@ export function StudentGrowthRecordWorkspace() {
                       <strong>Outcome:</strong> {act.learningOutcome}
                     </p>
                   )}
+
+                  {(() => {
+                    const sub = act.submission || userProfile?.activitySubmissions?.[act.activityId];
+                    if (!sub?.aiAnalysis) return null;
+                    return (
+                      <div className="mt-2.5 p-3.5 rounded-xl bg-white border border-[#DDD8FE] space-y-2.5 text-xs">
+                        <div className="flex items-center justify-between gap-2 border-b border-[#F2F1FA] pb-2">
+                          <span className="font-bold text-[#6757F5] flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Submitted Work &amp; AI Analysis</span>
+                          </span>
+                          <span className="text-[10px] text-[#626987]">
+                            {new Date(sub.submittedAt).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        {sub.writtenReflection && (
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#626987]">
+                              Your Reflection:
+                            </span>
+                            <p className="text-xs italic text-[#171A2B] bg-[#F7F6FF] p-2.5 rounded-lg border border-[#EAE7FD]">
+                              &ldquo;{sub.writtenReflection}&rdquo;
+                            </p>
+                          </div>
+                        )}
+
+                        {sub.uploadedFile && (
+                          <div className="flex items-center gap-2 text-[11px] text-[#31364F] bg-[#F4F3F8] px-3 py-1.5 rounded-lg w-fit">
+                            <FolderGit2 className="w-3.5 h-3.5 text-[#6757F5]" />
+                            <span>
+                              Uploaded: <strong>{sub.uploadedFile.fileName}</strong>
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                          <div className="p-2.5 rounded-lg bg-[#F7F6FF] space-y-0.5">
+                            <span className="text-[10px] font-bold text-[#6757F5] block">
+                              What You Learned:
+                            </span>
+                            <p className="text-[11px] text-[#31364F]">
+                              {sub.aiAnalysis.whatYouLearned}
+                            </p>
+                          </div>
+
+                          <div className="p-2.5 rounded-lg bg-[#FFFBEB] space-y-0.5">
+                            <span className="text-[10px] font-bold text-[#D97706] block">
+                              Your Discovery:
+                            </span>
+                            <p className="text-[11px] text-[#92400E]">
+                              {sub.aiAnalysis.discovery}
+                            </p>
+                          </div>
+                        </div>
+
+                        {sub.aiAnalysis.nextChallenge && (
+                          <div className="p-2.5 rounded-lg bg-[#EFF8FF] text-[11px] text-[#0284C7] flex items-start gap-1.5">
+                            <Target className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-bold">Next Challenge: </span>
+                              <span>{sub.aiAnalysis.nextChallenge}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}

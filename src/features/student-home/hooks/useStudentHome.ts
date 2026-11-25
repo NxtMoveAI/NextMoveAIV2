@@ -14,7 +14,12 @@ import { type StudentHomeViewModel, type PersonaFixtureId } from "../schemas/typ
 import { DEMO_PERSONAS } from "../data/demo-personas";
 import { isValidStageId, isValidSituation } from "@/data/flow2-config";
 import { onAuthStateChange, getCurrentAuthUser, signOutUser, type AuthUser } from "@/lib/auth-service";
-import { type UserProfile, type UserStartingPoint, type StudentNextMoveActivity } from "@/lib/firestore-service";
+import {
+  type UserProfile,
+  type UserStartingPoint,
+  type StudentNextMoveActivity,
+  type ActivitySubmission,
+} from "@/lib/firestore-service";
 
 const STAGE_TO_PERSONA: Record<string, PersonaFixtureId> = {
   "classes-4-7": "persona_a_class6",
@@ -222,6 +227,10 @@ export function useStudentHome() {
     return studentProfileStore.saveNextMoveActivity(data);
   }, []);
 
+  const saveActivitySubmission = useCallback(async (data: ActivitySubmission) => {
+    return studentProfileStore.saveActivitySubmission(data);
+  }, []);
+
   return {
     viewModel,
     isLoading,
@@ -237,6 +246,7 @@ export function useStudentHome() {
     nextMoveActivity,
     nextMoveHistory,
     saveNextMoveActivity,
+    saveActivitySubmission,
     selectAlternativeMove,
     restoreSuggestedMove,
     postponeMove,

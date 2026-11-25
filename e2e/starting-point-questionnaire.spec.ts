@@ -59,7 +59,7 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await expect(page.locator("#partner-preview")).toHaveCount(0);
   });
 
-  test("2. Classes 4–7 shows interactive questionnaire with 6 questions, navigation, and validation", async ({
+  test("2. Classes 4–7 shows interactive questionnaire with 4 questions, navigation, and validation", async ({
     page,
   }) => {
     await page.addInitScript(() => {
@@ -90,8 +90,12 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await expect(sp).toBeVisible();
 
     // Check Question 1 header and progress
-    await expect(sp.locator("text=Question 1 of 6")).toBeVisible();
+    await expect(sp.locator("text=Question 1 of 4")).toBeVisible();
     await expect(sp.locator("text=What do you enjoy doing most in your free time?")).toBeVisible();
+
+    // Explicitly verify the two removed questions are NOT rendered anywhere
+    await expect(sp.locator("text=What makes you feel proud of yourself?")).not.toBeVisible();
+    await expect(sp.locator("text=How do you like learning or trying something new?")).not.toBeVisible();
 
     // Next button is disabled when no option selected
     const nextBtn = sp.locator('button:has-text("Next")');
@@ -107,12 +111,12 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
 
     // Advance to Q2
     await nextBtn.click();
-    await expect(sp.locator("text=Question 2 of 6")).toBeVisible();
+    await expect(sp.locator("text=Question 2 of 4")).toBeVisible();
     await expect(sp.locator("text=Which activity sounds the most exciting to you?")).toBeVisible();
 
     // Test Previous button preserves selection
     await prevBtn.click();
-    await expect(sp.locator("text=Question 1 of 6")).toBeVisible();
+    await expect(sp.locator("text=Question 1 of 4")).toBeVisible();
     await expect(sp.locator('button:has-text("Drawing, painting, or making things")')).toHaveClass(/border-\[#6757F5\]/);
 
     // Move forward through questions answering with a Creative profile
@@ -120,27 +124,18 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await sp.locator('button:has-text("Creating something with my own hands")').click();
     await nextBtn.click(); // to Q3
 
-    await expect(sp.locator("text=Question 3 of 6")).toBeVisible();
+    await expect(sp.locator("text=Question 3 of 4")).toBeVisible();
     await sp.locator('button:has-text("Draw, create, or design something")').click();
-    await nextBtn.click(); // to Q4
+    await nextBtn.click(); // to Q4 (Final question: What would you love to explore more?)
 
-    await expect(sp.locator("text=Question 4 of 6")).toBeVisible();
-    await sp.locator('button:has-text("When I create something new")').click();
-    await nextBtn.click(); // to Q5
-
-    await expect(sp.locator("text=Question 5 of 6")).toBeVisible();
-    await sp.locator('button:has-text("Art, animation, and creativity")').click();
-    await nextBtn.click(); // to Q6
-
-    // Question 6 (Final)
-    await expect(sp.locator("text=Question 6 of 6")).toBeVisible();
-    await expect(sp.locator("text=How do you like learning or trying something new?")).toBeVisible();
+    await expect(sp.locator("text=Question 4 of 4")).toBeVisible();
+    await expect(sp.locator("text=What would you love to explore more?")).toBeVisible();
 
     // Complete button appears on last question
     const completeBtn = sp.locator('button:has-text("Complete & View Starting Point")');
     await expect(completeBtn).toBeDisabled();
 
-    await sp.locator('button:has-text("By doing it myself")').click();
+    await sp.locator('button:has-text("Art, animation, and creativity")').click();
     await expect(completeBtn).toBeEnabled();
 
     // Submit questionnaire
@@ -209,13 +204,7 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await sp.locator('button:has-text("Build something interesting")').click();
     await sp.locator('button:has-text("Next")').click();
 
-    await sp.locator('button:has-text("When I solve something difficult")').click();
-    await sp.locator('button:has-text("Next")').click();
-
     await sp.locator('button:has-text("Technology, robots, and machines")').click();
-    await sp.locator('button:has-text("Next")').click();
-
-    await sp.locator('button:has-text("By doing it myself")').click();
     await sp.locator('button:has-text("Complete & View Starting Point")').click();
 
     // Verify distinct technology / building output
@@ -270,7 +259,7 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     const sp = page.locator("#starting-point");
 
     // Directly renders baseline summary without showing questionnaire questions
-    await expect(sp.locator("text=Question 1 of 6")).toHaveCount(0);
+    await expect(sp.locator("text=Question 1 of 4")).toHaveCount(0);
     await expect(sp.locator("text=Exploring wildlife, observing plants, and discovering the natural world outdoors.")).toBeVisible();
     await expect(sp.locator("text=Nature & Environment")).toBeVisible();
     await expect(sp.locator("text=Status: Building Curiosity")).toBeVisible();
@@ -278,7 +267,7 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
 
     // Inspect full answers progressive disclosure
     await sp.locator('button:has-text("Inspect full baseline answers")').click();
-    await expect(sp.locator("text=Your Questionnaire Responses (6 Questions):")).toBeVisible();
+    await expect(sp.locator("text=Your Questionnaire Responses (4 Questions):")).toBeVisible();
     await expect(sp.locator("text=Exploring nature or animals")).toBeVisible();
   });
 
@@ -330,7 +319,7 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await sp.locator('button:has-text("Edit Answers")').click();
 
     // Reopens at Question 1 with previous answer pre-selected
-    await expect(sp.locator("text=Question 1 of 6")).toBeVisible();
+    await expect(sp.locator("text=Question 1 of 4")).toBeVisible();
     await expect(sp.locator('button:has-text("Drawing, painting, or making things")')).toHaveClass(/border-\[#6757F5\]/);
 
     // Cancel edit returns to summary without changing
@@ -341,8 +330,8 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await sp.locator('button:has-text("Edit Answers")').click();
     await sp.locator('button:has-text("Exploring nature or animals")').click();
 
-    // Advance to end
-    for (let i = 0; i < 5; i++) {
+    // Advance to end (3 clicks for 4 questions)
+    for (let i = 0; i < 3; i++) {
       await sp.locator('button:has-text("Next")').click();
     }
 
@@ -387,9 +376,9 @@ test.describe("Student Dashboard Section Order & Starting Point Questionnaire", 
     await expect(sp.locator("text=Question 1 of 6")).toHaveCount(0);
     await expect(sp.locator("text=What do you enjoy doing most in your free time?")).toHaveCount(0);
 
-    // Shows standard stage baseline for Classes 8-10
+    // Shows stage questionnaire tailored for Classes 8-10
     await expect(sp.locator("text=Classes 8 – 10").first()).toBeVisible();
-    await expect(sp.locator("text=Where You Stand")).toBeVisible();
+    await expect(sp.locator("text=Which subjects or activities do you find most interesting in school?")).toBeVisible();
   });
 
   test("7. Your Next Move section remains functional after repositioning", async ({

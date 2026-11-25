@@ -36,6 +36,8 @@ import {
   ChevronUp,
   ListChecks,
   Compass,
+  Loader2,
+  Plus,
 } from "lucide-react";
 import { useStudentHome } from "../hooks/useStudentHome";
 import {
@@ -45,6 +47,7 @@ import {
   type PersonalizedActivity,
 } from "../data/next-move-activities";
 import { type StudentNextMoveActivity } from "@/lib/firestore-service";
+import { ActivityReflectionSection } from "./ActivityReflectionSection";
 
 function formatEffortMinutes(effort: string | number): string {
   const str = String(effort).trim();
@@ -75,8 +78,11 @@ export function NextMoveCard() {
   const [showStepsReview, setShowStepsReview] = useState(true);
   const [localActivity, setLocalActivity] = useState<StudentNextMoveActivity | null>(null);
   const [isChoosingAnother, setIsChoosingAnother] = useState(false);
+  const [extraActivities, setExtraActivities] = useState<PersonalizedActivity[]>([]);
+  const [isGeneratingMore, setIsGeneratingMore] = useState(false);
+  const [getMoreError, setGetMoreError] = useState<string | null>(null);
 
-  // 1. Resolve TWO distinct personalized activity options for this student
+  // 1. Resolve initial TWO distinct personalized activity options for this student
   const personalizedPair = useMemo(() => {
     return getPersonalizedActivityPairForStudent({
       startingPoint,
@@ -86,7 +92,50 @@ export function NextMoveCard() {
     });
   }, [startingPoint, userProfile?.academicStage, viewModel.academicStageId, activePersonaId, isRealAuthenticatedUser]);
 
-  const [option1, option2] = personalizedPair;
+  // Session storage cache key for AI activities (Section 9 Optimization: strictly scoped to student UID)
+  const sessionCacheKey = useMemo(() => {
+    if (!userProfile?.uid) return null;
+    const stageId = userProfile?.academicStage || viewModel.academicStageId || "classes-4-7";
+    return `next_move_ai_acts_${userProfile.uid}_${stageId}`;
+  }, [userProfile?.uid, userProfile?.academicStage, viewModel.academicStageId]);
+
+  // AI-generated initial activities (read from sessionStorage if available for this specific student UID)
+  const [aiInitialActivities, setAiInitialActivities] = useState<PersonalizedActivity[]>([]);
+
+  React.useEffect(() => {
+    if (!sessionCacheKey || typeof window === "undefined") {
+      setAiInitialActivities([]);
+      return;
+    }
+    try {
+      const cached = sessionStorage.getItem(sessionCacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length >= 2) {
+          setAiInitialActivities(parsed);
+        }
+      }
+    } catch {
+      // ignore storage access error
+    }
+  }, [sessionCacheKey]);
+
+  // Base pair: prioritize cached/loaded AI activities, then initial personalized pair
+  const baseActivities = useMemo(() => {
+    if (aiInitialActivities.length >= 2) {
+      return aiInitialActivities;
+    }
+    return personalizedPair;
+  }, [aiInitialActivities, personalizedPair]);
+
+  // Combined pool: initially 2 activities, expands when student requests more
+  const allChoiceActivities = useMemo(() => {
+    const existingIds = new Set(baseActivities.map((a) => a.id));
+    const uniqueExtras = extraActivities.filter((a) => !existingIds.has(a.id));
+    return [...baseActivities, ...uniqueExtras];
+  }, [baseActivities, extraActivities]);
+
+  const [option1] = baseActivities;
   const resolvedDefaultActivity = option1;
 
   // 2. Active activity: Prioritize local optimistic state, then Firestore/profile-store, then initialized default
@@ -112,6 +161,84 @@ export function NextMoveCard() {
     (activeActivity.status === "in_progress" ||
       activeActivity.status === "completed" ||
       completedStepIds.length > 0);
+
+  // Initial Gemini AI generation effect (cached per session via sessionStorage and ref guard)
+  const hasRequestedInitialAiRef = React.useRef(false);
+
+  React.useEffect(() => {
+    // If student is running an activity, or activities already loaded, skip API call to save tokens
+    if (hasRequestedInitialAiRef.current || aiInitialActivities.length >= 2 || isStarted) {
+      return;
+    }
+
+    const stage = userProfile?.academicStage || viewModel.academicStageId;
+    if (!stage) return;
+
+    hasRequestedInitialAiRef.current = true;
+
+    const fetchInitialAi = async () => {
+      try {
+        const resolvedClass = userProfile?.currentClass
+          ? userProfile.currentClass
+          : stage === "classes-4-7"
+          ? "Class 6"
+          : stage === "classes-8-10"
+          ? "Class 9"
+          : stage === "classes-11-12"
+          ? "Class 11"
+          : stage === "diploma"
+          ? "Diploma Year 2"
+          : stage === "degree-engineering"
+          ? "Engineering Student"
+          : "Working Professional";
+
+        const completedTitles = Object.values(nextMoveHistory || {})
+          .filter((a) => a.status === "completed" || (a.completedStepIds?.length || 0) >= (a.steps?.length || 1))
+          .map((a) => a.title);
+
+        const res = await fetch("/api/ai/recommend-activities", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            primaryFocus: startingPoint?.primaryFocus || viewModel.primaryGoal,
+            activeInterests: startingPoint?.activeInterests || [],
+            academicStage: stage,
+            currentClass: resolvedClass,
+            startingPointAnswers: startingPoint?.answers || {},
+            completedActivities: completedTitles,
+            excludeActivityIds: Object.keys(nextMoveHistory || {}),
+            count: 2,
+          }),
+        });
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.activities) && data.activities.length >= 2) {
+          setAiInitialActivities(data.activities);
+          if (sessionCacheKey) {
+            try {
+              sessionStorage.setItem(sessionCacheKey, JSON.stringify(data.activities));
+            } catch {
+              // ignore
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Initial AI activities background load note:", err);
+      }
+    };
+
+    fetchInitialAi();
+  }, [
+    sessionCacheKey,
+    aiInitialActivities.length,
+    isStarted,
+    userProfile?.academicStage,
+    userProfile?.currentClass,
+    viewModel.academicStageId,
+    viewModel.primaryGoal,
+    startingPoint,
+    nextMoveHistory,
+  ]);
 
   const isCompleted =
     isStarted &&
@@ -217,6 +344,76 @@ export function NextMoveCard() {
   const handleResetToRecommended = async () => {
     await handleSelectAndStartActivity(resolvedDefaultActivity);
     restoreSuggestedMove();
+  };
+
+  // Request additional AI-recommended tasks beyond the initial 2
+  const handleGetMoreTasks = async () => {
+    setIsGeneratingMore(true);
+    setGetMoreError(null);
+    try {
+      const excludeIds = [
+        ...allChoiceActivities.map((a) => a.id),
+        ...Object.keys(nextMoveHistory || {}),
+        activeActivity.activityId,
+      ];
+
+      const resolvedStage = userProfile?.academicStage || viewModel.academicStageId;
+      const resolvedClass = userProfile?.currentClass
+        ? userProfile.currentClass
+        : resolvedStage === "classes-4-7"
+        ? "Class 6"
+        : resolvedStage === "classes-8-10"
+        ? "Class 9"
+        : resolvedStage === "classes-11-12"
+        ? "Class 11"
+        : resolvedStage === "diploma"
+        ? "Diploma Year 2"
+        : resolvedStage === "degree-engineering"
+        ? "Engineering Student"
+        : "Working Professional";
+
+      const completedTitles = Object.values(nextMoveHistory || {})
+        .filter((a) => a.status === "completed" || (a.completedStepIds?.length || 0) >= (a.steps?.length || 1))
+        .map((a) => a.title);
+
+      const res = await fetch("/api/ai/recommend-activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          primaryFocus: startingPoint?.primaryFocus || viewModel.primaryGoal,
+          activeInterests: startingPoint?.activeInterests || [],
+          academicStage: resolvedStage,
+          currentClass: resolvedClass,
+          startingPointAnswers: startingPoint?.answers || {},
+          completedActivities: completedTitles,
+          excludeActivityIds: excludeIds,
+          count: 2,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.activities) && data.activities.length > 0) {
+        setExtraActivities((prev) => {
+          const updated = [...prev, ...data.activities];
+          try {
+            if (sessionCacheKey) {
+              const combined = [...baseActivities, ...updated];
+              sessionStorage.setItem(sessionCacheKey, JSON.stringify(combined));
+            }
+          } catch {
+            // ignore
+          }
+          return updated;
+        });
+      } else {
+        setGetMoreError("All current personalized activities are already displayed!");
+      }
+    } catch (err) {
+      console.error("Failed to fetch more tasks:", err);
+      setGetMoreError("Could not load more tasks. Please try again.");
+    } finally {
+      setIsGeneratingMore(false);
+    }
   };
 
   // Whether the 2-activity choice view should be displayed
@@ -344,9 +541,9 @@ export function NextMoveCard() {
             </div>
           )}
 
-          {/* 2 Activities Comparison Cards Grid */}
+          {/* Activities Comparison Cards Grid (Initially 2, expandable via AI) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {[option1, option2].map((act, index) => {
+            {allChoiceActivities.map((act, index) => {
               const isThisActive = isStarted && activeActivity.activityId === act.id;
               const savedInHistory = nextMoveHistory[act.id];
               const hasSavedProgress =
@@ -441,6 +638,41 @@ export function NextMoveCard() {
                 </div>
               );
             })}
+          </div>
+
+          {/* "Get More Tasks" / "Show Me More Activities" Action */}
+          <div className="flex flex-col items-center justify-center pt-2">
+            <button
+              type="button"
+              onClick={handleGetMoreTasks}
+              disabled={isGeneratingMore}
+              data-testid="get-more-tasks-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-[#DDD8FE] bg-white hover:bg-[#F7F6FF] hover:border-[#6757F5] text-[#6757F5] hover:text-[#5342E8] text-xs font-bold shadow-xs hover:shadow-md hover:shadow-[#6757F5]/10 transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isGeneratingMore ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#6757F5]" />
+                  <span>Generating More Activities with AI...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 text-[#6757F5]" />
+                  <span>Get More Tasks</span>
+                </>
+              )}
+            </button>
+            {getMoreError && (
+              <div className="pt-2 text-center space-y-1">
+                <p className="text-[11px] text-[#B42318] font-medium">{getMoreError}</p>
+                <button
+                  type="button"
+                  onClick={handleGetMoreTasks}
+                  className="text-xs text-[#6757F5] font-bold underline hover:text-[#5342E8] transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Why disclosure trigger & content */}
@@ -629,6 +861,16 @@ export function NextMoveCard() {
                   </Link>
                 </div>
               </div>
+            )}
+
+            {/* ACTIVITY REFLECTION & UPLOAD SECTION (When completed) */}
+            {isCompleted && (
+              <ActivityReflectionSection
+                activity={activeActivity}
+                onSubmissionComplete={(sub) => {
+                  setLocalActivity((prev) => (prev ? { ...prev, submission: sub } : prev));
+                }}
+              />
             )}
 
             {/* Steps Header Toggle */}

@@ -16,9 +16,11 @@ import {
   subscribeToUserProfile,
   saveStartingPoint as persistStartingPoint,
   saveNextMoveActivity as persistNextMoveActivity,
+  saveActivitySubmission as persistActivitySubmission,
   type UserProfile,
   type UserStartingPoint,
   type StudentNextMoveActivity,
+  type ActivitySubmission,
 } from "@/lib/firestore-service";
 
 type ProfileChangeListener = () => void;
@@ -320,6 +322,49 @@ class StudentProfileStore {
       } catch {
         // Safe storage fallback
       }
+    }
+    this.notify();
+    return true;
+  }
+
+  public async saveActivitySubmission(submission: ActivitySubmission): Promise<boolean> {
+    const updatedSubmissions = {
+      ...(this.userProfile?.activitySubmissions || {}),
+      [submission.activityId]: submission,
+    };
+
+    let updatedNextMove = this.userProfile?.nextMoveActivity || null;
+    if (updatedNextMove && updatedNextMove.activityId === submission.activityId) {
+      updatedNextMove = {
+        ...updatedNextMove,
+        submission,
+      };
+    }
+
+    const updatedHistory = {
+      ...(this.userProfile?.nextMoveHistory || this.getNextMoveHistory()),
+    };
+    if (updatedHistory[submission.activityId]) {
+      updatedHistory[submission.activityId] = {
+        ...updatedHistory[submission.activityId],
+        submission,
+      };
+    }
+
+    if (this.userProfile) {
+      this.userProfile = {
+        ...this.userProfile,
+        activitySubmissions: updatedSubmissions,
+        nextMoveActivity: updatedNextMove,
+        nextMoveHistory: updatedHistory,
+      };
+      this.notify();
+    }
+
+    const res = await persistActivitySubmission(submission, this.authUser?.uid || this.userProfile?.uid);
+    if (!res.success) {
+      console.error("Failed to persist activity submission:", res.error);
+      return false;
     }
     this.notify();
     return true;

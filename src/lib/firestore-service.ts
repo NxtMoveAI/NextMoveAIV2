@@ -8,7 +8,7 @@ import {
   type Timestamp,
   type FieldValue,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, auth } from "./firebase";
 import { type AcademicStageId } from "@/data/landing-demo";
 import { type UserRole } from "./api-contracts";
 
@@ -34,6 +34,41 @@ export interface ActivityStep {
   instruction: string;
 }
 
+export interface ActivitySubmissionFile {
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  fileUrl?: string;
+  storagePath?: string;
+  uploadedAt: string;
+  description?: string;
+}
+
+export interface ActivityAIAnalysis {
+  whatYouLearned: string;
+  skillsPracticed: string[];
+  discovery: string;
+  nextChallenge: string;
+  analyzedAt: string;
+}
+
+export interface ActivitySubmission {
+  activityId: string;
+  activityTitle: string;
+  completionDetails?: {
+    completedStepIds: string[];
+    totalSteps: number;
+    completedAt?: string | null;
+  };
+  writtenReflection?: string;
+  uploadedFile?: ActivitySubmissionFile | null;
+  submittedAt: string;
+  aiAnalysis: ActivityAIAnalysis;
+  skillsIdentified: string[];
+  learningOutcomes: string;
+  suggestedNextChallenge: string;
+}
+
 export interface StudentNextMoveActivity {
   activityId: string;
   title: string;
@@ -47,6 +82,7 @@ export interface StudentNextMoveActivity {
   createdAt: string;
   updatedAt: string;
   completedAt?: string | null;
+  submission?: ActivitySubmission | null;
 }
 
 export interface UserProfile {
@@ -63,6 +99,7 @@ export interface UserProfile {
   startingPoint?: UserStartingPoint | null;
   nextMoveActivity?: StudentNextMoveActivity | null;
   nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
+  activitySubmissions?: Record<string, ActivitySubmission> | null;
   createdAt: Timestamp | FieldValue | string | null;
   updatedAt: Timestamp | FieldValue | string | null;
 }
@@ -81,6 +118,7 @@ export interface CreateUserProfileInput {
   startingPoint?: UserStartingPoint | null;
   nextMoveActivity?: StudentNextMoveActivity | null;
   nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
+  activitySubmissions?: Record<string, ActivitySubmission> | null;
 }
 
 export interface UpdateUserProfileInput {
@@ -96,6 +134,7 @@ export interface UpdateUserProfileInput {
   startingPoint?: UserStartingPoint | null;
   nextMoveActivity?: StudentNextMoveActivity | null;
   nextMoveHistory?: Record<string, StudentNextMoveActivity> | null;
+  activitySubmissions?: Record<string, ActivitySubmission> | null;
   [key: string]: unknown;
 }
 
@@ -734,6 +773,138 @@ export async function saveNextMoveActivity(
       error: {
         code: err.code || "firestore/save-next-move-failed",
         message: err.message || "Failed to save Next Move activity in Firestore.",
+      },
+    };
+  }
+}
+
+/**
+ * Saves a completed activity submission and its verified AI analysis to the authenticated student's profile.
+ * Updates users/{uid}:
+ * - activitySubmissions[submission.activityId]
+ * - nextMoveActivity.submission (if matching)
+ * - nextMoveHistory[submission.activityId].submission
+ */
+export async function saveActivitySubmission(
+  submission: ActivitySubmission,
+  targetUid?: string
+): Promise<FirestoreServiceResponse<ActivitySubmission>> {
+  try {
+    // Testing mock hook for browser tests (e.g. Playwright)
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __NEXT_MOVE_MOCK_FIRESTORE__?: unknown }).__NEXT_MOVE_MOCK_FIRESTORE__
+    ) {
+      const mockHost = window as unknown as {
+        __NEXT_MOVE_MOCK_FIRESTORE__:
+          | boolean
+          | {
+              mockProfile?: UserProfile | null;
+            };
+        __LAST_SAVED_SUBMISSION__?: ActivitySubmission;
+        __MOCK_SUBSCRIBERS__?: Set<() => void>;
+      };
+
+      mockHost.__LAST_SAVED_SUBMISSION__ = submission;
+
+      if (
+        typeof mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ === "object" &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__ !== null &&
+        mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile
+      ) {
+        const profile = mockHost.__NEXT_MOVE_MOCK_FIRESTORE__.mockProfile;
+        const subs = profile.activitySubmissions || {};
+        subs[submission.activityId] = submission;
+        profile.activitySubmissions = subs;
+
+        if (profile.nextMoveActivity && profile.nextMoveActivity.activityId === submission.activityId) {
+          profile.nextMoveActivity.submission = submission;
+        }
+
+        if (profile.nextMoveHistory && profile.nextMoveHistory[submission.activityId]) {
+          profile.nextMoveHistory[submission.activityId] = {
+            ...profile.nextMoveHistory[submission.activityId],
+            submission,
+          };
+        }
+
+        try {
+          window.sessionStorage.setItem("__E2E_MOCK_PROFILE__", JSON.stringify(profile));
+        } catch {}
+
+        mockHost.__MOCK_SUBSCRIBERS__?.forEach((cb) => {
+          try {
+            cb();
+          } catch {}
+        });
+      }
+
+      return {
+        success: true,
+        data: submission,
+      };
+    }
+
+    const user = auth.currentUser;
+    const uid = targetUid || user?.uid;
+
+    if (!uid) {
+      return {
+        success: false,
+        error: {
+          code: "auth/unauthenticated",
+          message: "You must be signed in to submit an activity.",
+        },
+      };
+    }
+
+    const userDocRef = doc(db, USERS_COLLECTION, uid);
+    const docSnap = await getDoc(userDocRef);
+    const existingData = docSnap.exists() ? (docSnap.data() as UserProfile) : null;
+    const existingSubmissions = existingData?.activitySubmissions || {};
+    const updatedSubmissions = {
+      ...existingSubmissions,
+      [submission.activityId]: submission,
+    };
+
+    const existingHistory = existingData?.nextMoveHistory || {};
+    let updatedHistory = existingHistory;
+    if (existingHistory[submission.activityId]) {
+      updatedHistory = {
+        ...existingHistory,
+        [submission.activityId]: {
+          ...existingHistory[submission.activityId],
+          submission,
+        },
+      };
+    }
+
+    const updates: Record<string, unknown> = {
+      activitySubmissions: updatedSubmissions,
+      nextMoveHistory: updatedHistory,
+      updatedAt: serverTimestamp(),
+    };
+
+    if (existingData?.nextMoveActivity?.activityId === submission.activityId) {
+      updates.nextMoveActivity = {
+        ...existingData.nextMoveActivity,
+        submission,
+      };
+    }
+
+    await updateDoc(userDocRef, updates);
+
+    return {
+      success: true,
+      data: submission,
+    };
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string };
+    return {
+      success: false,
+      error: {
+        code: err.code || "firestore/save-submission-failed",
+        message: err.message || "Failed to save activity submission in Firestore.",
       },
     };
   }
